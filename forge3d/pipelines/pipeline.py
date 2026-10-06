@@ -41,7 +41,10 @@ class Pipeline:
         manifest.write_text(json.dumps(data, indent=2))
 
     def run(self, *, prompt: str | None = None,
-            image: Path | None = None) -> PipelineResult:
+            image: Path | None = None,
+            texture: str | None = "lanczos",
+            densify: bool = True,
+            rig: bool = False) -> PipelineResult:
         if not prompt and not image:
             raise ProviderError("need --prompt and/or --image")
         ok, reason = self.provider.is_available()
@@ -57,10 +60,31 @@ class Pipeline:
         cleaned = self.cleanup(result.glb_path)
         self._record("cleanup", str(cleaned))
 
-        self._record("export", str(cleaned))
+        current = cleaned
+        # texture refinement (attacks blurry-back weakness)
+        if texture:
+            from .texture import refine_textures
+            try:
+                current = refine_textures(current, self.out_dir, backend=texture)
+                self._record("texture", f"{texture}: {current}")
+            except ProviderError as e:
+                # no embedded textures to refine: loud note, not a fake
+                self._record("texture", f"skipped: {e}")
+        # geometry densification (tessellation toward the ~1.9M Tripo bar)
+        if densify:
+            from .densify import densify_glb
+            current = densify_glb(current, self.out_dir)
+            self._record("densify", str(current))
+        # auto-rig (the beyond-Tripo edge: Tripo free output is unrigged)
+        if rig:
+            from .rig import rig_glb
+            current = rig_glb(current, self.out_dir)
+            self._record("rig", str(current))
+
+        self._record("export", str(current))
         self._record("handoff",
                      "ready for retarget/rig tooling (Bannon/AshLanev2 generative)")
-        return PipelineResult(glb_path=cleaned,
+        return PipelineResult(glb_path=current,
                               run_manifest=self.out_dir / "run.json",
                               stages=list(self._stages))
 

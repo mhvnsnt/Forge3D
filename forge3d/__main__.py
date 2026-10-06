@@ -41,7 +41,10 @@ def cmd_generate(args) -> int:
     print(f"provider: {name}")
     try:
         result = Pipeline(prov, Path(args.out)).run(
-            prompt=args.prompt, image=Path(args.image) if args.image else None)
+            prompt=args.prompt, image=Path(args.image) if args.image else None,
+            texture=None if args.texture == "none" else args.texture,
+            densify=not args.no_densify,
+            rig=args.rig)
     except ProviderError as e:
         print(f"FAILED (no fake output produced): {e}", file=sys.stderr)
         return 1
@@ -65,6 +68,13 @@ def main(argv=None) -> int:
     g.add_argument("--image", default=None)
     g.add_argument("--provider", default="auto")
     g.add_argument("--out", default="out")
+    g.add_argument("--texture", default="lanczos",
+                   choices=["lanczos", "realesrgan", "hunyuan-paint", "none"],
+                   help="texture refinement backend (none = skip)")
+    g.add_argument("--no-densify", action="store_true",
+                   help="skip geometry densification")
+    g.add_argument("--rig", action="store_true",
+                   help="auto-rig the output (instance-rig, CPU)")
     sub.add_parser("selftest")
     args = ap.parse_args(argv)
     # allow running from repo root without install

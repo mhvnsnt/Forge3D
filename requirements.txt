@@ -1,3 +1,6 @@
 # Forge3D requirements — base (CPU-only VM safe)
 # Local GPU model deps live in requirements-local.txt (installed on runners only).
 numpy>=1.24
+pillow>=10
+trimesh>=4
+requests>=2.31

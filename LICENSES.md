@@ -8,6 +8,11 @@ against official repos (see docs/research/).
 | Component | License | Commercial use | Notes |
 |---|---|---|---|
 | Forge3D own code (`forge3d/`, docs, configs) | MIT (TBD — owner picks at ship) | yes | prototype stage |
+| trimesh (mesh I/O, cleanup, densify) | MIT | yes | base requirement |
+| Pillow (texture extraction/upscale) | HPND | yes | base requirement |
+| numpy | BSD-3-Clause | yes | base requirement |
+| requests (API providers) | Apache-2.0 | yes | base requirement |
+| instance-rig (auto-rig backend, external venv) | MIT | yes | not vendored; subprocess via `pipelines/rig.py` |
 | TripoSR (Stability AI × Tripo) | MIT (code + weights) | yes | CPU-capable fallback provider |
 | Stable Fast 3D | Stability AI Community License | yes, <$1M annual revenue | default GPU provider; gated HF checkpoint |
 | TripoSG (VAST AI) | MIT | yes | shape fallback; geometry-only |

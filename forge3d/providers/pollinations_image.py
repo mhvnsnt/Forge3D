@@ -32,19 +32,26 @@ class PollinationsImageProvider(ModelProvider):
 
     def fetch_image(self, prompt: str, out_path: Path,
                     width: int = 1024, height: int = 1024,
-                    seed: int = 42) -> Path:
+                    seed: int = 42, retries: int = 5) -> Path:
         url = (self.ENDPOINT + urllib.parse.quote(prompt)
                + f"?width={width}&height={height}&seed={seed}&nologo=true&model=flux")
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Forge3D/0.1"})
-            with urllib.request.urlopen(req, timeout=120) as r:
-                data = r.read()
-        except Exception as e:  # noqa: BLE001
-            raise ProviderError(f"pollinations image fetch failed: {e}")
-        if len(data) < 10_000:
-            raise ProviderError("pollinations returned suspiciously small payload")
-        out_path.write_bytes(data)
-        return out_path
+        import time
+        last_err: Exception | None = None
+        for attempt in range(max(1, retries)):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "Forge3D/0.1"})
+                with urllib.request.urlopen(req, timeout=180) as r:
+                    data = r.read()
+                if len(data) < 10_000:
+                    raise ProviderError("pollinations returned suspiciously small payload")
+                out_path.write_bytes(data)
+                return out_path
+            except ProviderError:
+                raise  # honest failure, not transient
+            except Exception as e:  # noqa: BLE001 — transient network drops
+                last_err = e
+                time.sleep(4 * (attempt + 1))
+        raise ProviderError(f"pollinations image fetch failed after {retries} attempts: {last_err}")
 
     def generate(self, *, prompt=None, image=None, out_dir: Path,
                  **kwargs) -> GenerateResult:
