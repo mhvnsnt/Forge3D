@@ -23,3 +23,20 @@ for him.
 ## API keys
 Never in the repo. `export FORGE3D_MESHY_KEY=...` etc. Keys live in the Secure
 Vault; the provider reads env vars only.
+
+## Weight downloads behind a throttled proxy (learned 2026-10-06)
+`huggingface_hub`'s Xet client can stall at 0 B/s behind some egress proxies
+even when plain HTTPS works. The xet-bridge CDN URL itself is fine — follow
+the `/resolve/` redirect with plain curl and download directly:
+
+```bash
+mkdir -p ~/.forge3d/weights/triposr
+curl -sL --retry 3 -o ~/.forge3d/weights/triposr/model.ckpt \
+  "https://huggingface.co/stabilityai/TripoSR/resolve/main/model.ckpt"
+```
+
+The TripoSR provider prefers `~/.forge3d/weights/triposr/` (env
+`FORGE3D_TRIPOSR_WEIGHTS` to override) and only hits HF when the local dir is
+missing. Also: this VM's `no_proxy` contains bracketed IPv6 (`[::1]`) that
+crashes some HTTP clients with `Invalid port: ':1]'` — the provider strips
+IPv6 literals from `no_proxy` at runtime (proxy itself still used).

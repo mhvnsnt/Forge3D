@@ -3,12 +3,7 @@
     {
       "stage": "concept",
       "detail": "runs/gen1/concept1.jpg",
-      "ts": 1791326585.601076
-    },
-    {
-      "stage": "concept",
-      "detail": "runs/gen1/concept1.jpg",
-      "ts": 1791326621.7157855
+      "ts": 1791328348.7316668
     }
   ],
   "provider": "triposr"

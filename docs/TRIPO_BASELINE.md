@@ -30,9 +30,19 @@ Other observed properties:
 |---|---|---|---|
 | Faces | ~1.93M | _pending first measured run_ | — |
 | Vertices | ~1.00M | _pending_ | — |
-| Texture resolution | _read from Tripo GLB when available_ | _pending_ | — |
-| Watertight / manifold | _pending_ | _pending_ | — |
-| Bones (rig) | 0 (Tripo Studio output is unrigged; rigging is a paid add-on) | _pending_ | — |
+| Texture resolution | standard ~2K / detailed / extreme 8K; PBR set = base_color + metallic + roughness + normal | _pending_ | — |
+| Game-ready poly target | 50–100K (their docs); Smart Low Poly 500–20K | densify stage targets tessellation parity; lod_chain port planned | — |
+| Quad output | ≤25K faces (P-series, FBX only) | triangle only (glTF can't store quads) | — |
+| Watertight / manifold | no published number; raw Tripo output is triangle soup with known open shells — beat their *observed* rate | _pending (trimesh is_watertight)_ | — |
+| Bones (rig) | 0 (Tripo Studio output is unrigged; auto-rig is a minimal ~26-joint add-on) | rig stage via instance-rig (beyond-Tripo edge) | — |
+| Pose | T-pose/A-pose output, pose control in 3.0 | backbone-dependent | — |
+| Latency | ~1–3 min/generation (async cloud) | TripoSR ~45s–3min CPU; free APIs queue-bound | — |
+
+### Why Tripo is good (research 2026-10-06 — what we're countering)
+- **TripoSR** (the open one): LRM → triplane → NeRF → marching cubes; fast and MIT, but projection textures (blurry backs — confirmed) and low tens-of-thousands of tris. It's the baseline, not the ceiling.
+- **TripoSG** (their quality jump): rectified-flow DiT in a 3D VAE latent trained with SDF + surface-normal + eikonal loss on 2M curated samples; MoE; geometry-only. **Our answer: TripoSG itself is MIT — wired as a provider.**
+- **Tripo 3.0**: SparseFlex (Flexicubes accuracy + sparse voxels, up to 1024³, −82% Chamfer / +88% F-score) + PBR texture model with a "delight" step (strips baked lighting before texturing — key crispness factor) + 4K/8K maps + native quad topology (P-series). **Our answers: TRELLIS.2 (MIT SOTA anchor) on GPU runners; Hunyuan3D-Paint as the delight-equivalent texture stage; densify for tessellation parity.**
+- **Their edge is the stack**, not one trick: high-res geometry + data curation + PBR pipeline + production tooling. Ours is the same stack shape at $0: TripoSG geometry → Paint texture → MV-Adapter multi-view → measure → rig.
 
 ## Gap-closing plan (mapped to the numbers)
 

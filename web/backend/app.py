@@ -222,16 +222,47 @@ async def download(job_id: str, format: str = "glb"):
 
 @app.get("/api/providers")
 async def providers():
-    out = []
-    for name, p in sorted(discover().items()):
-        ok, reason = p.is_available()
-        out.append({"name": name, "kind": p.info.kind, "available": ok,
-                    "reason": "" if ok else reason,
-                    "license": p.info.license,
-                    "capabilities": [c.value for c in p.info.capabilities]})
-    return {"providers": out}
+    # availability checks can be slow (torch import); cache 5 min, refresh in bg
+    import time as _t
+    now = _t.time()
+    cache = getattr(providers, "_cache", None)
+    if cache and now - cache[0] < 300:
+        return {"providers": cache[1], "cached": True}
+
+    def _collect():
+        out = []
+        for name, p in sorted(discover().items()):
+            try:
+                ok, reason = p.is_available()
+            except Exception as e:  # noqa: BLE001
+                ok, reason = False, f"check crashed: {e}"
+            out.append({"name": name, "kind": p.info.kind, "available": ok,
+                        "reason": "" if ok else reason,
+                        "license": p.info.license,
+                        "capabilities": [c.value for c in p.info.capabilities]})
+        providers._cache = (_t.time(), out)
+
+    if cache is None:
+        # first call: compute inline so the picker is accurate
+        _collect()
+        return {"providers": providers._cache[1], "cached": False}
+    # stale cache: return it, refresh in background
+    pool.submit(_collect)
+    return {"providers": cache[1], "cached": True}
 
 
 FRONTEND = REPO / "web" / "frontend"
+ASSETS = REPO / "web" / "assets"
+
+
+@app.get("/assets/{name}")
+async def assets(name: str):
+    # registered BEFORE the "/" static mount (first match wins)
+    p = ASSETS / Path(name).name
+    if not p.is_file():
+        raise HTTPException(404, "asset not found")
+    return FileResponse(p)
+
+
 if FRONTEND.is_dir():
     app.mount("/", StaticFiles(directory=FRONTEND, html=True), name="frontend")
