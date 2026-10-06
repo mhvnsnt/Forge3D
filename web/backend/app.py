@@ -174,7 +174,7 @@ async def upload(file: UploadFile = File(...)):
     with open(dest, "wb") as f:
         shutil.copyfileobj(file.file, f)
     return {"upload_id": uid, "filename": dest.name,
-            "url": f"/api/jobfile/../uploads/{uid}/{dest.name}"}
+            "url": f"/api/uploads/{uid}/{dest.name}"}
 
 
 @app.post("/api/generate")
@@ -208,6 +208,14 @@ async def job_status(job_id: str):
 @app.get("/api/jobfile/{job_id}/{name}")
 async def job_file(job_id: str, name: str):
     p = (JOBS / job_id / Path(name).name)
+    if not p.is_file():
+        raise HTTPException(404, "file not found")
+    return FileResponse(p)
+
+
+@app.get("/api/uploads/{uid}/{name}")
+async def upload_file(uid: str, name: str):
+    p = (UPLOADS / Path(uid).name / Path(name).name)
     if not p.is_file():
         raise HTTPException(404, "file not found")
     return FileResponse(p)
