@@ -18,14 +18,18 @@ against official repos (see docs/research/).
 | TripoSG (VAST AI) | MIT | yes | shape fallback; geometry-only |
 | Unique3D | MIT | yes | hero-asset provider (16 GB) |
 | TRELLIS.2 (Microsoft) | MIT (code + weights) | yes | hero provider; 24 GB VRAM |
-| Hunyuan3D-Paint (Tencent) | Tencent Hunyuan 3D Community License | gated: EU/UK/SK excluded, 1M MAU cap, attribution required | texture stage only |
+| Hunyuan3D-Paint (Tencent) | Tencent Hunyuan 3D 2.0 Community License | gated: EU/UK/SK excluded, 1M MAU cap, no-training-on-outputs, attribution | texture stage only; 16GB VRAM |
+| MV-Adapter (ICCV 2025) | Apache-2.0 (adapter); SDXL base = Open RAIL++-M | yes (propagate RAIL Attachment-A) | commercial-safe multi-view (replaces Zero123++); ~14GB VRAM |
+| TRELLIS.2 (Microsoft) | MIT (code + weights) | yes | SOTA quality anchor; 24GB VRAM (FP8 variant lower); DINOv3 dep is HF-gated |
+| TripoSG (VAST AI) | MIT (code + weights) | yes | watertight geometry workhorse, 8-12GB VRAM; geometry-only — pair with Paint |
+| Hi3DGen (Stable-X) | MIT per upstream README — VERIFY LICENSE at pull time | yes (pending check) | best-detail geometry option; 16-19GB VRAM; geometry-only |
 | Pollinations.ai (image + 3D API) | service terms | check terms before shipping | free key; 3D costs Pollen |
 | Tripo3D API Platform | service terms, free tier CC BY 4.0 non-commercial | NO on free tier | prototyping/reference only |
 | Meshy AI | service terms, free tier CC BY 4.0 | yes with attribution | web UI only (no free API) |
 
 ## Hard no-gos (never wired as providers)
-- Zero123++ weights — CC-BY-NC 4.0 (non-commercial)
-- Hunyuan3D-2/2.1 weights — territory exclusion, 1M MAU gate, no-training-use clause
+- Zero123++ weights — CC-BY-NC 4.0 (non-commercial). Code is Apache-2.0; weights are the blocker. Research/R&D only, quarantined from shipped builds.
+- Hunyuan3D-2/2.1 full weights — territory exclusion, 1M MAU gate, no-training-use clause (same Tencent license family as Paint; Paint is the narrower, texture-only pull)
 - nvdiffrast-dependent TRELLIS v1 pipeline — NVIDIA non-commercial source license (use TRELLIS.2/Hi3DGen instead)
 
 ## Quarantine policy
