@@ -1,0 +1,5 @@
+# Local GPU runner deps (Kaggle / Colab / workstation). NOT for the CPU VM.
+torch>=2.0
+trimesh[easy]>=4.0
+pillow>=10.0
+# Vendored model repos go in forge3d/providers/_vendor/ (gitignored; cloned by setup script)
