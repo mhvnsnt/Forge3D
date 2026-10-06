@@ -1,8 +1,50 @@
 # INVENTORY.md — Phase 0 audit (2026-10-06, verified live)
 
 Full reports: `docs/research/image-to-3d-open-source-verification-2026-10-06.md`
-and `docs/research/free-api-gpu-research.md`. His-repo audit pending (GitHub
-audit agent still running — merged on landing).
+and `docs/research/free-api-gpu-research.md`. His-repo audit: read-only
+`gh` API survey 2026-10-06 (54 repos found; no commits, no secrets touched).
+
+## His repos (mhvnsnt) — generation-relevant
+
+**AshLanev2 `tools/generative/`** (master docs: GENERATIVE_PIPELINE.md, LICENSE-MANIFEST.md)
+- `3d/`: `triposr_generate.py` (image→GLB, mc_res 128–256, bg-removal) →
+  ported into Forge3D as `forge3d/providers/triposr.py`;
+  `trellis_generate.py`, `shap_e_generate.py` (wired, GPU-only);
+  `postprocess.py` (decimate/weld/normals/center → game-ready GLB, CPU-runnable) →
+  adapted into `forge3d/pipelines/postprocess.py`;
+  `buffalo_bill.py` (reference→TripoSR/TRELLIS→postprocess orchestrator);
+  `*_setup.sh` installers.
+- `character/`: `auto-character.py` (keyless HF Spaces REST, WORKING per docs —
+  proof-shap-e-wrestler.glb exists); `char-pipeline.py` (GENERATE→POSTPROCESS→
+  RIG→VALIDATE→DEPLOY); `auto-rig.py` (capsule-distance skinning to 58-joint
+  Mixamo skeleton, pure CPU); `char-procedural.py` (CPU proof path);
+  Colab notebook + RunPod/Vast.ai deploy (~$0.34/hr RTX 3090); `server.py`
+  (GPU-box HTTP server, NO AUTH — internal only).
+- `motion/glb_anim.py` (GLB animation injection), `splat/`, `world/` (seeded
+  city gen), `textures/` (+ Real-ESRGAN upscaler). No keys/secrets in generative code.
+
+**Bannon `tools/generative/`** (most mature layer, CPU-proven 2026-10-06, proof/ artifacts)
+- `mesh/mesh_doctor.py` (weld, degenerate removal, normal fix, HOLE FILL —
+  81 holes on STICKUP proof); `mesh/lod_chain.py` (18k→9k→4.5k faces);
+  `motion/procedural_moves.py` (34 wrestling moves baked as glTF anims);
+  `retarget/mediapipe_to_glb.py` + `bvh_retarget.py`; `common/` (glb_anim, fk, quat);
+  `world/` arena + crowd generators; `selftest.py` (one-command PASS/FAIL).
+- `tools/gen/hf_pipeline.py`: free HF GPU-Spaces 3D (text→FLUX→Hunyuan3D-2/
+  InstantMesh→GLB), `HF_TOKEN` env (owner authed 'Dmn52').
+- `tools/forge/generate.py`: brief→TripoSR→UniRig auto-rig→QA pipeline;
+  license table REJECTED Hunyuan3D-2/Stable Fast 3D (outdated — SF3D now
+  commercial-OK <$1M; Hunyuan still gated).
+- Free-API usage: `TRIPO_API_KEY` (PAID credits) in tools/tripo/*.mjs;
+  `TRIPOSR_DIR`/`TRELLIS_DIR` path vars. ⚠️ Tripo3D FREE tier outputs are
+  NON-commercial — only paid-credit outputs are money-safe.
+
+**Other repos:** `texture-customizer` (GLB material-tweaking PWA, no AI);
+`QuantumBlur` (quantum seeds/heightmaps only); `brutalfistgrokversionten`
+(correct Bannon model SOURCE, not a generator); `ConcreteDragon`/`AshLane`/
+`Brutal-Fist` (consumers, not generators).
+
+**Name check:** `mhvnsnt/Forge3D` was free at creation and is THIS repo
+(authorized build). ModelForge, DragonForge available as fallbacks (unused).
 
 ## Open-source models — ranked for Forge3D (textured character mesh, limited HW)
 
