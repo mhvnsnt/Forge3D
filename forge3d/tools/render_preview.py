@@ -56,7 +56,8 @@ def load_glb(glb_path: Path):
                 mat = getattr(mat, "material", None) if mat is not None else None
                 img = getattr(mat, "baseColorTexture", None) if mat is not None else None
                 if img is not None:
-                    tex = np.array(Image.open(img).convert("RGB"))
+                    pil_img = img if isinstance(img, Image.Image) else Image.open(img)
+                    tex = np.array(pil_img.convert("RGB"))
             except Exception:
                 pass
         if hasattr(g.visual, "uv") and g.visual.uv is not None and len(g.visual.uv) == len(V):
