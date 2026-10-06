@@ -54,38 +54,55 @@ class GenerateRequest(BaseModel):
 
 
 def _render_previews(glb: Path, out_dir: Path) -> list[str]:
-    """Render 4-angle shaded thumbnails of the real geometry (matplotlib Agg)."""
+    """Render preview sheets with the repo's software rasterizer.
+
+    Uses forge3d/tools/render_preview.py (sibling-proven: numpy+PIL, white
+    void background, full framing, textured). Falls back to a matplotlib
+    geometry plot if the rasterizer is unavailable — never a fake image.
+    """
+    import subprocess
+    tool = REPO / "forge3d" / "tools" / "render_preview.py"
+    urls = []
+    if tool.is_file():
+        for i, angles in enumerate(["0,90,180,270", "45,135,225,315"]):
+            p = out_dir / f"preview_{i}.png"
+            r = subprocess.run(
+                [sys.executable, str(tool), str(glb), str(p), angles],
+                capture_output=True, text=True, timeout=600)
+            if r.returncode == 0 and p.is_file():
+                urls.append(f"/api/jobfile/{out_dir.name}/{p.name}")
+            else:
+                print(f"preview render failed: {r.stderr[-400:]}",
+                      file=sys.stderr)
+        if urls:
+            return urls
+    # fallback: plain geometry plot (honest, untextured)
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import numpy as np
     import trimesh
-
+    from matplotlib.colors import LightSource
     scene = trimesh.load(glb, force="scene")
     geoms = [g for g in scene.dump()] if hasattr(scene, "dump") else [scene]
     mesh = max((g for g in geoms if hasattr(g, "vertices")),
                key=lambda g: len(g.faces))
     v = np.asarray(mesh.vertices, dtype=float)
     f = np.asarray(mesh.faces)
-    # decimate for plotting speed
     if len(f) > 60000:
-        idx = np.random.RandomState(0).choice(len(f), 60000, replace=False)
-        f = f[idx]
-    from matplotlib.colors import LightSource
+        f = f[np.random.RandomState(0).choice(len(f), 60000, replace=False)]
     ls = LightSource(azdeg=315, altdeg=45)
-    urls = []
     for i, (elev, azim) in enumerate([(15, -60), (15, 60), (10, 180), (25, 300)]):
         fig = plt.figure(figsize=(4, 4), dpi=100)
         ax = fig.add_subplot(111, projection="3d")
-        ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2],
-                        cmap="plasma", lightsource=ls, shade=True,
-                        linewidth=0, antialiased=False)
+        ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2], cmap="plasma",
+                        lightsource=ls, shade=True, linewidth=0,
+                        antialiased=False)
         ax.view_init(elev=elev, azim=azim)
         ax.set_axis_off()
         fig.patch.set_facecolor("white")
         p = out_dir / f"preview_{i}.png"
-        fig.savefig(p, bbox_inches="tight", pad_inches=0.1,
-                    facecolor="white")
+        fig.savefig(p, bbox_inches="tight", pad_inches=0.1, facecolor="white")
         plt.close(fig)
         urls.append(f"/api/jobfile/{out_dir.name}/{p.name}")
     return urls
