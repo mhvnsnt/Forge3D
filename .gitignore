@@ -1,4 +1,4 @@
-providers/_vendor/
+forge3d/providers/_vendor/
 __pycache__/
 out/
 *.glb
