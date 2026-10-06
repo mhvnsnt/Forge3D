@@ -2,4 +2,5 @@
 torch>=2.0
 trimesh[easy]>=4.0
 pillow>=10.0
+scikit-image>=0.21  # torchmcubes CPU shim (marching cubes without the C++ build)
 # Vendored model repos go in forge3d/providers/_vendor/ (gitignored; cloned by setup script)

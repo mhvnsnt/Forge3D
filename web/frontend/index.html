@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forge3D — free text/image to 3D</title>
+<link rel="icon" href="/assets/favicon.svg">
+<link rel="stylesheet" href="/styles.css">
+<script type="importmap">
+{"imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<header id="topbar">
+  <div class="brand">
+    <img src="/assets/logo.svg" alt="Forge3D" class="logo">
+    <span class="wordmark">Forge3D</span>
+    <span class="tagline">free 3D generation</span>
+  </div>
+  <div class="topright">
+    <span class="pill free">FREE &middot; $0</span>
+    <span class="pill" id="provider-pill" title="backend providers">providers&hellip;</span>
+  </div>
+</header>
+
+<main id="layout">
+  <!-- LEFT: generation input -->
+  <aside id="left">
+    <div class="tabs">
+      <button class="tab active" data-tab="text">Text to 3D</button>
+      <button class="tab" data-tab="image">Image to 3D</button>
+      <button class="tab" data-tab="multi">Multiview</button>
+    </div>
+
+    <div class="tabpane" id="pane-text">
+      <label>Prompt</label>
+      <textarea id="prompt" rows="4" placeholder="a hooded street fighter, game character, full body"></textarea>
+    </div>
+
+    <div class="tabpane hidden" id="pane-image">
+      <label>Reference image — upload from your device</label>
+      <div id="dropzone">
+        <input type="file" id="file" accept="image/*">
+        <div class="dz-hint">Drop image here or <b>browse</b><br><span>from your photo library</span></div>
+        <img id="dz-preview" class="hidden" alt="upload preview">
+      </div>
+      <label class="sub">Optional prompt to guide it</label>
+      <textarea id="prompt2" rows="2" placeholder="optional"></textarea>
+    </div>
+
+    <div class="tabpane hidden" id="pane-multi">
+      <p class="note">Multiview input (front/left/back/right) lands with the MV-Adapter provider on a GPU runner. For now, single-image mode observes all sides via the pipeline's multi-view stage.</p>
+    </div>
+
+    <label>Provider</label>
+    <select id="provider"><option value="auto">auto (best available)</option></select>
+
+    <details class="opts">
+      <summary>Pipeline options</summary>
+      <label>Texture refinement
+        <select id="texture">
+          <option value="lanczos">lanczos 2x (CPU)</option>
+          <option value="realesrgan">Real-ESRGAN (GPU)</option>
+          <option value="hunyuan-paint">Hunyuan3D-Paint (GPU)</option>
+          <option value="none">none</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="densify" checked> Densify toward ~1.9M-face Tripo bar</label>
+      <label class="check"><input type="checkbox" id="rig"> Auto-rig (beyond Tripo — game skeleton)</label>
+    </details>
+
+    <button id="generate">Generate 3D Model</button>
+    <p class="fineprint">Free forever. Local providers cost $0 &middot; API providers use their free tiers. Nothing fake: failures raise loudly, never a placeholder mesh.</p>
+  </aside>
+
+  <!-- CENTER: 3D viewport -->
+  <section id="center">
+    <div id="viewport"></div>
+    <div id="empty-state">
+      <img src="/assets/logo.svg" alt="">
+      <h2>Generate or upload to begin</h2>
+      <p>Type a prompt or drop an image &mdash; your model appears here.<br>
+      While you wait: densify targets the ~1.9M-face Tripo bar, texture refinement sharpens the maps, auto-rig beats Tripo's unrigged output.</p>
+    </div>
+    <div id="jobbar" class="hidden">
+      <span id="job-title">working&hellip;</span>
+      <div class="progress"><div id="progfill"></div></div>
+    </div>
+  </section>
+
+  <!-- RIGHT: history + model info + export -->
+  <aside id="right">
+    <h3>History</h3>
+    <div id="history"><p class="note">No generations yet.</p></div>
+    <div id="modelinfo" class="hidden">
+      <h3>Model Info</h3>
+      <div id="previews"></div>
+      <table id="stats"></table>
+      <div class="downloads">
+        <a id="dl-glb" class="btn" href="#">Download GLB</a>
+        <a id="dl-usd" class="btn ghost" href="#">USD</a>
+        <a id="dl-fbx" class="btn ghost" href="#">FBX</a>
+      </div>
+      <p class="fineprint" id="dl-note"></p>
+    </div>
+  </aside>
+</main>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

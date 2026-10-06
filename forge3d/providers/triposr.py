@@ -28,6 +28,10 @@ class TripoSRProvider(ModelProvider):
     )
 
     VENDOR = Path(__file__).parent / "_vendor" / "triposr"
+    # Local weights staged by an earlier Forge3D session; avoids re-downloading
+    # (and the HF Xet stall) on every run. Override with FORGE3D_TRIPOSR_WEIGHTS.
+    WEIGHTS_ENV = "FORGE3D_TRIPOSR_WEIGHTS"
+    WEIGHTS_DEFAULT = Path.home() / ".forge3d" / "weights" / "triposr"
     SHIM = Path(__file__).parent / "_vendor"  # torchmcubes CPU shim lives here
 
     def _ensure_path(self):
@@ -96,8 +100,14 @@ class TripoSRProvider(ModelProvider):
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
         try:
             self._sanitize_proxy_env()  # httpx vs no_proxy quirk (see above)
+            import os
+            local = Path(os.environ.get(self.WEIGHTS_ENV, self.WEIGHTS_DEFAULT))
+            if (local / "config.yaml").is_file() and (local / "model.ckpt").is_file():
+                src = str(local)  # local dir wins: no HF download at all
+            else:
+                src = "stabilityai/TripoSR"
             model = TSR.from_pretrained(
-                "stabilityai/TripoSR",
+                src,
                 config_name="config.yaml",
                 weight_name="model.ckpt",
             )

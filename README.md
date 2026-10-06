@@ -52,6 +52,31 @@ python -m forge3d generate --prompt "..." --provider auto --out out/
 
 See `docs/FREE_RUNNER_GUIDE.md` for Kaggle/Colab/HF Spaces setups.
 
+## Web app (Tripo Studio-style, purple/white)
+
+```
+pip install -r requirements-web.txt
+uvicorn web.backend.app:app --host 0.0.0.0 --port 8765
+# open http://localhost:8765
+```
+
+Layout mirrors Tripo Studio: left panel (Text to 3D / Image to 3D / Multiview
+tabs, prompt box, image upload dropzone, provider picker, Generate), center
+Three.js viewport with orbit controls, right panel (job history, model info
+with faces/verts front and center, GLB/USD/FBX downloads), top bar with the
+Forge3D logo (white diamond in a purple circle) and backend status. Image
+upload works from a phone browser (plain file input + dropzone).
+
+API: `POST /api/upload`, `POST /api/generate`, `GET /api/job/{id}`,
+`GET /api/download/{id}?format=glb|usdz|fbx`, `GET /api/providers`.
+Generation runs the real `forge3d` pipeline in a background thread — the web
+layer adds no new meshing code.
+
+Free hosting notes: the app is CPU-safe (TripoSR path). On Hugging Face
+Spaces, use the CPU Basic tier with `requirements-web.txt`; expect ~1-3 min
+per generation. GPU runners (Kaggle 30h/week free) unlock SF3D/TripoSG/
+Hunyuan3D-Paint via the provider registry with no web-code changes.
+
 ## Layout
 
 - `providers/` — backend implementations behind `providers/base.py`
