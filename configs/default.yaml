@@ -1,0 +1,15 @@
+# Default pipeline config
+pipeline:
+  concept:
+    backend: pollinations        # free text->image; local-sd optional
+    size: [1024, 1024]
+  mesh:
+    provider: auto               # auto | triposr | trellis | hunyuan3d | meshy | ...
+    texture_size: 1024
+  cleanup:
+    weld: true
+    remove_degenerate: true
+    target_height_m: 1.8         # game-character normalize (matches engine scale rule)
+  export:
+    format: glb
+    write_run_manifest: true

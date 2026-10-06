@@ -37,8 +37,9 @@ def test_provider_contract():
             return True, "test double"
 
         def generate(self, *, prompt=None, image=None, out_dir, **kw):
+            import trimesh  # real minimal mesh so cleanup runs the true path
             glb = Path(out_dir) / "dummy.glb"
-            glb.write_bytes(b"glTF-test-double")
+            trimesh.creation.box(extents=(1, 1, 1)).export(glb)
             from forge3d.providers.base import GenerateResult
             return GenerateResult(glb_path=glb, provider="dummy-test")
 
@@ -61,8 +62,9 @@ def test_pipeline_records_stages():
             return True, "test double"
 
         def generate(self, *, prompt=None, image=None, out_dir, **kw):
+            import trimesh  # real minimal mesh so cleanup runs the true path
             glb = Path(out_dir) / "m.glb"
-            glb.write_bytes(b"glTF")
+            trimesh.creation.box(extents=(1, 1, 1)).export(glb)
             return GenerateResult(glb_path=glb, provider="dummy-pipe")
 
     with tempfile.TemporaryDirectory() as td:
