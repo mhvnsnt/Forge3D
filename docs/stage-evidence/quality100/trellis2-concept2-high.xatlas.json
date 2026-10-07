@@ -10,8 +10,8 @@
     1024,
     1024
   ],
-  "xatlas_seconds": 70.0,
-  "rebake_seconds": 54.8,
-  "total_seconds": 144.6,
+  "xatlas_seconds": 25.8,
+  "rebake_seconds": 13.9,
+  "total_seconds": 46.9,
   "output": "docs/stage-evidence/quality100/trellis2-concept2-high.xatlas.glb"
 }
