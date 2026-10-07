@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "grunt_hustler",
+    "faction": "factionless",
+    "tier": "low",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_hustler.concept.jpg"
+  },
+  {
+    "slug": "grunt_bouncer",
+    "faction": "factionless",
+    "tier": "low-mid",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_bouncer.concept.jpg"
+  },
+  {
+    "slug": "grunt_alley",
+    "faction": "factionless",
+    "tier": "low",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_alley.concept.jpg"
+  },
+  {
+    "slug": "grunt_onyx",
+    "faction": "Onyx street faction",
+    "tier": "mid",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_onyx.concept.jpg"
+  },
+  {
+    "slug": "grunt_dynasty",
+    "faction": "Dynasty Authority",
+    "tier": "mid",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_dynasty.concept.jpg"
+  },
+  {
+    "slug": "grunt_kennedy",
+    "faction": "Kennedy corporate security",
+    "tier": "mid",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy.concept.jpg"
+  },
+  {
+    "slug": "grunt_lookout",
+    "faction": "SWMG street affiliate",
+    "tier": "low",
+    "concept": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_lookout.concept.jpg"
+  }
+]
