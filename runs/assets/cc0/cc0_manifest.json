@@ -1,0 +1,123 @@
+[
+  {
+    "file": "Wood096/Wood096_1K-JPG.zip",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "3aa0d5cddd866f5993c03a1a9bb036c1f7e82695cdf40f765cbea9faf91684ef",
+    "bytes": 5358165
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG.usdc",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "55c3cdf1c1751b507af1c4d1053de47bfb501638634dc8f0b3435cfb929a4518",
+    "bytes": 2982
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG_Color.jpg",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "fa6b603dda286865a82a93a483c341a975a7d3062dd0f291b57800f7ac4d1b66",
+    "bytes": 914353
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG_Displacement.jpg",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "5b0256ba67ae24f7023a46ff1ed0cab331b6378cf017227ae90de4f7cdf0b20c",
+    "bytes": 537330
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG_NormalDX.jpg",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "01ba482e08b2eb0bdf5b546048f8ad84e1136cf278b1d8a99d052f1572f4ddc3",
+    "bytes": 863598
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG_NormalGL.jpg",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "30e56cd5c8e7ec19545a0fe8b339f7311534071a3a9076d034d210ca8dad46f3",
+    "bytes": 864486
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG_Roughness.jpg",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "faed70389894632f5a9a62c0942cd3f8e677d6e2a1bf36d91e7ae5952631fa6e",
+    "bytes": 629325
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG.blend",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "a65affe4195f4ed41784396565530135a87221bf4c4f35fdb94aa4ee420cff16",
+    "bytes": 1313553
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG.mtlx",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "314ec352f4c6faa7de80deadebeefe0c5c09daae4a30d25e7553bc690636b1dc",
+    "bytes": 2242
+  },
+  {
+    "file": "Wood096/Wood096_1K-JPG.tres",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "522f4d6b58574a93f13107c3f451499bf8f70a0ba6f00ad5c19736f6cb72c294",
+    "bytes": 800
+  },
+  {
+    "file": "Wood096/Wood096.png",
+    "source": "ambientcg",
+    "source_name": "ambientCG",
+    "source_url": "https://ambientcg.com/a/Wood096",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:00:32+0000",
+    "sha256": "67bf7b142ba191f5caa9279d6d8f2ce600a7280d6199b5f0f1384c8197af2a14",
+    "bytes": 227580
+  }
+]

@@ -25,6 +25,15 @@ Owner rule: reuse, don't duplicate. Provenance of everything ported in:
 | `forge3d/pipelines/normalize_to_donor.cjs` | Bannon `out/tools/normalize_to_donor.cjs` (build-output dir, untracked) @ 95f68f4bd2af8241e9d63fc2e1c6979db99279f3 | companion: bakes target mesh into donor bind space (uniform height scale + centre translate) before transfer |
 | Bannon LICENSE for both ports | Copyright (c) 2026 mhvnsnt, All Rights Reserved | ported intra-owner (same copyright holder) at owner direction; no third-party code involved |
 
+## CC0 asset library (2026-10-07 expansion)
+
+| Forge3D file | Source | Notes |
+|---|---|---|
+| `forge3d/assets/cc0_sources.py` | new (Forge3D-original) | registry of 8 blanket-CC0 sources + 3 per-asset sources; every blanket entry's terms read live 2026-10-07 (log: docs/CC0_SOURCES.md) |
+| `forge3d/assets/fetch.py` | new (Forge3D-original) | keyless fetchers (ambientCG zip, Poly Haven file API, Kenney pack scrape) with sha256 `cc0_manifest.json` provenance; live-tested (Wood096 PBR set, 11 files, all CC0) |
+| `forge3d/providers/cloudflare_workers_ai.py` | new (Forge3D-original) | key-ready SDXL text-to-image (free 10K Neurons/day, no card); creds via keys.py (owner signup); raises loudly without creds |
+| CC0 texture proof | ambientCG Wood096_1K-JPG.zip | `runs/assets/cc0/Wood096/` + `cc0_manifest.json` — Color/NormalDX/GL/Displacement/Roughness, visually verified |
+
 ## Vertical depth expansion (2026-10-07)
 
 | Forge3D file | Source | Notes |

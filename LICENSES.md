@@ -45,6 +45,24 @@ against official repos (see docs/research/).
 | realesrgan-ncnn-vulkan binary (`~/workspace/api-wiring/bin/`) | BSD-3-Clause (nihui) | yes | DOCUMENTED ONLY — requires Vulkan GPU, which the free runner lacks (proven 2026-10-07: `vkCreateInstance failed -9`); torch path used instead |
 | Bannon `tools/generative/mesh/lod_chain.py` (port source for `pipelines/lod.py`) | Proprietary — Copyright (c) 2026 mhvnsnt, All Rights Reserved | intra-owner port | ported 2026-10-07 at owner direction (same copyright holder); Forge3D adds a headless-Blender decimate backend so LODs build with zero pip installs |
 
+## CC0 / public-domain 3D asset sources (verified live 2026-10-07)
+
+Owner rule: CC0 / public domain ONLY — no NC, no SA. Full verification log:
+docs/CC0_SOURCES.md. Registry: `forge3d/assets/cc0_sources.py`; fetcher with
+sha256 provenance manifests: `forge3d/assets/fetch.py`.
+
+| Component | License | Commercial use | Notes |
+|---|---|---|---|
+| Poly Haven (textures/HDRI/models) | CC0-1.0 (blanket, verified at polyhaven.com/license) | yes | keyless file API; direct dl.polyhaven.org downloads (API ToS: commercial API use needs sponsorship) |
+| ambientCG (PBR materials/models/HDRI) | CC0-1.0 (blanket, verified at docs.ambientcg.com/license) | yes | keyless catalog API + direct zip downloads; live-tested 2026-10-07 (Wood096 PBR set) |
+| Quaternius (low-poly packs, animation library) | CC0 (per pack page, verified live) | yes | manual/page-scrape zips; rigged characters + 250+ anim clips |
+| Kenney (3D kits, 2D, UI, audio) | CC0 (per asset page, verified live) | yes | page-scrape zips; city kits for urban-district dressing |
+| KayKit (low-poly characters/kits) | CC0-1.0 (GitHub org LICENSE) | yes, except owner law bans KK chibi in AshLane | prototyping/tooling only |
+| cgbookcase / TextureCan (PBR textures) | CC0 (per site terms, secondary-verified) | yes | recheck terms before first bulk pull |
+| NASA 3D Resources | US federal public domain | yes | skip contractor-credited entries |
+| Poly Pizza / Khronos glTF-Sample-Models / Smithsonian 3D | per-asset (CC0 or CC-BY / CC0-designated only) | per-asset check required | NEVER auto-fetch blind; CC-BY needs attribution |
+| Cloudflare Workers AI (SDXL text-to-image) | service-terms; SDXL: Stability AI Community License | check terms before shipping | key-ready provider `cloudflare-workers-ai`; free 10K Neurons/day, no card; key via free account (owner signup) |
+
 ## Parametric body models — license verdicts (2026-10-06)
 
 | Model | License | Commercial-safe? | Forge3D decision |
