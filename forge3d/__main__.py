@@ -64,6 +64,18 @@ def cmd_generate(args) -> int:
     )
     image = Path(args.image) if args.image else None
 
+    # RAM HARDENING: gate local inference on free RAM + single-flight lock.
+    # Without this, parallel agents + a 2.5GB model = OOM roulette.
+    # atexit releases the lock on every return path (no restructure needed).
+    if args.wait_for_ram:
+        import atexit
+        from contextlib import ExitStack
+        from forge3d.tools.ram_gate import wait_for_ram, inference_lock
+        _stack = ExitStack()
+        wait_for_ram(args.min_ram_gb, timeout_s=args.ram_timeout)
+        _stack.enter_context(inference_lock(timeout_s=args.ram_timeout))
+        atexit.register(_stack.close)
+
     # FAN-OUT: race N providers in parallel, take the first good mesh,
     # then run post stages once on the winner. (GAP 3 latency mitigation.)
     if args.fanout > 1 and len(chain) > 1:
@@ -142,6 +154,17 @@ def main(argv=None) -> int:
     g.add_argument("--no-gates", action="store_true",
                    help="skip automated quality gates (default: gates run, "
                         "FAIL aborts loudly)")
+    g.add_argument("--wait-for-ram", action="store_true",
+                   help="wait until enough free RAM before local inference "
+                        "(default need: 2.5GB, see --min-ram-gb); holds a "
+                        "single-flight lock so two local runs never OOM "
+                        "each other")
+    g.add_argument("--min-ram-gb", type=float, default=2.5,
+                   help="GB of free RAM required with --wait-for-ram "
+                        "(default 2.5)")
+    g.add_argument("--ram-timeout", type=float, default=1800.0,
+                   help="seconds to wait for RAM with --wait-for-ram "
+                        "(default 1800)")
     sub.add_parser("selftest")
     args = ap.parse_args(argv)
     # allow running from repo root without install

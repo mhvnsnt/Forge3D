@@ -7,6 +7,48 @@
 - Free APIs (Meshy, Tripo3D, HF Inference) work fine from CPU — the heavy lifting
   is server-side. This is the fastest $0 path on this box.
 
+## RAM hardening (learned 2026-10-07)
+TripoSR inference needs ~2.5GB sustained RAM; this VM's free RAM swings
+0.8–5GB as parallel agents come and go. Without protection that's OOM roulette.
+What we did (all open-source, all in-repo):
+- **`--wait-for-ram`** (`forge3d generate --image X --wait-for-ram`): waits until
+  `--min-ram-gb` (default 2.5) GB is free, then takes a single-flight file lock
+  (`~/.forge3d/inference.lock`) so two local runs never OOM each other.
+  `--ram-timeout` (default 1800s) bounds the wait. Implementation:
+  `forge3d/tools/ram_gate.py`.
+- **Thread caps**: `FORGE3D_TRIPOSR_THREADS=1` (default) + `torch.set_num_threads(1)`
+  bounds allocator arenas; `FORGE3D_TRIPOSR_CHUNK` (default 8192) sizes the
+  triplane query chunks in `extract_mesh`.
+- **Swap**: NOT available — `swapon` fails with "Operation not permitted"
+  (container lacks the capability). Don't bother retrying.
+- **Persistent venv** at `~/workspace/forge3d-venv/` (torch CPU + deps) survives
+  VM restarts, unlike `/usr/local`.
+
+### Disk footprint (measured 2026-10-07)
+| Path | Size | Notes |
+|---|---|---|
+| `~/workspace/forge3d-venv/` | 1.7GB | torch CPU + TripoSR deps; keep |
+| `~/.forge3d/weights/triposr/` | 2.4GB | model.ckpt (1.56GB fp32) + model.bf16.safetensors (838MB) + config; keep |
+| `~/.cache/pip` | 721MB | safe to `pip cache purge` (done 2026-10-07) |
+| `~/.cache/ms-playwright` | 1.6GB | browser automation — used by other agents, do NOT delete |
+| `~/.cache/puppeteer` | 656MB | same — do NOT delete |
+| `/usr/local/lib/python3.12/dist-packages` | 1.3GB | system python — leave alone |
+
+### Evaluated but not pursued (2026-10-07)
+- **ONNX export** (optimum/onnxruntime): code-inspected the TripoSR forward —
+  DINO ViT tokenizer + Transformer1D backbone + triplane decoder MLP are all
+  traceable modules, but marching cubes (torchmcubes CPU shim) is NOT
+  exportable and would stay numpy. Estimated 2–4h work for ~20–30% RAM saving
+  on a path the owner already quality-rejected. Not pursued; re-evaluate if
+  local quality ever matters more than API/GPU backbones.
+- **Quantization**: bf16 is already the quantization win (1.94GB → 840MB
+  params). Dynamic int8 would risk further quality loss on a quality-rejected
+  path — not pursued.
+- **Chunked marching cubes**: the triplane query side already chunks
+  (`FORGE3D_TRIPOSR_CHUNK`, default 8192); the density grid itself is only
+  67MB at 256³ — true tiled marching-cubes would solve a problem we don't
+  have. Not pursued.
+
 ## Free GPU runners (for TRELLIS / Hunyuan3D-class models)
 1. **Kaggle** — free GPU ~30h/week (verify current quota; needs his account).
    Setup: notebook, `pip install -r requirements-local.txt`, clone Forge3D,
