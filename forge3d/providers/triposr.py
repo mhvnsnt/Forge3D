@@ -104,19 +104,54 @@ class TripoSRProvider(ModelProvider):
             local = Path(os.environ.get(self.WEIGHTS_ENV, self.WEIGHTS_DEFAULT))
             if (local / "config.yaml").is_file() and (local / "model.ckpt").is_file():
                 src = str(local)  # local dir wins: no HF download at all
+                # Memory-efficient load for small VMs: mmap (no RAM dup) +
+                # bfloat16 halves the 1.68GB fp32 checkpoint (CPU-native, norm-safe). Chunked state-dict
+                # load keeps peak ~1.3GB instead of ~3.4GB.
+                from omegaconf import OmegaConf
+                _cfg = OmegaConf.load(str(local / "config.yaml"))
+                OmegaConf.resolve(_cfg)
+                _use_fp16 = os.environ.get("FORGE3D_TRIPOSR_BF16", "1") == "1" and device == "cpu"
+                if _use_fp16:
+                    # construct directly in bf16 (840MB) instead of fp32 (1.94GB)
+                    torch.set_default_dtype(torch.bfloat16)
+                model = TSR(_cfg)
+                if _use_fp16:
+                    torch.set_default_dtype(torch.float32)
+                _ckpt = torch.load(str(local / "model.ckpt"), map_location="cpu",
+                                   mmap=True, weights_only=False)
+                _keys = list(_ckpt.keys())
+                _mid = len(_keys) // 2
+                for _chunk in (_keys[:_mid], _keys[_mid:]):
+                    _part = {k: (_ckpt[k].to(torch.bfloat16) if _use_fp16 else _ckpt[k])
+                             for k in _chunk}
+                    model.load_state_dict(_part, strict=False)
+                    del _part
+                del _ckpt
             else:
                 src = "stabilityai/TripoSR"
-            model = TSR.from_pretrained(
-                src,
-                config_name="config.yaml",
-                weight_name="model.ckpt",
-            )
+                model = TSR.from_pretrained(
+                    src,
+                    config_name="config.yaml",
+                    weight_name="model.ckpt",
+                )
             model.renderer.set_chunk_size(8192)
             model.to(device)
+            # CPU dtype unification (2026-10-07): the bf16 fast path can leave
+            # mixed dtypes (norms/buffers stay fp32) -> "mixed dtype (CPU)"
+            # at inference. Force the whole model to one dtype.
+            if device == "cpu":
+                try:
+                    _tgt = torch.bfloat16 if _use_fp16 else torch.float32
+                except NameError:
+                    _tgt = torch.float32
+                model = model.to(_tgt)
 
             pil = Image.open(image)
             if remove_bg:
-                pil = remove_background(pil)
+                from rembg import new_session
+                # pin u2net: rembg 2.x defaults to the 1GB bria-rmbg model
+                _sess = new_session("u2net")
+                pil = remove_background(pil, rembg_session=_sess)
             pil = resize_foreground(pil, foreground_ratio)
             if pil.mode == "RGBA":
                 bg = Image.new("RGB", pil.size, (255, 255, 255))
@@ -127,7 +162,11 @@ class TripoSRProvider(ModelProvider):
 
             with torch.no_grad():
                 scene_codes = model([pil], device=device)
-            meshes = model.extract_mesh(scene_codes, resolution=mc_resolution)
+            # has_vertex_color=True: triplane-queried RGB per vertex.
+            # (Upstream run.py passes `not args.bake_texture` positionally;
+            # we always take vertex colors — texture baking is a later stage.)
+            meshes = model.extract_mesh(scene_codes, True,
+                                        resolution=mc_resolution)
         except Exception as e:  # noqa: BLE001
             raise ProviderError(f"TripoSR inference failed: {e}")
 
