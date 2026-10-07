@@ -28,14 +28,64 @@ from ..providers.base import ProviderError
 WORKER = Path(__file__).parent.parent.parent / "quarantine" / "pymeshlab_worker.py"
 VENV_PY = Path.home() / "workspace" / "forge3d-venv" / "bin" / "python"
 
-DEFAULT_OPS = [
-    {"filter": "meshing_remove_null_faces", "params": {}},
-    {"filter": "meshing_remove_duplicate_vertices", "params": {}},
-    {"filter": "apply_coord_taubin_smoothing",
-     "params": {"lambda_": 0.5, "mu": -0.53, "stepsmoothnum": 5}},
-    {"filter": "meshing_isotropic_explicit_remeshing",
-     "params": {"iterations": 3}},
-]
+def _adaptive_remesh_ops(mesh: trimesh.Trimesh) -> list:
+    """Build the op list with isotropic-remesh targetlen matched to the
+    input's mean edge length (preserves resolution; only improves shape).
+
+    NOTE: the {"__pct__": x} marker is converted to pymeshlab.PercentageValue
+    inside the quarantined worker — this MIT-side module never imports
+    pymeshlab (license boundary)."""
+    v = mesh.vertices[mesh.faces]
+    e = np.stack([np.linalg.norm(v[:, 1] - v[:, 0], axis=1),
+                  np.linalg.norm(v[:, 2] - v[:, 1], axis=1),
+                  np.linalg.norm(v[:, 0] - v[:, 2], axis=1)], axis=1)
+    mean_edge = float(e.mean())
+    diag = float(np.linalg.norm(mesh.bounds[1] - mesh.bounds[0]))
+    pct = max(mean_edge / max(diag, 1e-9) * 100.0, 0.05)
+    return [
+        {"filter": "meshing_remove_null_faces", "params": {}},
+        {"filter": "meshing_remove_duplicate_vertices", "params": {}},
+        {"filter": "apply_coord_taubin_smoothing",
+         "params": {"lambda_": 0.5, "mu": -0.53, "stepsmoothnum": 5}},
+        {"filter": "meshing_isotropic_explicit_remeshing",
+         "params": {"iterations": 3, "targetlen": {"__pct__": round(pct, 3)}}},
+        {"filter": "meshing_remove_unreferenced_vertices", "params": {}},
+    ]
+
+
+def _load_indexed_obj(path: Path) -> trimesh.Trimesh:
+    """Parse an OBJ preserving its TRUE index structure (trimesh's loader
+    splits vertices at UV seams, inflating counts). Per-vertex UV = first
+    referencing corner (documented approximation; the xatlas_uv stage
+    re-unwraps downstream anyway)."""
+    verts, uvs, faces, face_uvs = [], [], [], []
+    with open(path) as f:
+        for line in f:
+            if line.startswith("v "):
+                verts.append([float(x) for x in line.split()[1:4]])
+            elif line.startswith("vt "):
+                uvs.append([float(x) for x in line.split()[1:3]])
+            elif line.startswith("f "):
+                fv, ft = [], []
+                for p in line.split()[1:]:
+                    parts = p.split("/")
+                    fv.append(int(parts[0]) - 1)
+                    ft.append(int(parts[1]) - 1 if len(parts) > 1 and parts[1] else -1)
+                faces.append(fv)
+                face_uvs.append(ft)
+    verts = np.array(verts, dtype=np.float64)
+    faces = np.array(faces, dtype=np.int64)
+    vuv = np.zeros((len(verts), 2))
+    seen = np.zeros(len(verts), bool)
+    uvs_a = np.array(uvs, dtype=np.float64) if uvs else np.zeros((0, 2))
+    for fv, ft in zip(faces, face_uvs):
+        for vi, ti in zip(fv, ft):
+            if not seen[vi] and ti >= 0 and ti < len(uvs_a):
+                vuv[vi] = uvs_a[ti]
+                seen[vi] = True
+    mesh = trimesh.Trimesh(vertices=verts, faces=faces, process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(uv=vuv)
+    return mesh
 
 
 def _mesh_metrics(mesh: trimesh.Trimesh) -> dict:
@@ -73,7 +123,7 @@ def run(glb_path: str | Path, out_dir: str | Path | None = None,
     mesh.export(str(obj_in))  # trimesh OBJ keeps UVs
 
     job = {"input": str(obj_in), "output": str(obj_out),
-           "ops": ops or DEFAULT_OPS,
+           "ops": ops or _adaptive_remesh_ops(mesh),
            "report": str(out_dir / f"{glb_path.stem}.mq_worker.json")}
     job_p.write_text(json.dumps(job, indent=2))
     r = subprocess.run([py, str(WORKER), str(job_p)],
@@ -82,7 +132,7 @@ def run(glb_path: str | Path, out_dir: str | Path | None = None,
         raise ProviderError(f"mesh_quality: worker failed: {r.stderr[-2000:]}")
     worker_report = json.loads((out_dir / f"{glb_path.stem}.mq_worker.json").read_text())
 
-    out_mesh = trimesh.load(str(obj_out), force="mesh")
+    out_mesh = _load_indexed_obj(obj_out)  # true index structure, not seam-split
     after = _mesh_metrics(out_mesh)
     out_glb = out_dir / f"{glb_path.stem}.mq.glb"
     # keep original materials/UVs where possible: export processed mesh

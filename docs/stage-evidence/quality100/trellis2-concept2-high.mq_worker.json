@@ -1,0 +1,52 @@
+{
+  "input": "docs/stage-evidence/quality100/trellis2-concept2-high.mq_in.obj",
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.mq_out.obj",
+  "before": {
+    "verts": 59766,
+    "faces": 93234,
+    "degenerate_faces": -1
+  },
+  "after": {
+    "verts": 44635,
+    "faces": 88052,
+    "degenerate_faces": -1
+  },
+  "steps": [
+    {
+      "filter": "meshing_remove_null_faces",
+      "params": {},
+      "seconds": 0.0
+    },
+    {
+      "filter": "meshing_remove_duplicate_vertices",
+      "params": {},
+      "seconds": 0.0
+    },
+    {
+      "filter": "apply_coord_taubin_smoothing",
+      "params": {
+        "lambda_": 0.5,
+        "mu": -0.53,
+        "stepsmoothnum": 5
+      },
+      "seconds": 0.2
+    },
+    {
+      "filter": "meshing_isotropic_explicit_remeshing",
+      "params": {
+        "iterations": 3,
+        "targetlen": {
+          "__pct__": 0.366
+        }
+      },
+      "seconds": 13.6
+    },
+    {
+      "filter": "meshing_remove_unreferenced_vertices",
+      "params": {},
+      "seconds": 0.0
+    }
+  ],
+  "seconds": 17.4,
+  "pymeshlab_version": "unknown"
+}

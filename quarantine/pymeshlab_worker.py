@@ -40,6 +40,18 @@ def _stats(ms) -> dict:
     }
 
 
+def _coerce_params(params: dict) -> dict:
+    """Convert JSON-safe markers to pymeshlab types (runs GPL-side only)."""
+    import pymeshlab
+    out = {}
+    for k, v in params.items():
+        if isinstance(v, dict) and set(v.keys()) == {"__pct__"}:
+            out[k] = pymeshlab.PercentageValue(v["__pct__"])
+        else:
+            out[k] = v
+    return out
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         print("usage: pymeshlab_worker.py <job.json>", file=sys.stderr)
@@ -64,10 +76,11 @@ def main() -> None:
         if name not in available:
             print(f"WORKER_FATAL: unknown filter '{name}'", file=sys.stderr)
             sys.exit(1)
-        params = dict(op.get("params", {}))
+        raw_params = dict(op.get("params", {}))
+        params = _coerce_params(raw_params)
         s = time.time()
         ms.apply_filter(name, **params)
-        steps.append({"filter": name, "params": params,
+        steps.append({"filter": name, "params": raw_params,
                       "seconds": round(time.time() - s, 1)})
     ms.save_current_mesh(str(outp))
     after = _stats(ms)
