@@ -45,7 +45,12 @@ signal no API gives us.
   INSTEAD of densify (upsampling clean quads back to soup would undo it).
   No new license burden (Blender tool-use, already a dependency). Instant
   Meshes evaluated and rejected: BSD-3-Clause but interactive-GUI-only, no
-  CLI for headless pipelines.
+  CLI for headless pipelines. PROVEN 2026-10-07: 48-tri input → 110 quads /
+  0 tris / 0 ngons (100% quad in Blender). Honest format note: glTF 2.0 only
+  stores triangles, so GLB export triangulates the quads — but the
+  triangulation follows quad diagonals, preserving Quadriflow's clean edge
+  flow (which is what rigging actually needs). UV seams split some verts;
+  re-run cleanup after quadremesh if watertightness is required.
 - **Latency (GAP 3):** two mitigations, both wired. (1) Parallel fan-out
   (`--fanout N`): race N providers simultaneously on the mesh stage, first
   good mesh wins, losers cancelled — worst case drops from sum-of-queues to
