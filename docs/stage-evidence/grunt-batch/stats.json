@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "grunt_hustler",
+    "faction": "factionless",
+    "tier": "low",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_hustler.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_hustler.preview.png",
+    "verts": null,
+    "faces": 98812,
+    "watertight": true,
+    "pollen_spent": 0.0
+  },
+  {
+    "slug": "grunt_bouncer",
+    "faction": "factionless",
+    "tier": "low-mid",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_bouncer.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_bouncer.preview.png",
+    "verts": null,
+    "faces": 125450,
+    "watertight": true,
+    "pollen_spent": 0.0
+  },
+  {
+    "slug": "grunt_alley",
+    "faction": "factionless",
+    "tier": "low",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_alley.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_alley.preview.png",
+    "verts": null,
+    "faces": 90652,
+    "watertight": true,
+    "pollen_spent": 0.0
+  },
+  {
+    "slug": "grunt_onyx",
+    "faction": "Onyx street faction",
+    "tier": "mid",
+    "backbone": "trellis-2-high",
+    "status": "ok",
+    "glb": "stage-evidence/grunt-batch/grunt_onyx.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_onyx.preview.png",
+    "verts": null,
+    "faces": 96599,
+    "watertight": false,
+    "pollen_spent": 0.35
+  },
+  {
+    "slug": "grunt_dynasty",
+    "faction": "Dynasty Authority",
+    "tier": "mid",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_dynasty.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_dynasty.preview.png",
+    "verts": null,
+    "faces": 92980,
+    "watertight": true,
+    "pollen_spent": 0.0
+  },
+  {
+    "slug": "grunt_kennedy",
+    "faction": "Kennedy corporate security",
+    "tier": "mid",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_kennedy.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_kennedy.preview.png",
+    "verts": null,
+    "faces": 102626,
+    "watertight": true,
+    "pollen_spent": 0.0
+  },
+  {
+    "slug": "grunt_lookout",
+    "faction": "SWMG street affiliate",
+    "tier": "low",
+    "backbone": "local-triposr",
+    "status": "relief-failed (flat bas-relief, unusable as character; see preview)",
+    "glb": "stage-evidence/grunt-batch/grunt_lookout.glb",
+    "preview": "stage-evidence/grunt-batch/grunt_lookout.preview.png",
+    "verts": null,
+    "faces": 95352,
+    "watertight": true,
+    "pollen_spent": 0.0
+  }
+]
