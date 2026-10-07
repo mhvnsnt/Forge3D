@@ -1,7 +1,8 @@
 """Tripo3D API Platform provider (v3 REST).
 
 Free tier: 300 credits/month, 1 concurrent task, no card. Key format tsk_...
-via env var FORGE3D_TRIPO_KEY only — never in the repo.
+via env var FORGE3D_TRIPO_KEY or ~/.config/forge3d/api_keys.env
+(docs/ACCOUNTS.md) — never in the repo.
 
 REST spec wired from official docs (developers.tripo3d.com), verified 2026-10-06:
   base: https://openapi.tripo3d.ai/v3  (auth: Bearer <key>)
@@ -24,6 +25,7 @@ import requests
 
 from .base import (Capability, GenerateResult, ModelProvider, ProviderError,
                    ProviderInfo)
+from .keys import get_key, key_source
 
 BASE = "https://openapi.tripo3d.ai/v3"
 MODEL = "v3.1-20260211"  # latest/best per docs; fall back to v3.0-20250812
@@ -42,16 +44,18 @@ class TripoAPIProvider(ModelProvider):
     )
 
     def _headers(self) -> dict:
-        key = os.environ.get("FORGE3D_TRIPO_KEY", "")
+        # Env first, then ~/.config/forge3d/api_keys.env (docs/ACCOUNTS.md).
+        key = get_key("FORGE3D_TRIPO_KEY")
         if not key:
             raise ProviderError(
                 "FORGE3D_TRIPO_KEY not set (free key: platform.tripo3d.ai -> API Keys)")
         return {"Authorization": f"Bearer {key}"}
 
     def is_available(self) -> tuple[bool, str]:
-        if not os.environ.get("FORGE3D_TRIPO_KEY"):
+        src = key_source("FORGE3D_TRIPO_KEY")
+        if src == "missing":
             return False, "FORGE3D_TRIPO_KEY not set (free at platform.tripo3d.ai)"
-        return True, "key present (quota checked at request time)"
+        return True, f"key present via {src} (quota checked at request time)"
 
     def _post(self, path: str, payload: dict) -> dict:
         r = requests.post(BASE + path, headers=self._headers(),

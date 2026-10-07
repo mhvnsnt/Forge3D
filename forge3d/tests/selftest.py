@@ -232,6 +232,26 @@ def test_scan_gate_loud_without_gpu():
         raise AssertionError("scan_photos should have raised ScanError")
 
 
+def test_concept_stage_contract():
+    # concept stage: unknown backend fails loudly; module has the right shape.
+    # (No network in selftest — real generation is exercised in integration.)
+    from forge3d.pipelines.concept import concept_image
+    from forge3d.providers.base import ProviderError, Capability
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        try:
+            concept_image("test prompt", td, backend="no-such-backend")
+        except ProviderError as e:
+            assert "not available" in str(e)
+            return
+        raise AssertionError("concept_image with unknown backend must raise")
+    # pollinations-image must advertise TEXT_TO_IMAGE
+    from forge3d.providers.registry import discover
+    p = discover().get("pollinations-image")
+    assert p is not None
+    assert Capability.TEXT_TO_IMAGE in p.info.capabilities
+
+
 def test_gates_pass_and_fail():
     # gates: a clean watertight humanoid-ish mesh passes; a holed mesh FAILs
     import trimesh
@@ -275,6 +295,7 @@ def run() -> bool:
         ("pipeline-run-from-mesh", test_pipeline_run_from_mesh),
         ("scan-gate-loud-without-gpu", test_scan_gate_loud_without_gpu),
         ("gates-pass-and-fail", test_gates_pass_and_fail),
+        ("concept-stage-contract", test_concept_stage_contract),
     ]
     results = [_check(n, f) for n, f in checks]
     print(f"{sum(results)}/{len(results)} selftest checks passed")

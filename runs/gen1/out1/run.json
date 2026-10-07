@@ -3,7 +3,105 @@
     {
       "stage": "concept",
       "detail": "runs/gen1/concept1.jpg",
-      "ts": 1791328348.7316668
+      "ts": 1791338016.4148748
+    },
+    {
+      "stage": "mesh",
+      "detail": "runs/gen1/out1/triposr-concept1.glb",
+      "ts": 1791338254.3870163
+    },
+    {
+      "stage": "mesh",
+      "detail": "runs/gen1/out1/triposr-concept1.glb",
+      "ts": 1791338254.3885214
+    },
+    {
+      "stage": "cleanup",
+      "detail": "runs/gen1/out1/triposr-concept1.clean.glb",
+      "ts": 1791338267.7048364
+    },
+    {
+      "stage": "densify",
+      "detail": "runs/gen1/out1/triposr-concept1.clean.dense.glb",
+      "ts": 1791338268.7538557
+    },
+    {
+      "stage": "texture",
+      "detail": "skipped: texture stage: no embedded textures found in triposr-concept1.clean.dense.glb; nothing to refine (refusing to fake it)",
+      "ts": 1791338268.7669423
+    },
+    {
+      "stage": "export",
+      "detail": "runs/gen1/out1/triposr-concept1.clean.dense.glb",
+      "ts": 1791338268.7677794
+    },
+    {
+      "stage": "gates",
+      "detail": {
+        "verdict": "FAIL",
+        "gates": [
+          {
+            "name": "watertight",
+            "verdict": "FAIL",
+            "detail": "984 boundary edges \u2014 mesh has holes",
+            "measured": {
+              "boundary_edges": 984
+            }
+          },
+          {
+            "name": "manifold",
+            "verdict": "FAIL",
+            "detail": "not watertight",
+            "measured": {
+              "watertight": false,
+              "winding_consistent": true
+            }
+          },
+          {
+            "name": "components",
+            "verdict": "PASS",
+            "detail": "single connected mesh",
+            "measured": {
+              "components": 1
+            }
+          },
+          {
+            "name": "degenerate",
+            "verdict": "PASS",
+            "detail": "0 degenerate faces (0.0000)",
+            "measured": {
+              "ratio": 0.0,
+              "count": 0
+            }
+          },
+          {
+            "name": "poly_count",
+            "verdict": "FLAG",
+            "detail": "864384 tris above 120000 \u2014 heavy for game, consider decimate/quadremesh",
+            "measured": {
+              "tris": 864384
+            }
+          },
+          {
+            "name": "texture_res",
+            "verdict": "FLAG",
+            "detail": "no embedded textures found \u2014 untextured mesh?",
+            "measured": {
+              "textures": 0
+            }
+          },
+          {
+            "name": "proportions",
+            "verdict": "PASS",
+            "detail": "height 1.71m, width 1.74m \u2014 humanoid-ish",
+            "measured": {
+              "height": 1.71,
+              "width": 1.74
+            }
+          }
+        ]
+      },
+      "ts": 1791338275.2729611
     }
   ],
   "provider": "triposr"

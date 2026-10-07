@@ -17,7 +17,7 @@ class PollinationsImageProvider(ModelProvider):
     info = ProviderInfo(
         name="pollinations-image",
         kind="api",
-        capabilities=[],  # concept-image stage, not 3D — registered for discovery
+        capabilities=[Capability.TEXT_TO_IMAGE],  # concept-image stage
         license="service-terms",
         commercial_ok=False,  # check enter.pollinations.ai terms before shipping
         needs_gpu=False,

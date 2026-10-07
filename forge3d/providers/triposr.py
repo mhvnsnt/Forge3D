@@ -102,11 +102,9 @@ class TripoSRProvider(ModelProvider):
             self._sanitize_proxy_env()  # httpx vs no_proxy quirk (see above)
             import os
             local = Path(os.environ.get(self.WEIGHTS_ENV, self.WEIGHTS_DEFAULT))
-            if (local / "config.yaml").is_file() and (local / "model.ckpt").is_file():
-                src = str(local)  # local dir wins: no HF download at all
-                # Memory-efficient load for small VMs: mmap (no RAM dup) +
-                # bfloat16 halves the 1.68GB fp32 checkpoint (CPU-native, norm-safe). Chunked state-dict
-                # load keeps peak ~1.3GB instead of ~3.4GB.
+            if (local / "config.yaml").is_file():
+                # Prefer pre-converted bf16 safetensors (838MB, fast mmap load).
+                # Falls back to fp32 ckpt with chunked bf16 conversion.
                 from omegaconf import OmegaConf
                 _cfg = OmegaConf.load(str(local / "config.yaml"))
                 OmegaConf.resolve(_cfg)
@@ -117,16 +115,24 @@ class TripoSRProvider(ModelProvider):
                 model = TSR(_cfg)
                 if _use_fp16:
                     torch.set_default_dtype(torch.float32)
-                _ckpt = torch.load(str(local / "model.ckpt"), map_location="cpu",
-                                   mmap=True, weights_only=False)
-                _keys = list(_ckpt.keys())
-                _mid = len(_keys) // 2
-                for _chunk in (_keys[:_mid], _keys[_mid:]):
-                    _part = {k: (_ckpt[k].to(torch.bfloat16) if _use_fp16 else _ckpt[k])
-                             for k in _chunk}
-                    model.load_state_dict(_part, strict=False)
-                    del _part
-                del _ckpt
+                _bf16_st = local / "model.bf16.safetensors"
+                if _use_fp16 and _bf16_st.is_file():
+                    from safetensors.torch import load_file
+                    model.load_state_dict(load_file(str(_bf16_st), device="cpu"),
+                                          strict=False)
+                elif (local / "model.ckpt").is_file():
+                    _ckpt = torch.load(str(local / "model.ckpt"), map_location="cpu",
+                                       mmap=True, weights_only=False)
+                    _keys = list(_ckpt.keys())
+                    _mid = len(_keys) // 2
+                    for _chunk in (_keys[:_mid], _keys[_mid:]):
+                        _part = {k: (_ckpt[k].to(torch.bfloat16) if _use_fp16 else _ckpt[k])
+                                 for k in _chunk}
+                        model.load_state_dict(_part, strict=False)
+                        del _part
+                    del _ckpt
+                else:
+                    raise ProviderError("no TripoSR weights in " + str(local))
             else:
                 src = "stabilityai/TripoSR"
                 model = TSR.from_pretrained(
@@ -134,7 +140,17 @@ class TripoSRProvider(ModelProvider):
                     config_name="config.yaml",
                     weight_name="model.ckpt",
                 )
-            model.renderer.set_chunk_size(8192)
+            model.renderer.set_chunk_size(
+                int(os.environ.get("FORGE3D_TRIPOSR_CHUNK", "8192")))
+            # RAM hardening (2026-10-07): cap thread pools to bound allocator
+            # arenas and peak RSS on small VMs. Env must be set before heavy
+            # allocs; torch.set_num_threads applies to imported torch.
+            try:
+                _nt = int(os.environ.get("FORGE3D_TRIPOSR_THREADS", "1"))
+                torch.set_num_threads(max(1, _nt))
+                torch.set_num_interop_threads(max(1, _nt))
+            except Exception:
+                pass
             model.to(device)
             # CPU dtype unification (2026-10-07): the bf16 fast path can leave
             # mixed dtypes (norms/buffers stay fp32) -> "mixed dtype (CPU)"
@@ -178,6 +194,20 @@ class TripoSRProvider(ModelProvider):
                     # baking is a later stage.)
                     meshes = model.extract_mesh(scene_codes, True,
                                                 resolution=mc_resolution)
+            # RAW TripoSR output is ~1300 disconnected components
+            # (marching-cubes noise around one real body). Keep significant
+            # parts only — otherwise previews show scattered fragments.
+            # (Measured 2026-10-07: 128^3 -> 1305 components, largest 6024f.)
+            try:
+                import trimesh as _tm
+                _m0 = meshes[0]
+                _comps = _m0.split(only_watertight=False)
+                if len(_comps) > 1:
+                    _big = max(len(c.faces) for c in _comps)
+                    _keep = [c for c in _comps if len(c.faces) >= 0.05 * _big]
+                    meshes[0] = _tm.util.concatenate(_keep)
+            except Exception:
+                pass  # filtering is best-effort; raw mesh still exports
         except Exception as e:  # noqa: BLE001
             raise ProviderError(f"TripoSR inference failed: {e}")
 

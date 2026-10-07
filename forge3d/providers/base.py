@@ -17,6 +17,7 @@ class Capability(Enum):
     IMAGE_TO_3D = "image_to_3d"
     MULTIVIEW = "multiview"
     TEXTURE = "texture"
+    TEXT_TO_IMAGE = "text_to_image"
 
 
 class ProviderError(RuntimeError):
