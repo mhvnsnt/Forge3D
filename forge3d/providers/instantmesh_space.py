@@ -10,13 +10,11 @@ iterations and props; TRELLIS.2-space is the quality anchor.
 """
 from __future__ import annotations
 
-import sys
 import uuid
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "_vendor"))
 
-from hf_space import (SpaceError, call_endpoint, download_filedata,  # noqa: E402
+from .hf_space import (SpaceError, call_endpoint, download_filedata,  # noqa: E402
                       file_data, find_filedata, upload_file)
 
 from .base import (Capability, GenerateResult, ModelProvider, ProviderError,  # noqa: E402
