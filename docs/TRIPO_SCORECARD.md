@@ -19,7 +19,7 @@ vertices, T-pose/A-pose, full PBR textures, unrigged, cloud, credit-metered.
 | 4 | Rigged out of the box | 0 bones (unrigged; ~26-joint auto-rig add-on) | **58 joints verified in file** (`bannon_15bone.58bone.glb`) | **WIN — 2.2× the joints** |
 | 5 | Parametric head + expressions | none | **GNM: 253 identity + 383 expression blendshapes** (Apache-2.0) | **WIN — Tripo has no equivalent** |
 | 6 | Body morphs | none | **bulk/height/shoulders/belly/limbs**, topology unchanged | **WIN — Tripo has no equivalent** |
-| 7 | Texture resolution | 2K base / 4K–8K PBR (base+metal+rough+normal) | **2×768² albedo only** (trellis-2-low output) | **LOSS — gap is real** |
+| 7 | Texture resolution | 2K base / 4K–8K PBR (base+metal+rough+normal) | **2×768² albedo + 1024² normal map** (trellis-2-high; ESRGAN 1536² run in progress) | **LOSS — gap is real but narrowing** |
 | 8 | Texture delight (de-baked lighting) | "delight" step strips baked light | Hunyuan3D-Paint wired as delight-equivalent | **IN PROGRESS** |
 | 9 | Generation cost | credits per model | **$0** (local CPU + free tiers) | **WIN** |
 | 10 | Pipeline ownership | cloud black box | **full stack in-repo** (providers → mesh → rig → web) | **WIN** |
@@ -50,7 +50,45 @@ runners / trellis-2-low with balance).
   → textures `["768x768", "768x768"]`, 1 material.
 - Dims 9–10: by construction (no paid keys; repo is the pipeline).
 
-## What "200%" still needs
+## Refinement track — 2026-10-07 quality push (trellis-2-high)
+
+Owner verdict driving this: visible mesh/vertex/texture topology issues up
+close; Tripo way ahead; nowhere near 100%. Findings, all measured:
+
+- **Flat-shade proof:** the trellis-2-high geometry is clean — a textureless
+  render is smooth with no speckle. The "topology issues" are **texture**, not
+  geometry (`docs/stage-evidence/remesh/` flat render).
+- **Remesh shootout** (`docs/REMESH_SHOOTOUT.md`): bmesh cleanup wins as the
+  default repair (preserves surface, kills degenerates, keeps UVs); voxel
+  remesh destroys hero meshes at this scale (93k→8k faces, UVs gone, still not
+  watertight); Quadriflow **silently refuses non-manifold input** — it needs a
+  watertight mesh first. Verdict is a pipeline ORDER, not a champion:
+  cleanup → watertight → quadriflow.
+- **Speckle = UV-seam bleed** (`forge3d/pipelines/speckle.py`): the visible
+  speckle is mip sampling of the black texture background at UV island
+  boundaries (proven: 0 near-black pixels inside skin regions). Island-color
+  dilation (bleed fill): seam-band luminance 59.6 → 196.9, near-black band
+  pixels 86,673 → 13,931 (−84%). Proof: `docs/stage-evidence/speckle/`.
+- **Watertight hardening** (`remesh.py --mode watertight`, trimesh, UV-safe):
+  raw trellis output is **1,428 disconnected shells** (patch soup). Exact
+  weld (pos+uv+normal) → 149 shells → debris filter + hole fill → **one
+  dominant shell (92,687 faces, 99.4%)**, boundary edges 24,012 → 1,911
+  (−92%) in 4.8 s. Honest: NOT fully watertight (555 sub-pixel pinholes +
+  28 non-manifold edges remain); true single-manifold needs volumetric
+  rebuild, which destroys the hero mesh. Scorecard dim 3 stays a WIN for the
+  TripoSR path; trellis-high path is "stitched, visually closed."
+- **Normal-map stage** (`forge3d/pipelines/normalmap.py`): tangent-space
+  normals baked from geometry, wired as `normalTexture` (1024²).
+  Proof: `docs/stage-evidence/normalmap/`. Honest: the map is mostly flat —
+  the smooth generated mesh has little high-frequency geometry to capture.
+- **Real-ESRGAN 2x** (`forge3d/pipelines/upscale.py`): 768² → 1536² on
+  trellis-2-high textures — run in progress, evidence pending.
+- **Retexture (re-unwrap + rebake)** (`forge3d/pipelines/retexture.py`):
+  ATTEMPTED — Cycles selected-to-active bake is unreliable on this input
+  (mostly-black bakes). A quality gate now fails loudly instead of shipping
+  black textures. Needs work; not in the default path.
+
+## What "200%" still needs (updated)
 
 1. Texture resolution parity (vertical track: Real-ESRGAN 768→1536+, Paint delight).
 2. Native detail parity (GPU-runner backbones: TRELLIS.2 / TripoSG / SF3D;

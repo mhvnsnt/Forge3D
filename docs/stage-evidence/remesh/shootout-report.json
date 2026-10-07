@@ -1,0 +1,56 @@
+{
+  "input": "/home/hatch/workspace/forge3d/docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "steps": {
+    "raw": {
+      "metrics": {
+        "file": "trellis2-concept2-high.glb",
+        "parts": 1,
+        "verts": 59766,
+        "faces": 93234,
+        "watertight": false,
+        "boundary_edges": 24012,
+        "nonmanifold_edges": 0,
+        "total_unique_edges": 151857,
+        "poles_v3": 7106,
+        "poles_v5": 10950,
+        "poles_v7plus": 10252,
+        "verts_valence6": 14397,
+        "tri_aspect_mean": 18753.887161976792,
+        "tri_aspect_p99": 3.4409521556809,
+        "degenerate_faces": 1,
+        "has_uv": true
+      },
+      "seconds": 0.0
+    },
+    "voxel": {
+      "error": "blender run failed",
+      "seconds": 22.0
+    },
+    "cleanup": {
+      "metrics": {
+        "file": "trellis2-concept2-high.remesh-cleanup.glb",
+        "parts": 1,
+        "verts": 60773,
+        "faces": 93137,
+        "watertight": false,
+        "boundary_edges": 25749,
+        "nonmanifold_edges": 0,
+        "total_unique_edges": 152580,
+        "poles_v3": 7204,
+        "poles_v5": 11000,
+        "poles_v7plus": 10010,
+        "verts_valence6": 14185,
+        "tri_aspect_mean": 1.6516928353217317,
+        "tri_aspect_p99": 3.4367238745306024,
+        "degenerate_faces": 0,
+        "has_uv": true
+      },
+      "seconds": 23.0,
+      "file": "trellis2-concept2-high.remesh-cleanup.glb"
+    },
+    "quadriflow": {
+      "error": "quad remesh failed",
+      "seconds": 25.4
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "bleed_px": 8,
+  "images": [
+    {
+      "index": 0,
+      "size": 768,
+      "seam_band_texels": 227355,
+      "band_luminance_before": 59.6,
+      "band_luminance_after": 196.9,
+      "near_black_band_px_before": 86673,
+      "near_black_band_px_after": 13931
+    }
+  ],
+  "seconds": 5.1,
+  "output": "trellis2-concept2-high.despeckle.glb"
+}

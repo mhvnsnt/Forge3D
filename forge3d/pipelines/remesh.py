@@ -25,6 +25,7 @@ import time
 from pathlib import Path
 
 import trimesh
+import numpy as np
 
 from ..providers.base import ProviderError
 
@@ -41,7 +42,7 @@ for ob in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     bpy.context.view_layer.objects.active = ob
     ob.select_set(True)
     mod = ob.modifiers.new("forge3d_voxel", 'REMESH')
-    mod.mode = 'VOXELS'
+    mod.mode = 'VOXEL'  # Blender 4.2 enum is VOXEL, not VOXELS
     mod.voxel_size = voxel
     bpy.ops.object.modifier_apply(modifier=mod.name)
     ob.select_set(False)
@@ -74,6 +75,67 @@ print("REMESH_OK", flush=True)
 """
 
 
+def _watertight_trimesh(glb: Path, out: Path) -> dict:
+    """Stitch + close a patch-soup mesh (pure trimesh, UV-safe, no Blender).
+
+    Raw trellis output is ~1,400 disconnected shells with exact-duplicate
+    vertices at patch joints. This welds exact duplicates (position+uv+normal,
+    so UV seams stay split correctly), drops tiny debris components, and
+    fills holes. Returns stats dict; watertight is reported honestly —
+    sub-pixel pinholes may remain on pathological inputs.
+    """
+    from trimesh.graph import connected_components
+    t0 = time.time()
+    scene = trimesh.load(glb, force="scene")
+    geoms = [g for g in scene.geometry.values()
+             if isinstance(g, trimesh.Trimesh)]
+    if not geoms:
+        raise ProviderError("watertight: no mesh geometry found")
+    g = max(geoms, key=lambda x: len(x.faces))
+    before_faces = len(g.faces)
+    e0 = g.edges_sorted
+    _, c0 = np.unique(e0, axis=0, return_counts=True)
+    before_boundary = int((c0 == 1).sum())
+
+    m = g.copy()
+    m.merge_vertices(merge_tex=True, merge_norm=True)  # exact weld, UV-safe
+    comp = connected_components(m.face_adjacency,
+                                nodes=np.arange(len(m.faces)))
+    big = [c for c in comp if len(c) >= 100]
+    if big:
+        keep = np.concatenate(big)
+        m = trimesh.Trimesh(vertices=m.vertices, faces=m.faces[keep],
+                            vertex_normals=m.vertex_normals,
+                            visual=m.visual, process=True)
+        m.remove_unreferenced_vertices()
+    trimesh.repair.fill_holes(m)
+    # re-weld after fill (fill can duplicate boundary verts)
+    m.merge_vertices(merge_tex=True, merge_norm=True)
+
+    e1 = m.edges_sorted
+    _, c1 = np.unique(e1, axis=0, return_counts=True)
+    after_boundary = int((c1 == 1).sum())
+    nonmanifold = int((c1 > 2).sum())
+    watertight = bool(m.is_watertight)
+
+    # export: merge_vertices already kept visual (uv + material) consistent,
+    # so the scene export carries textures through.
+    out_scene = trimesh.Scene()
+    out_scene.add_geometry(m, geom_name="mesh")
+    out_scene.export(out)
+    secs = time.time() - t0
+    stats = {"mode": "watertight", "seconds": round(secs, 1),
+             "faces_before": before_faces, "faces_after": len(m.faces),
+             "boundary_before": before_boundary,
+             "boundary_after": after_boundary,
+             "nonmanifold_edges": nonmanifold,
+             "watertight": watertight}
+    print(f"watertight[trimesh]: {before_faces}f -> {len(m.faces)}f, "
+          f"boundary {before_boundary} -> {after_boundary}, "
+          f"watertight={watertight}, {secs:.1f}s", file=sys.stderr)
+    return stats
+
+
 def _run_blender(script: str, args: list[str], timeout: int = 1200):
     with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
         f.write("import sys\n" + script)
@@ -102,7 +164,7 @@ def _measure(path: Path) -> dict:
 def remesh(glb: Path, out_dir: Path, mode: str,
            voxel_size: float = 0.02, merge_dist: float = 1e-4) -> tuple[Path, dict]:
     """Run one remesh contender. Returns (out_glb, stats)."""
-    if mode not in ("voxel", "cleanup"):
+    if mode not in ("voxel", "cleanup", "watertight"):
         raise ProviderError(f"unknown remesh mode: {mode}")
     glb = Path(glb)
     out_dir = Path(out_dir)
@@ -111,6 +173,12 @@ def remesh(glb: Path, out_dir: Path, mode: str,
 
     before = _measure(glb)
     t0 = time.time()
+    if mode == "watertight":
+        # pure-trimesh stitch+close (UV-safe); stats printed inside
+        stats = _watertight_trimesh(glb, out)
+        stats["before"] = before
+        stats["after"] = _measure(out)
+        return out, stats
     if mode == "voxel":
         _run_blender(_VOXEL_SCRIPT,
                      [str(glb), str(out), str(voxel_size)])
@@ -131,7 +199,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True)
     ap.add_argument("--outdir", required=True)
-    ap.add_argument("--mode", required=True, choices=["voxel", "cleanup"])
+    ap.add_argument("--mode", required=True, choices=["voxel", "cleanup", "watertight"])
     ap.add_argument("--voxel-size", type=float, default=0.02)
     ap.add_argument("--report", default=None)
     a = ap.parse_args()
