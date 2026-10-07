@@ -1,1180 +1,1229 @@
 {
- "wave": 1,
- "directive": "continuous pulling against texture-resolution + native-detail + topology gaps",
- "compass": "docs/TRIPO_SCORECARD.md",
- "count": 114,
- "wired_stages": [
-  {
-   "stage": "swinir-x4",
-   "file": "forge3d/pipelines/swinir.py",
-   "license": "Apache-2.0",
-   "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.swinir.glb"
-  },
-  {
-   "stage": "xatlas-uv",
-   "file": "forge3d/pipelines/xatlas_uv.py",
-   "license": "MIT",
-   "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.xatlas.glb"
-  },
-  {
-   "stage": "detail",
-   "file": "forge3d/pipelines/detail.py",
-   "license": "MIT-compatible (PIL/numpy)",
-   "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.detail.glb"
-  },
-  {
-   "stage": "ao-bake",
-   "file": "forge3d/pipelines/ao_bake.py",
-   "license": "Vanilla Blender bpy (safe)",
-   "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.ao.glb"
-  },
-  {
-   "stage": "displace",
-   "file": "forge3d/pipelines/displace.py",
-   "license": "MIT-compatible (trimesh/numpy)",
-   "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.displace.glb"
-  }
- ],
- "entries": [
-  {
-   "name": "SUPIR",
-   "url": "https://github.com/Fanghua-Yu/SUPIR",
-   "license": "SUPIR-SLA (custom) [RESEARCH]",
-   "gap": "texture-res",
-   "impact": 5,
-   "difficulty": 4,
-   "status": "research",
-   "category": "sr"
-  },
-  {
-   "name": "DiffBIR",
-   "url": "https://github.com/XPixelGroup/DiffBIR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "OSEDiff",
-   "url": "https://github.com/cswry/OSEDiff",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "SeeSR",
-   "url": "https://github.com/cswry/SeeSR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "TSD-SR",
-   "url": "https://github.com/Microtreei/TSD-SR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "CCSR",
-   "url": "https://github.com/csslc/CCSR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "CTMSR",
-   "url": "https://github.com/CVL-UESTC/CTMSR",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "PiSA-SR",
-   "url": "https://github.com/csslc/PiSA-SR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "VOSR",
-   "url": "https://github.com/cswry/VOSR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "Real-ESRGAN v3",
-   "url": "https://github.com/xinntao/Real-ESRGAN",
-   "license": "BSD-3-Clause",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "RealWebPhoto v4",
-   "url": "https://openmodeldb.info/models/4x-RealWebPhoto-v4-dat2",
-   "license": "CC-BY-4.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "FeMaSR",
-   "url": "https://github.com/chaofengc/FeMaSR",
-   "license": "CC BY-NC-SA 4.0 [RESEARCH]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "research",
-   "category": "sr"
-  },
-  {
-   "name": "LDL",
-   "url": "https://github.com/csjliang/LDL",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "StructSR",
-   "url": "https://github.com/LYCEXE/StructSR",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "Swin2SR",
-   "url": "https://github.com/mv-lab/swin2sr",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "RealBasicVSR",
-   "url": "https://github.com/ckkelvinchan/RealBasicVSR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "sr"
-  },
-  {
-   "name": "DFOSD",
-   "url": "https://github.com/JianzeLi-114/DFOSD",
-   "license": "UNVERIFIED",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "blocked",
-   "category": "sr"
-  },
-  {
-   "name": "SwinIR-S x4",
-   "url": "https://github.com/JingyunLiang/SwinIR",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "wired",
-   "category": "sr"
-  },
-  {
-   "name": "MatFuse",
-   "url": "https://github.com/code-sy95/matgen",
-   "license": "MIT",
-   "gap": "texture-res+native-detail",
-   "impact": 5,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "SurfaceNet",
-   "url": "https://github.com/perceivelab/surfacenet",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "Material Anything",
-   "url": "https://github.com/3DTopia/MaterialAnything",
-   "license": "MIT",
-   "gap": "texture-res+native-detail",
-   "impact": 5,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "SinGAN",
-   "url": "https://github.com/tamarott/SinGAN",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "ConSinGAN",
-   "url": "https://github.com/tohinz/ConSinGAN",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "LaMa",
-   "url": "https://github.com/advimman/lama",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "DeepFillv2",
-   "url": "https://github.com/JiahuiYu/generative_inpainting",
-   "license": "CC BY-NC [RESEARCH]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "research",
-   "category": "texsyn"
-  },
-  {
-   "name": "MultiDiffusion",
-   "url": "https://github.com/omerbt/MultiDiffusion",
-   "license": "UNVERIFIED",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "blocked",
-   "category": "texsyn"
-  },
-  {
-   "name": "Material Maker",
-   "url": "https://github.com/RodZill4/material-maker",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "texsyn"
-  },
-  {
-   "name": "EdgeConnect",
-   "url": "https://github.com/knazeri/edge-connect",
-   "license": "CC BY-NC 4.0 [RESEARCH]",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 3,
-   "status": "research",
-   "category": "texsyn"
-  },
-  {
-   "name": "RePaint",
-   "url": "https://github.com/andreas128/RePaint",
-   "license": "UNVERIFIED",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 3,
-   "status": "blocked",
-   "category": "texsyn"
-  },
-  {
-   "name": "DeepBump",
-   "url": "https://github.com/HugoTini/DeepBump",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "quarantine",
-   "category": "detail"
-  },
-  {
-   "name": "GeoWizard",
-   "url": "https://github.com/fuxiao0719/geowizard",
-   "license": "CC BY 4.0",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "Marigold",
-   "url": "https://github.com/prs-eth/Marigold",
-   "license": "Apache-2.0",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "StableNormal",
-   "url": "https://github.com/Stable-X/StableNormal",
-   "license": "Apache-2.0",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "DSINE",
-   "url": "https://github.com/baegwangbin/DSINE",
-   "license": "Custom Imperial [RESEARCH]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "research",
-   "category": "detail"
-  },
-  {
-   "name": "Depth Anything V2",
-   "url": "https://github.com/DepthAnything/Depth-Anything-V2",
-   "license": "Apache-2.0",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "ZoeDepth",
-   "url": "https://github.com/isl-org/ZoeDepth",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "MiDaS",
-   "url": "https://github.com/isl-org/MiDaS",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "detail"
-  },
-  {
-   "name": "Omnidata",
-   "url": "https://github.com/EPFL-VILAB/omnidata",
-   "license": "Research-only [RESEARCH]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "research",
-   "category": "detail"
-  },
-  {
-   "name": "ACVD",
-   "url": "https://github.com/valette/ACVD",
-   "license": "CeCILL-B",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "PyMeshLab",
-   "url": "https://github.com/cnr-isti-vclab/PyMeshLab",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "native-detail+texture-res",
-   "impact": 5,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "mesh"
-  },
-  {
-   "name": "meshoptimizer",
-   "url": "https://github.com/zeux/meshoptimizer",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "geometry-central",
-   "url": "https://github.com/nmwsharp/geometry-central",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "CinoLib",
-   "url": "https://github.com/mlivesu/cinolib",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "gpytoolbox",
-   "url": "https://github.com/sgsellan/gpytoolbox",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "quarantine",
-   "category": "mesh"
-  },
-  {
-   "name": "libigl-python-bindings",
-   "url": "https://github.com/libigl/libigl-python-bindings",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "mesh"
-  },
-  {
-   "name": "fTetWild",
-   "url": "https://github.com/wildmeshing/fTetWild",
-   "license": "MPL-2.0",
-   "gap": "topology",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "Mmg",
-   "url": "https://github.com/MmgTools/mmg",
-   "license": "LGPL-3.0 [external-only]",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mesh"
-  },
-  {
-   "name": "L0Mesh",
-   "url": "https://github.com/li-yiqing/L0Mesh",
-   "license": "UNVERIFIED",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "blocked",
-   "category": "mesh"
-  },
-  {
-   "name": "Instant Meshes",
-   "url": "https://github.com/wjakob/instant-meshes",
-   "license": "BSD-3-Clause",
-   "gap": "topology",
-   "impact": 5,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "topo"
-  },
-  {
-   "name": "QuadriFlow",
-   "url": "https://github.com/hjwdzh/QuadriFlow",
-   "license": "BSD-3-Clause",
-   "gap": "topology",
-   "impact": 5,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "topo"
-  },
-  {
-   "name": "QuadWild",
-   "url": "https://github.com/nicopietroni/quadwild",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "topology",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "quarantine",
-   "category": "topo"
-  },
-  {
-   "name": "RetopoFlow",
-   "url": "https://github.com/CGCookie/retopoflow",
-   "license": "GPL-3.0+ [QUARANTINE]",
-   "gap": "topology",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "topo"
-  },
-  {
-   "name": "Tissue",
-   "url": "https://github.com/alessandro-zomparelli/tissue",
-   "license": "GPL-2.0+ [QUARANTINE]",
-   "gap": "topology",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "topo"
-  },
-  {
-   "name": "PolyQuilt",
-   "url": "https://github.com/sakana3/PolyQuilt",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "topology",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "topo"
-  },
-  {
-   "name": "Mira Tools",
-   "url": "https://github.com/mifth/mifthtools",
-   "license": "BSD-3-Clause",
-   "gap": "topology",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "topo"
-  },
-  {
-   "name": "Exoside QuadRemesher",
-   "url": "https://www.exoside.com/quadremesher/",
-   "license": "Proprietary PAID",
-   "gap": "topology",
-   "impact": 5,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "topo"
-  },
-  {
-   "name": "thekla_atlas",
-   "url": "https://github.com/Thekla/thekla_atlas",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "uv"
-  },
-  {
-   "name": "UVAtlas",
-   "url": "https://github.com/microsoft/UVAtlas",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "uv"
-  },
-  {
-   "name": "rectpack",
-   "url": "https://github.com/secnot/rectpack",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "uv"
-  },
-  {
-   "name": "Magic UV",
-   "url": "https://github.com/nutti/Magic-UV",
-   "license": "GPL-2.0+ [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "uv"
-  },
-  {
-   "name": "TexTools",
-   "url": "https://github.com/SavMartin/TexTools-Blender",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "uv"
-  },
-  {
-   "name": "UvSquares",
-   "url": "https://github.com/Radivarig/UvSquares",
-   "license": "GPL-2.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 1,
-   "status": "quarantine",
-   "category": "uv"
-  },
-  {
-   "name": "UniV",
-   "url": "https://extensions.blender.org/add-ons/univ/",
-   "license": "GPL-3.0+ [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "uv"
-  },
-  {
-   "name": "Zen UV",
-   "url": "https://www.superhivemarket.com/products/zen-uv",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "uv"
-  },
-  {
-   "name": "Headus UVLayout",
-   "url": "https://www.uvlayout.com/",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "uv"
-  },
-  {
-   "name": "xatlas",
-   "url": "https://github.com/jpcy/xatlas",
-   "license": "MIT",
-   "gap": "texture-res+topology",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "wired",
-   "category": "uv"
-  },
-  {
-   "name": "MikkTSpace",
-   "url": "https://github.com/mmikk/MikkTSpace",
-   "license": "zlib",
-   "gap": "texture-res",
-   "impact": 5,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "bake"
-  },
-  {
-   "name": "three-gpu-baker",
-   "url": "https://github.com/hoodgail/three-gpu-baker",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "bake"
-  },
-  {
-   "name": "Laigter",
-   "url": "https://github.com/azagaya/laigter",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "bake"
-  },
-  {
-   "name": "AwesomeBump",
-   "url": "https://github.com/kmkolasinski/AwesomeBump",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "bake"
-  },
-  {
-   "name": "Materialize",
-   "url": "https://github.com/BoundingBoxSoftware/Materialize",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "bake"
-  },
-  {
-   "name": "EZ Baker",
-   "url": "https://github.com/eastingroup/ez_baker",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "bake"
-  },
-  {
-   "name": "pybaker",
-   "url": "https://github.com/LuniumLuk/pybaker",
-   "license": "UNVERIFIED",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "blocked",
-   "category": "bake"
-  },
-  {
-   "name": "Blender baking",
-   "url": "https://github.com/blender/blender",
-   "license": "GPL-2.0+ [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "bake"
-  },
-  {
-   "name": "Handplane Baker",
-   "url": "https://www.handplane3d.com/",
-   "license": "Proprietary freeware",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "bake"
-  },
-  {
-   "name": "Knald",
-   "url": "https://www.knaldtech.com/",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "bake"
-  },
-  {
-   "name": "Marmoset Toolbag",
-   "url": "https://marmoset.co/toolbag/",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 5,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "bake"
-  },
-  {
-   "name": "Substance 3D Painter",
-   "url": "https://www.adobe.com/products/substance3d-painter.html",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 5,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "bake"
-  },
-  {
-   "name": "Paint-it",
-   "url": "https://github.com/kaist-ami/Paint-it",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "FlashTex",
-   "url": "https://github.com/Roblox/FlashTex",
-   "license": "Apache-2.0",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "TexPainter",
-   "url": "https://github.com/Quantuman134/TexPainter",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "Make-it-Real",
-   "url": "https://github.com/Aleafy/Make_it_Real",
-   "license": "MIT",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "CaPa",
-   "url": "https://github.com/ncsoft/CaPa",
-   "license": "BSD-3-Clause",
-   "gap": "texture-res",
-   "impact": 5,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "Fantasia3D",
-   "url": "https://github.com/Gorilla-Lab-SCUT/Fantasia3D",
-   "license": "Apache-2.0",
-   "gap": "texture-res+native-detail",
-   "impact": 3,
-   "difficulty": 5,
-   "status": "queued",
-   "category": "mv"
-  },
-  {
-   "name": "Repainting 3D Assets",
-   "url": "https://github.com/kongdai123/repainting_3d_assets",
-   "license": "CC BY-NC-SA 4.0 [RESEARCH]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "research",
-   "category": "mv"
-  },
-  {
-   "name": "TANGO",
-   "url": "https://github.com/Gorilla-Lab-SCUT/tango",
-   "license": "UNVERIFIED",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 3,
-   "status": "blocked",
-   "category": "mv"
-  },
-  {
-   "name": "threestudio",
-   "url": "https://github.com/threestudio-project/threestudio",
-   "license": "Apache-2.0",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 4,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "Neuralangelo",
-   "url": "https://github.com/NVlabs/neuralangelo",
-   "license": "NVIDIA-NC [RESEARCH]",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 5,
-   "status": "research",
-   "category": "scan"
-  },
-  {
-   "name": "DN-Splatter",
-   "url": "https://github.com/maturk/dn-splatter",
-   "license": "Apache-2.0",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "PyTorch3D",
-   "url": "https://github.com/facebookresearch/pytorch3d",
-   "license": "BSD",
-   "gap": "topology+native-detail",
-   "impact": 4,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "nvdiffrec",
-   "url": "https://github.com/NVlabs/nvdiffrec",
-   "license": "NVIDIA-NC [RESEARCH]",
-   "gap": "topology+native-detail",
-   "impact": 3,
-   "difficulty": 4,
-   "status": "research",
-   "category": "scan"
-  },
-  {
-   "name": "FlexiCubes",
-   "url": "https://github.com/nv-tlabs/FlexiCubes",
-   "license": "Apache-2.0",
-   "gap": "topology",
-   "impact": 5,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "Kaolin",
-   "url": "https://github.com/NVIDIAGameWorks/kaolin",
-   "license": "Apache-2.0 (mixed)",
-   "gap": "topology+native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "torch-ngp",
-   "url": "https://github.com/ashawkey/torch-ngp",
-   "license": "MIT",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "queued",
-   "category": "scan"
-  },
-  {
-   "name": "GOF",
-   "url": "https://github.com/autonomousvision/gaussian-opacity-fields",
-   "license": "Inria-NC [RESEARCH]",
-   "gap": "native-detail+topology",
-   "impact": 4,
-   "difficulty": 4,
-   "status": "research",
-   "category": "scan"
-  },
-  {
-   "name": "SOF",
-   "url": "https://github.com/r4dl/SOF",
-   "license": "Inria-NC [RESEARCH]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 4,
-   "status": "research",
-   "category": "scan"
-  },
-  {
-   "name": "PGSR",
-   "url": "https://github.com/zju3dv/PGSR",
-   "license": "Research-only [RESEARCH]",
-   "gap": "native-detail",
-   "impact": 3,
-   "difficulty": 4,
-   "status": "research",
-   "category": "scan"
-  },
-  {
-   "name": "Gaussian Surfels",
-   "url": "https://github.com/turandai/gaussian_surfels",
-   "license": "UNVERIFIED",
-   "gap": "native-detail",
-   "impact": 2,
-   "difficulty": 4,
-   "status": "blocked",
-   "category": "scan"
-  },
-  {
-   "name": "GS2Mesh",
-   "url": "https://github.com/yanivw12/gs2mesh",
-   "license": "UNVERIFIED",
-   "gap": "native-detail",
-   "impact": 2,
-   "difficulty": 4,
-   "status": "blocked",
-   "category": "scan"
-  },
-  {
-   "name": "RetopoFlow",
-   "url": "https://github.com/CGCookie/retopoflow",
-   "license": "GPL [QUARANTINE]",
-   "gap": "topology",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "blender"
-  },
-  {
-   "name": "TexTools-bl",
-   "url": "https://github.com/franMarz/TexTools-Blender",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "blender"
-  },
-  {
-   "name": "UV Squares",
-   "url": "https://github.com/Radivarig/UvSquares",
-   "license": "GPL-2.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "blender"
-  },
-  {
-   "name": "Magic UV",
-   "url": "https://github.com/nutti/Magic-UV",
-   "license": "GPL-2.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 2,
-   "difficulty": 2,
-   "status": "quarantine",
-   "category": "blender"
-  },
-  {
-   "name": "Layer Painter",
-   "url": "https://github.com/joshuaKnauber/layer_painter",
-   "license": "GPL-3.0 [QUARANTINE]",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 3,
-   "status": "quarantine",
-   "category": "blender"
-  },
-  {
-   "name": "MESHmachine",
-   "url": "https://machin3.io/MESHmachine/",
-   "license": "Proprietary PAID",
-   "gap": "topology+native-detail",
-   "impact": 3,
-   "difficulty": 2,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "Quad Remesher",
-   "url": "https://exoside.com/quadremesher/",
-   "license": "Proprietary PAID",
-   "gap": "topology",
-   "impact": 5,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "Zen UV",
-   "url": "https://superhivemarket.com/products/zen-uv",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "Bake Wrangler",
-   "url": "https://gum.co/bake-wrangler",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 4,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "SpeedRetopo",
-   "url": "https://superhivemarket.com/products/speedretopo",
-   "license": "Proprietary PAID (GPL)",
-   "gap": "topology",
-   "impact": 2,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "SimplyBake",
-   "url": "https://blendermarket.com/",
-   "license": "Proprietary PAID",
-   "gap": "texture-res",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "note-only",
-   "category": "blender"
-  },
-  {
-   "name": "Multires+Dyntopo",
-   "url": "https://docs.blender.org",
-   "license": "Vanilla Blender (bpy-safe)",
-   "gap": "native-detail",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "blender"
-  },
-  {
-   "name": "Shrinkwrap retopo",
-   "url": "https://docs.blender.org/manual/en/4.2/modeling/modifiers/deform/shrinkwrap.html",
-   "license": "Vanilla Blender (bpy-safe)",
-   "gap": "topology",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "blender"
-  },
-  {
-   "name": "Data Transfer",
-   "url": "https://docs.blender.org",
-   "license": "Vanilla Blender (bpy-safe)",
-   "gap": "texture-res+topology",
-   "impact": 4,
-   "difficulty": 2,
-   "status": "queued",
-   "category": "blender"
-  },
-  {
-   "name": "Remesh modifier",
-   "url": "https://docs.blender.org/manual/en/4.2/modeling/modifiers/generate/remesh.html",
-   "license": "Vanilla Blender (bpy-safe)",
-   "gap": "topology",
-   "impact": 3,
-   "difficulty": 1,
-   "status": "queued",
-   "category": "blender"
-  }
- ]
+  "wave": 2,
+  "directive": "continuous pulling against texture-resolution + native-detail + topology gaps",
+  "compass": "docs/TRIPO_SCORECARD.md",
+  "count": 114,
+  "wired_stages": [
+    {
+      "stage": "swinir-x4",
+      "file": "forge3d/pipelines/swinir.py",
+      "license": "Apache-2.0",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.swinir.glb"
+    },
+    {
+      "stage": "xatlas-uv",
+      "file": "forge3d/pipelines/xatlas_uv.py",
+      "license": "MIT",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.xatlas.glb"
+    },
+    {
+      "stage": "detail",
+      "file": "forge3d/pipelines/detail.py",
+      "license": "MIT-compatible (PIL/numpy)",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.detail.glb"
+    },
+    {
+      "stage": "ao-bake",
+      "file": "forge3d/pipelines/ao_bake.py",
+      "license": "Vanilla Blender bpy (safe)",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.ao.glb"
+    },
+    {
+      "stage": "displace",
+      "file": "forge3d/pipelines/displace.py",
+      "license": "MIT-compatible (trimesh/numpy)",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.displace.glb"
+    },
+    {
+      "wave": 2,
+      "stage": "mikktspace-tangents",
+      "file": "forge3d/pipelines/tangent_space.py",
+      "license": "zlib-style (MikkTSpace, verified from source)",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.mikkt.glb",
+      "metrics": {
+        "naive_degenerate_tangents": 41,
+        "mikkt_degenerate_tangents": 0,
+        "mirrored_uv_vertex_fraction": 0.5943,
+        "bake_mean_angular_delta_deg": 2.359,
+        "bake_p99_angular_delta_deg": 18.905,
+        "bake_texels_gt5deg_fraction": 0.1468
+      }
+    },
+    {
+      "wave": 2,
+      "stage": "lama-seam-inpaint",
+      "file": "forge3d/pipelines/seam_inpaint.py",
+      "license": "Apache-2.0 (LaMa, verified from source)",
+      "proof": "docs/stage-evidence/quality100/tex_albedo.inpainted.png",
+      "metrics": {
+        "hole_psnr_before_db": 9.16,
+        "hole_psnr_after_db": 15.43,
+        "psnr_gain_db": 6.27,
+        "hole_pixel_fraction": 0.1526
+      }
+    },
+    {
+      "wave": 2,
+      "stage": "pymeshlab-mesh-quality",
+      "file": "forge3d/pipelines/mesh_quality.py + quarantine/pymeshlab_worker.py",
+      "license": "GPL-3.0 quarantined worker (arm's-length subprocess); MIT shim",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.mq.glb",
+      "metrics": {
+        "faces": "93234 -> 88052",
+        "tri_aspect_p99": "3.441 -> 2.85",
+        "tri_aspect_mean": "18753.887 -> 1.368",
+        "non6_poles": "45369 -> 16535"
+      }
+    },
+    {
+      "wave": 2,
+      "stage": "bake-passes",
+      "file": "forge3d/pipelines/bake_passes.py",
+      "license": "vanilla Blender 4.2 bpy (GPL software, scripting use safe)",
+      "proof": "pending Blender run",
+      "metrics": {}
+    }
+  ],
+  "entries": [
+    {
+      "name": "SUPIR",
+      "url": "https://github.com/Fanghua-Yu/SUPIR",
+      "license": "SUPIR-SLA (custom) [RESEARCH]",
+      "gap": "texture-res",
+      "impact": 5,
+      "difficulty": 4,
+      "status": "research",
+      "category": "sr"
+    },
+    {
+      "name": "DiffBIR",
+      "url": "https://github.com/XPixelGroup/DiffBIR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "OSEDiff",
+      "url": "https://github.com/cswry/OSEDiff",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "SeeSR",
+      "url": "https://github.com/cswry/SeeSR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "TSD-SR",
+      "url": "https://github.com/Microtreei/TSD-SR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "CCSR",
+      "url": "https://github.com/csslc/CCSR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "CTMSR",
+      "url": "https://github.com/CVL-UESTC/CTMSR",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "PiSA-SR",
+      "url": "https://github.com/csslc/PiSA-SR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "VOSR",
+      "url": "https://github.com/cswry/VOSR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "Real-ESRGAN v3",
+      "url": "https://github.com/xinntao/Real-ESRGAN",
+      "license": "BSD-3-Clause",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "RealWebPhoto v4",
+      "url": "https://openmodeldb.info/models/4x-RealWebPhoto-v4-dat2",
+      "license": "CC-BY-4.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "FeMaSR",
+      "url": "https://github.com/chaofengc/FeMaSR",
+      "license": "CC BY-NC-SA 4.0 [RESEARCH]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "research",
+      "category": "sr"
+    },
+    {
+      "name": "LDL",
+      "url": "https://github.com/csjliang/LDL",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "StructSR",
+      "url": "https://github.com/LYCEXE/StructSR",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "Swin2SR",
+      "url": "https://github.com/mv-lab/swin2sr",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "RealBasicVSR",
+      "url": "https://github.com/ckkelvinchan/RealBasicVSR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "sr"
+    },
+    {
+      "name": "DFOSD",
+      "url": "https://github.com/JianzeLi-114/DFOSD",
+      "license": "UNVERIFIED",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "blocked",
+      "category": "sr"
+    },
+    {
+      "name": "SwinIR-S x4",
+      "url": "https://github.com/JingyunLiang/SwinIR",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "wired",
+      "category": "sr"
+    },
+    {
+      "name": "MatFuse",
+      "url": "https://github.com/code-sy95/matgen",
+      "license": "MIT",
+      "gap": "texture-res+native-detail",
+      "impact": 5,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "SurfaceNet",
+      "url": "https://github.com/perceivelab/surfacenet",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "Material Anything",
+      "url": "https://github.com/3DTopia/MaterialAnything",
+      "license": "MIT",
+      "gap": "texture-res+native-detail",
+      "impact": 5,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "SinGAN",
+      "url": "https://github.com/tamarott/SinGAN",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "ConSinGAN",
+      "url": "https://github.com/tohinz/ConSinGAN",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "LaMa",
+      "url": "https://github.com/advimman/lama",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "DeepFillv2",
+      "url": "https://github.com/JiahuiYu/generative_inpainting",
+      "license": "CC BY-NC [RESEARCH]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "research",
+      "category": "texsyn"
+    },
+    {
+      "name": "MultiDiffusion",
+      "url": "https://github.com/omerbt/MultiDiffusion",
+      "license": "UNVERIFIED",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "blocked",
+      "category": "texsyn"
+    },
+    {
+      "name": "Material Maker",
+      "url": "https://github.com/RodZill4/material-maker",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "texsyn"
+    },
+    {
+      "name": "EdgeConnect",
+      "url": "https://github.com/knazeri/edge-connect",
+      "license": "CC BY-NC 4.0 [RESEARCH]",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 3,
+      "status": "research",
+      "category": "texsyn"
+    },
+    {
+      "name": "RePaint",
+      "url": "https://github.com/andreas128/RePaint",
+      "license": "UNVERIFIED",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 3,
+      "status": "blocked",
+      "category": "texsyn"
+    },
+    {
+      "name": "DeepBump",
+      "url": "https://github.com/HugoTini/DeepBump",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "quarantine",
+      "category": "detail"
+    },
+    {
+      "name": "GeoWizard",
+      "url": "https://github.com/fuxiao0719/geowizard",
+      "license": "CC BY 4.0",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "Marigold",
+      "url": "https://github.com/prs-eth/Marigold",
+      "license": "Apache-2.0",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "StableNormal",
+      "url": "https://github.com/Stable-X/StableNormal",
+      "license": "Apache-2.0",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "DSINE",
+      "url": "https://github.com/baegwangbin/DSINE",
+      "license": "Custom Imperial [RESEARCH]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "research",
+      "category": "detail"
+    },
+    {
+      "name": "Depth Anything V2",
+      "url": "https://github.com/DepthAnything/Depth-Anything-V2",
+      "license": "Apache-2.0",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "ZoeDepth",
+      "url": "https://github.com/isl-org/ZoeDepth",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "MiDaS",
+      "url": "https://github.com/isl-org/MiDaS",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "detail"
+    },
+    {
+      "name": "Omnidata",
+      "url": "https://github.com/EPFL-VILAB/omnidata",
+      "license": "Research-only [RESEARCH]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "research",
+      "category": "detail"
+    },
+    {
+      "name": "ACVD",
+      "url": "https://github.com/valette/ACVD",
+      "license": "CeCILL-B",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "PyMeshLab",
+      "url": "https://github.com/cnr-isti-vclab/PyMeshLab",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "native-detail+texture-res",
+      "impact": 5,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "mesh"
+    },
+    {
+      "name": "meshoptimizer",
+      "url": "https://github.com/zeux/meshoptimizer",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "geometry-central",
+      "url": "https://github.com/nmwsharp/geometry-central",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "CinoLib",
+      "url": "https://github.com/mlivesu/cinolib",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "gpytoolbox",
+      "url": "https://github.com/sgsellan/gpytoolbox",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "quarantine",
+      "category": "mesh"
+    },
+    {
+      "name": "libigl-python-bindings",
+      "url": "https://github.com/libigl/libigl-python-bindings",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "mesh"
+    },
+    {
+      "name": "fTetWild",
+      "url": "https://github.com/wildmeshing/fTetWild",
+      "license": "MPL-2.0",
+      "gap": "topology",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "Mmg",
+      "url": "https://github.com/MmgTools/mmg",
+      "license": "LGPL-3.0 [external-only]",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mesh"
+    },
+    {
+      "name": "L0Mesh",
+      "url": "https://github.com/li-yiqing/L0Mesh",
+      "license": "UNVERIFIED",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "blocked",
+      "category": "mesh"
+    },
+    {
+      "name": "Instant Meshes",
+      "url": "https://github.com/wjakob/instant-meshes",
+      "license": "BSD-3-Clause",
+      "gap": "topology",
+      "impact": 5,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "topo"
+    },
+    {
+      "name": "QuadriFlow",
+      "url": "https://github.com/hjwdzh/QuadriFlow",
+      "license": "BSD-3-Clause",
+      "gap": "topology",
+      "impact": 5,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "topo"
+    },
+    {
+      "name": "QuadWild",
+      "url": "https://github.com/nicopietroni/quadwild",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "topology",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "quarantine",
+      "category": "topo"
+    },
+    {
+      "name": "RetopoFlow",
+      "url": "https://github.com/CGCookie/retopoflow",
+      "license": "GPL-3.0+ [QUARANTINE]",
+      "gap": "topology",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "topo"
+    },
+    {
+      "name": "Tissue",
+      "url": "https://github.com/alessandro-zomparelli/tissue",
+      "license": "GPL-2.0+ [QUARANTINE]",
+      "gap": "topology",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "topo"
+    },
+    {
+      "name": "PolyQuilt",
+      "url": "https://github.com/sakana3/PolyQuilt",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "topology",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "topo"
+    },
+    {
+      "name": "Mira Tools",
+      "url": "https://github.com/mifth/mifthtools",
+      "license": "BSD-3-Clause",
+      "gap": "topology",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "topo"
+    },
+    {
+      "name": "Exoside QuadRemesher",
+      "url": "https://www.exoside.com/quadremesher/",
+      "license": "Proprietary PAID",
+      "gap": "topology",
+      "impact": 5,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "topo"
+    },
+    {
+      "name": "thekla_atlas",
+      "url": "https://github.com/Thekla/thekla_atlas",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "uv"
+    },
+    {
+      "name": "UVAtlas",
+      "url": "https://github.com/microsoft/UVAtlas",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "uv"
+    },
+    {
+      "name": "rectpack",
+      "url": "https://github.com/secnot/rectpack",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "uv"
+    },
+    {
+      "name": "Magic UV",
+      "url": "https://github.com/nutti/Magic-UV",
+      "license": "GPL-2.0+ [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "uv"
+    },
+    {
+      "name": "TexTools",
+      "url": "https://github.com/SavMartin/TexTools-Blender",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "uv"
+    },
+    {
+      "name": "UvSquares",
+      "url": "https://github.com/Radivarig/UvSquares",
+      "license": "GPL-2.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 1,
+      "status": "quarantine",
+      "category": "uv"
+    },
+    {
+      "name": "UniV",
+      "url": "https://extensions.blender.org/add-ons/univ/",
+      "license": "GPL-3.0+ [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "uv"
+    },
+    {
+      "name": "Zen UV",
+      "url": "https://www.superhivemarket.com/products/zen-uv",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "uv"
+    },
+    {
+      "name": "Headus UVLayout",
+      "url": "https://www.uvlayout.com/",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "uv"
+    },
+    {
+      "name": "xatlas",
+      "url": "https://github.com/jpcy/xatlas",
+      "license": "MIT",
+      "gap": "texture-res+topology",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "wired",
+      "category": "uv"
+    },
+    {
+      "name": "MikkTSpace",
+      "url": "https://github.com/mmikk/MikkTSpace",
+      "license": "zlib",
+      "gap": "texture-res",
+      "impact": 5,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "bake"
+    },
+    {
+      "name": "three-gpu-baker",
+      "url": "https://github.com/hoodgail/three-gpu-baker",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "bake"
+    },
+    {
+      "name": "Laigter",
+      "url": "https://github.com/azagaya/laigter",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "bake"
+    },
+    {
+      "name": "AwesomeBump",
+      "url": "https://github.com/kmkolasinski/AwesomeBump",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "bake"
+    },
+    {
+      "name": "Materialize",
+      "url": "https://github.com/BoundingBoxSoftware/Materialize",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "bake"
+    },
+    {
+      "name": "EZ Baker",
+      "url": "https://github.com/eastingroup/ez_baker",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "bake"
+    },
+    {
+      "name": "pybaker",
+      "url": "https://github.com/LuniumLuk/pybaker",
+      "license": "UNVERIFIED",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "blocked",
+      "category": "bake"
+    },
+    {
+      "name": "Blender baking",
+      "url": "https://github.com/blender/blender",
+      "license": "GPL-2.0+ [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "bake"
+    },
+    {
+      "name": "Handplane Baker",
+      "url": "https://www.handplane3d.com/",
+      "license": "Proprietary freeware",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "bake"
+    },
+    {
+      "name": "Knald",
+      "url": "https://www.knaldtech.com/",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "bake"
+    },
+    {
+      "name": "Marmoset Toolbag",
+      "url": "https://marmoset.co/toolbag/",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 5,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "bake"
+    },
+    {
+      "name": "Substance 3D Painter",
+      "url": "https://www.adobe.com/products/substance3d-painter.html",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 5,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "bake"
+    },
+    {
+      "name": "Paint-it",
+      "url": "https://github.com/kaist-ami/Paint-it",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "FlashTex",
+      "url": "https://github.com/Roblox/FlashTex",
+      "license": "Apache-2.0",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "TexPainter",
+      "url": "https://github.com/Quantuman134/TexPainter",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "Make-it-Real",
+      "url": "https://github.com/Aleafy/Make_it_Real",
+      "license": "MIT",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "CaPa",
+      "url": "https://github.com/ncsoft/CaPa",
+      "license": "BSD-3-Clause",
+      "gap": "texture-res",
+      "impact": 5,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "Fantasia3D",
+      "url": "https://github.com/Gorilla-Lab-SCUT/Fantasia3D",
+      "license": "Apache-2.0",
+      "gap": "texture-res+native-detail",
+      "impact": 3,
+      "difficulty": 5,
+      "status": "queued",
+      "category": "mv"
+    },
+    {
+      "name": "Repainting 3D Assets",
+      "url": "https://github.com/kongdai123/repainting_3d_assets",
+      "license": "CC BY-NC-SA 4.0 [RESEARCH]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "research",
+      "category": "mv"
+    },
+    {
+      "name": "TANGO",
+      "url": "https://github.com/Gorilla-Lab-SCUT/tango",
+      "license": "UNVERIFIED",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 3,
+      "status": "blocked",
+      "category": "mv"
+    },
+    {
+      "name": "threestudio",
+      "url": "https://github.com/threestudio-project/threestudio",
+      "license": "Apache-2.0",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 4,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "Neuralangelo",
+      "url": "https://github.com/NVlabs/neuralangelo",
+      "license": "NVIDIA-NC [RESEARCH]",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 5,
+      "status": "research",
+      "category": "scan"
+    },
+    {
+      "name": "DN-Splatter",
+      "url": "https://github.com/maturk/dn-splatter",
+      "license": "Apache-2.0",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "PyTorch3D",
+      "url": "https://github.com/facebookresearch/pytorch3d",
+      "license": "BSD",
+      "gap": "topology+native-detail",
+      "impact": 4,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "nvdiffrec",
+      "url": "https://github.com/NVlabs/nvdiffrec",
+      "license": "NVIDIA-NC [RESEARCH]",
+      "gap": "topology+native-detail",
+      "impact": 3,
+      "difficulty": 4,
+      "status": "research",
+      "category": "scan"
+    },
+    {
+      "name": "FlexiCubes",
+      "url": "https://github.com/nv-tlabs/FlexiCubes",
+      "license": "Apache-2.0",
+      "gap": "topology",
+      "impact": 5,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "Kaolin",
+      "url": "https://github.com/NVIDIAGameWorks/kaolin",
+      "license": "Apache-2.0 (mixed)",
+      "gap": "topology+native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "torch-ngp",
+      "url": "https://github.com/ashawkey/torch-ngp",
+      "license": "MIT",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "queued",
+      "category": "scan"
+    },
+    {
+      "name": "GOF",
+      "url": "https://github.com/autonomousvision/gaussian-opacity-fields",
+      "license": "Inria-NC [RESEARCH]",
+      "gap": "native-detail+topology",
+      "impact": 4,
+      "difficulty": 4,
+      "status": "research",
+      "category": "scan"
+    },
+    {
+      "name": "SOF",
+      "url": "https://github.com/r4dl/SOF",
+      "license": "Inria-NC [RESEARCH]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 4,
+      "status": "research",
+      "category": "scan"
+    },
+    {
+      "name": "PGSR",
+      "url": "https://github.com/zju3dv/PGSR",
+      "license": "Research-only [RESEARCH]",
+      "gap": "native-detail",
+      "impact": 3,
+      "difficulty": 4,
+      "status": "research",
+      "category": "scan"
+    },
+    {
+      "name": "Gaussian Surfels",
+      "url": "https://github.com/turandai/gaussian_surfels",
+      "license": "UNVERIFIED",
+      "gap": "native-detail",
+      "impact": 2,
+      "difficulty": 4,
+      "status": "blocked",
+      "category": "scan"
+    },
+    {
+      "name": "GS2Mesh",
+      "url": "https://github.com/yanivw12/gs2mesh",
+      "license": "UNVERIFIED",
+      "gap": "native-detail",
+      "impact": 2,
+      "difficulty": 4,
+      "status": "blocked",
+      "category": "scan"
+    },
+    {
+      "name": "RetopoFlow",
+      "url": "https://github.com/CGCookie/retopoflow",
+      "license": "GPL [QUARANTINE]",
+      "gap": "topology",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "blender"
+    },
+    {
+      "name": "TexTools-bl",
+      "url": "https://github.com/franMarz/TexTools-Blender",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "blender"
+    },
+    {
+      "name": "UV Squares",
+      "url": "https://github.com/Radivarig/UvSquares",
+      "license": "GPL-2.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "blender"
+    },
+    {
+      "name": "Magic UV",
+      "url": "https://github.com/nutti/Magic-UV",
+      "license": "GPL-2.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 2,
+      "difficulty": 2,
+      "status": "quarantine",
+      "category": "blender"
+    },
+    {
+      "name": "Layer Painter",
+      "url": "https://github.com/joshuaKnauber/layer_painter",
+      "license": "GPL-3.0 [QUARANTINE]",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 3,
+      "status": "quarantine",
+      "category": "blender"
+    },
+    {
+      "name": "MESHmachine",
+      "url": "https://machin3.io/MESHmachine/",
+      "license": "Proprietary PAID",
+      "gap": "topology+native-detail",
+      "impact": 3,
+      "difficulty": 2,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "Quad Remesher",
+      "url": "https://exoside.com/quadremesher/",
+      "license": "Proprietary PAID",
+      "gap": "topology",
+      "impact": 5,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "Zen UV",
+      "url": "https://superhivemarket.com/products/zen-uv",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "Bake Wrangler",
+      "url": "https://gum.co/bake-wrangler",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 4,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "SpeedRetopo",
+      "url": "https://superhivemarket.com/products/speedretopo",
+      "license": "Proprietary PAID (GPL)",
+      "gap": "topology",
+      "impact": 2,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "SimplyBake",
+      "url": "https://blendermarket.com/",
+      "license": "Proprietary PAID",
+      "gap": "texture-res",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "note-only",
+      "category": "blender"
+    },
+    {
+      "name": "Multires+Dyntopo",
+      "url": "https://docs.blender.org",
+      "license": "Vanilla Blender (bpy-safe)",
+      "gap": "native-detail",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "blender"
+    },
+    {
+      "name": "Shrinkwrap retopo",
+      "url": "https://docs.blender.org/manual/en/4.2/modeling/modifiers/deform/shrinkwrap.html",
+      "license": "Vanilla Blender (bpy-safe)",
+      "gap": "topology",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "blender"
+    },
+    {
+      "name": "Data Transfer",
+      "url": "https://docs.blender.org",
+      "license": "Vanilla Blender (bpy-safe)",
+      "gap": "texture-res+topology",
+      "impact": 4,
+      "difficulty": 2,
+      "status": "queued",
+      "category": "blender"
+    },
+    {
+      "name": "Remesh modifier",
+      "url": "https://docs.blender.org/manual/en/4.2/modeling/modifiers/generate/remesh.html",
+      "license": "Vanilla Blender (bpy-safe)",
+      "gap": "topology",
+      "impact": 3,
+      "difficulty": 1,
+      "status": "queued",
+      "category": "blender"
+    }
+  ]
 }

@@ -26,6 +26,18 @@ Sibling quality lane already owns (do NOT duplicate): remesh shootout,
 speckle dilation, trimesh watertight weld, retexture, geometry normal maps,
 Real-ESRGAN upscale, LOD chain, CC0 materials.
 
+## Wave-2 wired stages (proven, committed)
+
+| Stage | File | Gap closed | Proof (measured) |
+|---|---|---|---|
+| MikkTSpace tangent basis | `forge3d/pipelines/tangent_space.py` (+ `_vendor/mikktspace/`, zlib) | texture-res (correctness) | `.mikkt.{glb,json}`: naive degenerate tangents 41 → **0**; 59.4% verts touch mirrored UVs (naive handedness wrong there; MikkTSpace flips w on 59.5%); baked-map delta mean 2.36°, p99 18.9°, 14.7% texels >5°. Feeds sibling normalmap stage. |
+| LaMa texture completion | `forge3d/pipelines/seam_inpaint.py` (+ `_vendor/lama/`, Apache-2.0; weights `~/.forge3d/weights/lama/`) | texture-res | `tex_albedo.{holes,inpainted}.png` + `.seam_inpaint.json`: synthetic-hole benchmark on real trellis albedo, hole-PSNR **9.16 → 15.43 dB (+6.27 dB)**. Distinct from speckle dilation (generative fill vs smear). |
+| PyMeshLab mesh quality (quarantined) | `forge3d/pipelines/mesh_quality.py` (MIT shim) + `quarantine/pymeshlab_worker.py` (GPL-3.0, subprocess-only) | native-detail/topology | `.mq.{glb,json}`: faces 93,234→88,052; tri aspect p99 3.44→**2.85**; aspect mean 18753→**1.37** (slivers gone); non-6 poles 45,369→**16,535** (−64%). Adaptive targetlen (first run over-decimated — documented). |
+| Detail bake-pass checklist | `forge3d/pipelines/bake_passes.py` (vanilla bpy) | native-detail | curvature/cavity/thickness/ID passes — Blender run pending. |
+
+GPU-lane items stay queued (no CUDA on this box): DiffBIR/OSEDiff/CCSR,
+CaPa, MatFuse/Material Anything, FlashTex, StableNormal.
+
 ---
 
 ## 1. Texture upscaling / super-resolution (17) 🆕
