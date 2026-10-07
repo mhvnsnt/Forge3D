@@ -152,6 +152,10 @@ class TripoSRProvider(ModelProvider):
                 # pin u2net: rembg 2.x defaults to the 1GB bria-rmbg model
                 _sess = new_session("u2net")
                 pil = remove_background(pil, rembg_session=_sess)
+            if pil.mode != "RGBA":
+                # resize_foreground asserts 4 channels; opaque alpha keeps
+                # the whole frame as foreground when bg removal is skipped
+                pil = pil.convert("RGBA")
             pil = resize_foreground(pil, foreground_ratio)
             if pil.mode == "RGBA":
                 bg = Image.new("RGB", pil.size, (255, 255, 255))
@@ -161,12 +165,19 @@ class TripoSRProvider(ModelProvider):
                 pil = pil.convert("RGB")
 
             with torch.no_grad():
-                scene_codes = model([pil], device=device)
-            # has_vertex_color=True: triplane-queried RGB per vertex.
-            # (Upstream run.py passes `not args.bake_texture` positionally;
-            # we always take vertex colors — texture baking is a later stage.)
-            meshes = model.extract_mesh(scene_codes, True,
-                                        resolution=mc_resolution)
+                # autocast unifies dtypes when running the bf16 model (fp32
+                # image input -> bf16); no-op for fp32 models. Must cover
+                # extract_mesh too: query_triplane builds its position grid
+                # in default dtype, which must match the bf16 triplanes.
+                with torch.autocast(device_type="cpu", dtype=torch.bfloat16,
+                                    enabled=_use_fp16):
+                    scene_codes = model([pil], device=device)
+                    # has_vertex_color=True: triplane-queried RGB per vertex.
+                    # (Upstream run.py passes `not args.bake_texture`
+                    # positionally; we always take vertex colors -- texture
+                    # baking is a later stage.)
+                    meshes = model.extract_mesh(scene_codes, True,
+                                                resolution=mc_resolution)
         except Exception as e:  # noqa: BLE001
             raise ProviderError(f"TripoSR inference failed: {e}")
 
