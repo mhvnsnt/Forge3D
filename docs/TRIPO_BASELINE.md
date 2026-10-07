@@ -53,6 +53,24 @@ backbones (TRELLIS.2 / TripoSG / SF3D on GPU runners). What we beat Tripo on
 What we don't beat yet: PBR texture maps (we emit vertex colors; their PBR
 set is base_color + metallic + roughness + normal) and raw surface detail.
 
+### Update 2026-10-07 — first high-quality generation (trellis-2-low)
+
+`docs/stage-evidence/trellis-first/` — Pollinations 3D API, `trellis-2-low`,
+concept1 (hooded street fighter). Measured with `measure_glb`:
+
+| Metric | Tripo bar | Forge3D trellis-2-low | Delta |
+|---|---|---|---|
+| Faces | ~1.93M | 96,825 | 5.0% — low tessellation, but native detail is high |
+| Vertices | ~1.00M | 57,865 | 5.8% |
+| Textures | 2K–8K PBR set | **2×768² albedo, 1 PBR material** | real texture maps now (was: vertex colors) |
+| Latency | ~1–3 min | 160 s | parity |
+| Cost | credits | 0.24 Quest Pollen (free tier) | free; balance now 0 — further gens need top-up/quests (owner decision) |
+
+This is the texture-quality jump the baseline called for: from vertex colors to
+real baked texture maps. Tessellation is low on `trellis-2-low` by design —
+run it through `densify` for the 90.7% parity number. Full dimension-by-dimension
+verdict lives in `docs/TRIPO_SCORECARD.md`.
+
 ### Why Tripo is good (research 2026-10-06 — what we're countering)
 - **TripoSR** (the open one): LRM → triplane → NeRF → marching cubes; fast and MIT, but projection textures (blurry backs — confirmed) and low tens-of-thousands of tris. It's the baseline, not the ceiling.
 - **TripoSG** (their quality jump): rectified-flow DiT in a 3D VAE latent trained with SDF + surface-normal + eikonal loss on 2M curated samples; MoE; geometry-only. **Our answer: TripoSG itself is MIT — wired as a provider.**
