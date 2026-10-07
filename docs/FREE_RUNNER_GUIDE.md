@@ -34,6 +34,19 @@ What we did (all open-source, all in-repo):
 | `~/.cache/puppeteer` | 656MB | same — do NOT delete |
 | `/usr/local/lib/python3.12/dist-packages` | 1.3GB | system python — leave alone |
 
+
+### transformers 4.x is MANDATORY for TripoSR (found 2026-10-07)
+The venv shipped transformers **5.19.0**; TripoSR's 2024 checkpoint was saved
+with transformers 4.x ViT naming (`encoder.layer.N...`). With 5.x, 192 of 549
+checkpoint keys silently fail to load under `strict=False` — the DINO image
+encoder runs on RANDOM weights, re-initialized per process. Symptoms: wildly
+nondeterministic meshes (16K vs 54K verts on identical input, 192^3
+degenerating), outputs not conditioned on the input image. Fix:
+`pip install "transformers>=4.40,<5.0"` (now 4.57.6 in the venv) — key load
+goes 357/549 -> 549/549, output becomes deterministic (6,634 verts at 128^3,
+matching the canonical result). requirements-local.txt already pinned this;
+the venv build ignored it.
+
 ### Evaluated but not pursued (2026-10-07)
 - **ONNX export** (optimum/onnxruntime): code-inspected the TripoSR forward —
   DINO ViT tokenizer + Transformer1D backbone + triplane decoder MLP are all
