@@ -66,9 +66,16 @@ def _render_previews(glb: Path, out_dir: Path) -> list[str]:
     if tool.is_file():
         for i, angles in enumerate(["0,90,180,270", "45,135,225,315"]):
             p = out_dir / f"preview_{i}.png"
-            r = subprocess.run(
-                [sys.executable, str(tool), str(glb), str(p), angles],
-                capture_output=True, text=True, timeout=600)
+            try:
+                r = subprocess.run(
+                    [sys.executable, str(tool), str(glb), str(p), angles],
+                    capture_output=True, text=True, timeout=600)
+            except subprocess.TimeoutExpired:
+                # 1.7M-face dense meshes exceed the software rasterizer's
+                # 10-min budget — fall through to the matplotlib fallback
+                print(f"preview render timed out for {glb.name}, "
+                      f"using matplotlib fallback", file=sys.stderr)
+                break
             if r.returncode == 0 and p.is_file():
                 urls.append(f"/api/jobfile/{out_dir.name}/{p.name}")
             else:

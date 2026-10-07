@@ -26,17 +26,32 @@ Other observed properties:
 
 ## Where Forge3D stands (measured with `forge3d/pipelines/measure.py`)
 
-| Metric | Tripo bar | Forge3D (fill per run) | Delta |
+**Measured 2026-10-07** — first real TripoSR run through the web API
+(`POST /api/upload` → `POST /api/generate` → triposr provider, texture=lanczos,
+densify=true). Test input: `web/data/test-images/wrestler_rgba.png` (synthetic
+wrestler silhouette, RGBA). Job `be5358713bf2`, all values from `measure_glb`.
+
+| Metric | Tripo bar | Forge3D (measured) | Delta |
 |---|---|---|---|
-| Faces | ~1.93M | _pending first measured run_ | — |
-| Vertices | ~1.00M | _pending_ | — |
-| Texture resolution | standard ~2K / detailed / extreme 8K; PBR set = base_color + metallic + roughness + normal | _pending_ | — |
-| Game-ready poly target | 50–100K (their docs); Smart Low Poly 500–20K | densify stage targets tessellation parity; lod_chain port planned | — |
+| Faces (raw backbone) | ~1.93M | 112,680 (TripoSR, mc_res 256) | 5.8% — confirms the research: TripoSR-class emits far less tessellation |
+| Faces (after densify) | ~1.93M | **1,751,968** | **90.7% of the Tripo bar** |
+| Vertices (after densify) | ~1.00M | **875,984** | **87.3% of the Tripo bar** |
+| Watertight / manifold | no published number; raw Tripo output is triangle soup with known open shells | raw: False → **cleaned+densified: True** (trimesh `is_watertight`) | **our edge: watertight output; Tripo's observed rate is lower** |
+| Texture resolution | standard ~2K / detailed / extreme 8K; PBR set = base_color + metallic + roughness + normal | vertex colors (TripoSR bakes no texture maps); lanczos stage refines when maps exist | gap: texture-map baking is the next stage to wire |
+| Game-ready poly target | 50–100K (their docs); Smart Low Poly 500–20K | densify targets tessellation parity; lod_chain port planned | — |
 | Quad output | ≤25K faces (P-series, FBX only) | triangle only (glTF can't store quads) | — |
-| Watertight / manifold | no published number; raw Tripo output is triangle soup with known open shells — beat their *observed* rate | _pending (trimesh is_watertight)_ | — |
-| Bones (rig) | 0 (Tripo Studio output is unrigged; auto-rig is a minimal ~26-joint add-on) | rig stage via instance-rig (beyond-Tripo edge) | — |
-| Pose | T-pose/A-pose output, pose control in 3.0 | backbone-dependent | — |
-| Latency | ~1–3 min/generation (async cloud) | TripoSR ~45s–3min CPU; free APIs queue-bound | — |
+| Bones (rig) | 0 (Tripo Studio output is unrigged) | rig stage via instance-rig (beyond-Tripo edge; DOWN on CPU VM — needs libEGL) | — |
+| Pose | T-pose/A-pose output | backbone-dependent (this test: A-pose-ish silhouette in → figure out) | — |
+| Latency | ~1–3 min/generation (async cloud) | ~10 min CPU (bf16, 2-core VM); ~45s–3min quoted for faster hosts | slower on this VM, $0 |
+
+**Honest reading:** raw TripoSR is 5.8% of Tripo's tessellation — the "geometry
+density" gap from the steer is real and measured. Our densify stage closes it
+to 90.7% *tessellation* parity, watertight. Tessellation ≠ detail: subdivision
+adds triangles, not surface detail — real detail still needs higher-res
+backbones (TRELLIS.2 / TripoSG / SF3D on GPU runners). What we beat Tripo on
+*today*: watertightness (theirs is triangle soup) and $0 fully-owned pipeline.
+What we don't beat yet: PBR texture maps (we emit vertex colors; their PBR
+set is base_color + metallic + roughness + normal) and raw surface detail.
 
 ### Why Tripo is good (research 2026-10-06 — what we're countering)
 - **TripoSR** (the open one): LRM → triplane → NeRF → marching cubes; fast and MIT, but projection textures (blurry backs — confirmed) and low tens-of-thousands of tris. It's the baseline, not the ceiling.

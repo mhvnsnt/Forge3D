@@ -3,4 +3,16 @@ torch>=2.0
 trimesh[easy]>=4.0
 pillow>=10.0
 scikit-image>=0.21  # torchmcubes CPU shim (marching cubes without the C++ build)
+# TripoSR vendored-dep requirements (forge3d/providers/_vendor/triposr/tsr/):
+omegaconf>=2.0
+einops>=0.6
+# transformers MUST stay 4.x for TripoSR: transformers 5.x refactored ViTModel
+# internals (layers.N.attention.q_proj) so the 2024 checkpoint state dict
+# (encoder.layer.N.attention.attention.query) no longer loads. Verified 2026-10-06.
+transformers>=4.40,<5.0
+safetensors>=0.4
+# rembg is OPTIONAL for TripoSR: only needed when remove_bg=True.
+# The vendored tsr/utils.py makes it a lazy import (fails loudly if called
+# without it). pip install rembg onnxruntime  (needs numpy>=2; the vendored
+# tree's stock top-level `import rembg` was patched to try/except on 2026-10-06)
 # Vendored model repos go in forge3d/providers/_vendor/ (gitignored; cloned by setup script)
