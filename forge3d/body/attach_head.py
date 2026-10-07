@@ -185,6 +185,11 @@ def attach_head(body_glb: str | Path, out_glb: str | Path,
     out_glb = Path(out_glb)
     V, F = _merged_verts_faces(body_glb)
     ymin, ymax = V[:, 1].min(), V[:, 1].max()
+    body_h = ymax - ymin
+    # embed/blend are tuned for a ~1.7-unit body; scale to actual height
+    hscale = body_h / 1.7 if body_h > 1e-9 else 1.0
+    embed = embed * hscale
+    blend = blend * hscale
 
     # --- locate neck ---
     hj = find_head_joint(body_glb)
