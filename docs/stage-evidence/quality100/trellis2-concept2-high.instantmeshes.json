@@ -1,0 +1,12 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "binary": "/home/hatch/workspace/build/instant-meshes/build/Instant Meshes",
+  "in_faces": 93234,
+  "target_faces": 20000,
+  "deterministic": true,
+  "note": "target -f 20000 -> pure-quad subdivision yields 73162 quads (4x intermediate)",
+  "quads": 73162,
+  "tris": 0,
+  "quad_fraction": 1.0,
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.im.glb"
+}
