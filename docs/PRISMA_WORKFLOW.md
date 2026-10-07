@@ -18,15 +18,19 @@ the owner asked for ("the way they work").
 
 ## Forge3D mapping (every step exists as a stage)
 
+**Status 2026-10-06: all 7 Prisma steps now have Forge3D stages.** The last
+two unbuilt stages — morph-as-shape-keys and pose/animate in-Forge3D — were
+implemented and checked off in the table below (✅ DONE rows).
+
 | Prisma 3D step | Forge3D stage | Notes |
 |---|---|---|
 | Model (generate) | `providers/` + `pipelines/pipeline.py` | text/image -> mesh, free |
 | Sculpt / mesh edit | `forge3d/blender/` | headless Blender: cleanup, voxel remesh, decimate, transforms |
 | Texture / paint | `pipelines/texture.py` | Hunyuan3D-Paint refinement; Real-ESRGAN upscale |
 | Rig + skinning | `pipelines/rig.py` (+ `blender/stage.py`) | auto-rig, auto-skin, weight smoothing, **58-bone retarget** |
-| Morph / customize | `forge3d/body/morphs.py` | bulk, height, shoulders, belly, limbs — pre-rig |
+| Morph / customize | `forge3d/body/morphs.py` + `forge3d/blender/shapekeys.py` | bulk, height, shoulders, belly, limbs — pre-rig; ✅ DONE 2026-10-06: morphs bake to real Blender shape keys → glTF morph targets (`docs/stage-evidence/shapekeys/trellis_morphs.glb`, 3 targets + 6 proof renders at 0.0/1.0) |
 | Face | `forge3d/body/gnm_head.py` | GNM parametric head: identity + 383 expression blendshapes |
-| Pose / animate | Bannon handoff | 34 procedural moves + retargeters in Bannon `tools/generative/` |
+| Pose / animate | `forge3d/animation/pose.py` (Bannon `tools/generative/` moves imported in-place, never copied) | ✅ DONE 2026-10-06: one Bannon procedural clip (`TAUNT_CROWD`) injected as `MOVE_TAUNT_CROWD` glTF animation (5 channels) into 58-bone rigged GLB (`docs/stage-evidence/pose/pose_TAUNT_CROWD.glb` + 2 proof frames); input cleaned to single body (upstream 58-bone sources carry a double-body defect, documented in `docs/stage-evidence/pose/README.md`) |
 
 ## Blender setup (per host, once)
 

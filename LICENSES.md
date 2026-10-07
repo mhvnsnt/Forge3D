@@ -72,6 +72,8 @@ sha256 provenance manifests: `forge3d/assets/fetch.py`.
 | GHUM / GHUML (Google) | request-form gated | **NO (gated)** | reference only |
 | Body morphs (`forge3d/body/morphs.py`) | Forge3D-original | yes | authored deformation fields, no statistical model, no tainted data |
 
+| Bannon `tools/generative/motion/procedural_moves.py` + `common/glb_anim.py` | Copyright (c) 2026 mhvnsnt, All Rights Reserved — intra-owner reuse, same copyright holder | yes | imported in-place via `forge3d/animation/pose.py` (`FORGE3D_BANNON_GENERATIVE` env or `~/workspace/bannon-repair/tools/generative` default); NO code copied into the Forge3D tree |
+
 ## Hard no-gos (never wired as providers)
 - Zero123++ weights — CC-BY-NC 4.0 (non-commercial). Code is Apache-2.0; weights are the blocker. Research/R&D only, quarantined from shipped builds.
 - Hunyuan3D-2/2.1 full weights — territory exclusion, 1M MAU gate, no-training-use clause (same Tencent license family as Paint; Paint is the narrower, texture-only pull)
