@@ -1,0 +1,21 @@
+{
+ "body_glb": "runs/closeout/body128/body_standing.glb",
+ "neck_y": 0.8568005413322125,
+ "neck_radius": 0.06697950395839729,
+ "neck_center": [
+  -0.005793876216436426,
+  0.010053872068723043
+ ],
+ "neck_source": "geometric",
+ "head_scale_xz": 0.8528181708852081,
+ "head_scale_y": 0.3880608818534661,
+ "facing_degrees": 0.0,
+ "embed": 0.011839943773606245,
+ "blend": 0.02071990160381093,
+ "blended_verts": 1160,
+ "body_verts": 5103,
+ "body_tris": 10178,
+ "head_verts": 17821,
+ "head_tris": 35324,
+ "out_glb": "docs/stage-evidence/forge-proof/body_gnm_head.glb"
+}
