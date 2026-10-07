@@ -37,7 +37,7 @@ against official repos (see docs/research/).
 | Instant Meshes (wjakob) | BSD-3-Clause (verified 2026-10-07 against LICENSE.txt) | yes | EVALUATED, NOT WIRED — interactive GUI only, no CLI/batch mode for headless pipeline; Blender Quadriflow chosen instead |
 | google/GNM head model (weights, HF `google/gnm-3`) | Apache-2.0 (repo + model) | yes | `forge3d/body/gnm_head.py`; weights cached repo-local, never committed |
 | Prisma 3D (app) | commercial, NOT open source | n/a | workflow replicated as stages (docs/PRISMA_WORKFLOW.md); no code pulled |
-| COLMAP / pycolmap | BSD-3-Clause | yes | scan path evaluated only (docs/SCAN_PATH.md); not wired |
+| COLMAP / pycolmap | BSD-3-Clause | yes | WIRED 2026-10-07 — `forge3d/scan/stage.py` (hard GPU gate, loud failure); docs/SCAN_PATH.md |
 
 ## Parametric body models — license verdicts (2026-10-06)
 

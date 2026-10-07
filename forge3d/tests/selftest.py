@@ -215,6 +215,23 @@ def test_pipeline_run_from_mesh():
         assert "mesh" in stages and "cleanup" in stages
 
 
+def test_scan_gate_loud_without_gpu():
+    # the scan stage must FAIL LOUDLY on this GPU-less box, never fake a mesh
+    from forge3d.scan import ScanError, is_available, scan_photos
+    import tempfile
+    ok, reason = is_available()
+    assert not ok, f"scan claims available on a GPU-less box: {reason}"
+    assert "CUDA" in reason or "cuda" in reason.lower() or "GPU" in reason
+    with tempfile.TemporaryDirectory() as td:
+        # empty dir -> photo validation fires first, also loud
+        try:
+            scan_photos(td, td)
+        except ScanError as e:
+            assert "8" in str(e) or "photos" in str(e).lower()
+            return
+        raise AssertionError("scan_photos should have raised ScanError")
+
+
 def run() -> bool:
     checks = [
         ("imports", test_imports),
@@ -227,6 +244,7 @@ def run() -> bool:
         ("fanout-winner", test_fanout_winner),
         ("multiview-unknown-loud", test_multiview_unknown_backend_loud),
         ("pipeline-run-from-mesh", test_pipeline_run_from_mesh),
+        ("scan-gate-loud-without-gpu", test_scan_gate_loud_without_gpu),
     ]
     results = [_check(n, f) for n, f in checks]
     print(f"{sum(results)}/{len(results)} selftest checks passed")
