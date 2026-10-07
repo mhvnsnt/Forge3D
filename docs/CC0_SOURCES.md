@@ -36,3 +36,19 @@ ShareTextures ("custom CC0" banning redistribution), FreePBR (custom grant, not 
 Sketchfab/BlenderKit/OpenGameArt/itch.io (mixed per-asset — CC0-filtered one-offs only,
 never blanket), Fab/Quixel Megascans (no redistribution), Mixamo (no raw redistribution),
 textures.com/CGTrader free sections (royalty-free ≠ CC0).
+
+## Stage wiring — vertical depth expansion (2026-10-07)
+
+The texture/material/lighting stages draw on the fetched CC0 library
+(`assets/cc0/`, pulled via `forge3d/assets/fetch.py` → `cc0_manifest.json`):
+
+| Stage | CC0 use |
+|---|---|
+| `pipelines/render.py --hdri assets/cc0/studio_small_09/studio_small_09_1k.hdr` | HDRI environment lighting (Poly Haven CC0) instead of the flat studio-gray world — lookdev renders |
+| `pipelines/materials.py --set cotton_jersey [--mode pbr-overlay\|full]` | applies the set's roughness + normal maps (overlay keeps the GLB's own albedo; full also swaps albedo); `--list` shows the local library |
+| `pipelines/upscale.py` / `texture.py` | future: CC0 albedo sets as repaint references (not yet wired) |
+
+Pulled 2026-10-07 (md5-verified by the fetcher, recorded in
+`assets/cc0/cc0_manifest.json`): `studio_small_09` 1k HDRI (Poly Haven CC0),
+`cotton_jersey` 1k Diffuse/Rough/nor_gl (Poly Haven CC0). Proof renders under
+`docs/stage-evidence/materials/`.

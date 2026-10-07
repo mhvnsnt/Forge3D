@@ -1,0 +1,12 @@
+{
+  "set": "cotton_jersey",
+  "mode": "pbr-overlay",
+  "maps_applied": [
+    "roughness",
+    "normal"
+  ],
+  "materials_tagged": 1,
+  "seconds": 6.8,
+  "output": "trellis-concept1.mat-cotton_jersey-pbr-overlay.glb",
+  "license": "CC0 1.0 (see docs/CC0_ASSETS.md)"
+}

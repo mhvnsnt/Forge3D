@@ -1,0 +1,9 @@
+{
+  "faces": 96825,
+  "verts": 57865,
+  "normal_map": "1024x1024",
+  "normal_png_bytes": 752965,
+  "bake_seconds": 66.0,
+  "materials_tagged": 1,
+  "output": "trellis-concept1.normalmap.glb"
+}

@@ -9,7 +9,10 @@ Method (trimesh + numpy, CPU):
   2. Per-vertex tangent frame from UV derivatives (standard
      dP/du,dP/dv solve), orthogonalized against the normal.
   3. Rasterize every triangle into UV space (default 1024): barycentric
-     interpolation of N/T/B, then n_tangent = (n·T, n·B, n·N).
+     interpolation of the T/B/N frames; the FLAT geometric face normal is
+     transformed into tangent space per texel (n_t = (n·T, n·B, n·N)).
+     This captures the faceting that smooth shading hides — genuine
+     high-frequency surface detail already in the mesh.
   4. Encode to PNG, append as a new GLB image + texture, wire
      materials[*].normalTexture.
 
@@ -62,8 +65,9 @@ def _tangent_frames(verts: np.ndarray, faces: np.ndarray,
 
 
 def _bake(verts, faces, uvs, size: int = 1024) -> np.ndarray:
-    nrm = trimesh.Trimesh(vertices=verts, faces=faces,
-                          process=False).vertex_normals
+    tm = trimesh.Trimesh(vertices=verts, faces=faces, process=False)
+    nrm = tm.vertex_normals          # smooth (for the tangent frame)
+    face_nrm = tm.face_normals       # flat geometric (what we bake)
     T, B = _tangent_frames(verts, faces, uvs)
     # orthogonalize T against N
     T = T - nrm * (np.einsum("ij,ij->i", T, nrm))[:, None]
@@ -82,7 +86,9 @@ def _bake(verts, faces, uvs, size: int = 1024) -> np.ndarray:
     for s in range(0, len(faces), chunk):
         e = min(s + chunk, len(faces))
         tri = fuv[s:e]
-        (x0, y0), (x1, y1), (x2, y2) = tri[:, 0], tri[:, 1], tri[:, 2]
+        x0, y0 = tri[:, 0, 0], tri[:, 0, 1]
+        x1, y1 = tri[:, 1, 0], tri[:, 1, 1]
+        x2, y2 = tri[:, 2, 0], tri[:, 2, 1]
         xmin = np.clip(np.floor(np.min(tri[:, :, 0], 1)).astype(int), 0, size - 1)
         xmax = np.clip(np.ceil(np.max(tri[:, :, 0], 1)).astype(int), 0, size - 1)
         ymin = np.clip(np.floor(np.min(tri[:, :, 1], 1)).astype(int), 0, size - 1)
@@ -107,15 +113,15 @@ def _bake(verts, faces, uvs, size: int = 1024) -> np.ndarray:
                 continue
             fi = faces[s + j]
             W = np.stack([w0[inside], w1[inside], w2[inside]], 1)
-            Np = W @ nrm[fi]
             Tp = W @ T[fi]
             Bp = W @ B[fi]
-            nl = np.linalg.norm(Np, axis=1, keepdims=True)
-            Np = Np / np.maximum(nl, 1e-12)
             Nv = W @ nrm[fi]
-            nt = np.stack([np.einsum("ij,ij->i", Np, Tp),
-                           np.einsum("ij,ij->i", Np, Bp),
-                           np.einsum("ij,ij->i", Np, Nv)], 1)
+            # bake the FLAT geometric face normal into tangent space —
+            # this is the high-frequency detail smooth shading hides
+            Nf = np.broadcast_to(face_nrm[s + j], Tp.shape)
+            nt = np.stack([np.einsum("ij,ij->i", Nf, Tp),
+                           np.einsum("ij,ij->i", Nf, Bp),
+                           np.einsum("ij,ij->i", Nf, Nv)], 1)
             nl2 = np.linalg.norm(nt, axis=1, keepdims=True)
             nt = nt / np.maximum(nl2, 1e-12)
             px = (xs[inside] - 0.5).astype(int)

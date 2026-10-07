@@ -1,0 +1,34 @@
+{
+  "backend": "realesrgan",
+  "arch": "RRDBNet-x2 (vendored BasicSR)",
+  "weights": "RealESRGAN_x2.pth",
+  "textures": [
+    {
+      "image_index": 0,
+      "before": [
+        768,
+        768
+      ],
+      "after": [
+        1536,
+        1536
+      ],
+      "seconds": 562.66,
+      "upscaled_png_bytes": 2602004
+    },
+    {
+      "image_index": 1,
+      "before": [
+        768,
+        768
+      ],
+      "after": [
+        1536,
+        1536
+      ],
+      "seconds": 689.75,
+      "upscaled_png_bytes": 35004
+    }
+  ],
+  "total_seconds": 1252.41
+}

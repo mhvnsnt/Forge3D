@@ -1,0 +1,46 @@
+[
+  {
+    "file": "studio_small_09/studio_small_09_1k.hdr",
+    "source": "polyhaven",
+    "source_name": "Poly Haven",
+    "source_url": "https://polyhaven.com/a/studio_small_09",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:20:55+0000",
+    "sha256": "e7cfda5f4e98e623db12b8bfd0184e048488e4855d9c83e2751fb44a32e80c45",
+    "bytes": 1615248
+  },
+  {
+    "file": "cotton_jersey/cotton_jersey_diff_1k.jpg",
+    "source": "polyhaven",
+    "source_name": "Poly Haven",
+    "source_url": "https://polyhaven.com/a/cotton_jersey",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:21:22+0000",
+    "sha256": "0f1b790e4087223275aaa6fdffdd46a556a26d2af72cd811acf72ba9c21ec1f6",
+    "bytes": 581360
+  },
+  {
+    "file": "cotton_jersey/cotton_jersey_rough_1k.jpg",
+    "source": "polyhaven",
+    "source_name": "Poly Haven",
+    "source_url": "https://polyhaven.com/a/cotton_jersey",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:21:23+0000",
+    "sha256": "89bed18f5c3f03fc7b4c2382446891629716278e521e06e8b7f6c8f02dd22590",
+    "bytes": 865264
+  },
+  {
+    "file": "cotton_jersey/cotton_jersey_nor_gl_1k.jpg",
+    "source": "polyhaven",
+    "source_name": "Poly Haven",
+    "source_url": "https://polyhaven.com/a/cotton_jersey",
+    "license": "CC0-1.0",
+    "license_verified": "2026-10-07",
+    "downloaded_at": "2026-10-07T04:21:25+0000",
+    "sha256": "9b79709806511b62567fb007ff61009c3b194bb0d0821fbaee3faf1b2bff0318",
+    "bytes": 678670
+  }
+]

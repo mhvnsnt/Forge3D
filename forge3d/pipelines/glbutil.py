@@ -98,11 +98,12 @@ def write_glb(doc: dict, blob: bytes, out_path: Path) -> Path:
     new_doc = json.dumps(doc, separators=(",", ":")).encode()
     pad = (-len(new_doc)) % 4
     new_doc += b" " * pad  # space-pad per glTF spec
+    blob = bytes(blob)
+    bpad = (-len(blob)) % 4
+    blob = blob + b"\x00" * bpad
     total = 12 + 8 + len(new_doc) + 8 + len(blob)
     header = struct.pack("<III", 0x46546C67, 2, total)
     jchunk = struct.pack("<II", len(new_doc), 0x4E4F534A) + new_doc
-    bpad = (-len(blob)) % 4
-    blob = bytes(blob) + b"\x00" * bpad
     bchunk = struct.pack("<II", len(blob), 0x004E4942) + blob
     out_path = Path(out_path)
     out_path.write_bytes(header + jchunk + bchunk)
