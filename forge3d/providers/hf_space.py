@@ -11,6 +11,11 @@ Proven pattern: AshLanev2 tools/generative/character/auto-character.py
 
 Uses urllib (not httpx) to avoid the no_proxy IPv6-literal parsing bug
 documented in ~/TOOLS.md. Proxy comes from https_proxy env as usual.
+
+NOTE (2026-10-07): on ZeroGPU-backed spaces, quota exhaustion surfaces over
+raw REST as `event: error, data: null` — the human-readable message
+("You have exceeded your ZeroGPU quota ... Try again in H:MM:SS") is lost.
+Use the official gradio_client when you need the real error text.
 """
 from __future__ import annotations
 

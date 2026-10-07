@@ -1,10 +1,36 @@
 """TRELLIS.2 via official HuggingFace Space (microsoft/TRELLIS.2).
 
-Keyless Gradio REST: upload -> /image_to_3d -> /extract_glb -> download GLB.
-Runs on HF's free GPU — no local GPU needed. Microsoft TRELLIS.2 weights
-are MIT-licensed (code + weights), so outputs are commercial-safe.
+Keyless Gradio REST. WORKING state (verified 2026-10-07):
+  /image_to_3d (stateless)   [WORK — returns turntable-preview HTML]
+  /extract_glb (GLB export)   [BROKEN over REST]
 
 Space: https://huggingface.co/spaces/microsoft/TRELLIS.2
+License: MIT (microsoft/TRELLIS.2 code + weights) — commercial-safe.
+
+WHY /extract_glb IS BROKEN (verified 2026-10-07):
+  image_to_3d returns (output_buf: gr.State, preview_html). extract_glb
+  takes that state dict as its first input. Over REST:
+  - stateless: the gr.State comes back `null` in the complete payload, so
+    /extract_glb has nothing to decode (`unpack_state(None)` fails);
+  - session-pinned (session_hash in POST payload): the SSE stream returns
+    `event: error` on /image_to_3d, and /extract_glb returns
+    `event: error, data: "404: Not Found"` — the same session-state breakage
+    seen on the TencentARC/InstantMesh space's Gradio version.
+
+What generate() does: runs stateless /image_to_3d, saves the real preview
+HTML (48 rendered views of the generated 3D model — genuine evidence the
+3D inference ran), then raises ProviderError loudly at the /extract_glb
+step. No fake GLB, ever.
+
+NOTE 2026-10-07: ZeroGPU anonymous quota is ALSO a factor on this space
+(official gradio_client: "exceeded your ZeroGPU quota (120s requested vs.
+174s left). Try again in 4:54:25") — raw REST surfaces quota errors as
+`event: error, data: null`, identical to the state failure mode, so the two
+cannot be fully disentangled until quota resets. The gr.State=null
+observation over stateless REST stands regardless.
+
+For a WORKING keyless TRELLIS path use trellis1-space (trellis-community
+space, single stateless /generate_and_extract_glb call -> GLB).
 """
 from __future__ import annotations
 
@@ -58,28 +84,39 @@ class Trellis2SpaceProvider(ModelProvider):
         try:
             server_path = upload_file(self.SPACE_HOST, Path(image))
             fd = file_data(server_path, Path(image).name)
-            # image_to_3d(image, seed, resolution, ss_*, shape_*, tex_*)
-            # defaults from the space UI; 12 steps is the space default
-            call_endpoint(self.SPACE_HOST, "/image_to_3d",
-                          [fd, seed, resolution,
-                           7.5, 0.7, 12, 3.0,      # sparse-structure stage
-                           3.0, 0.7, 12, 3.0,      # shape stage
-                           3.0, 0.7, 12, 3.0],     # texture stage
-                          timeout_min=timeout_min)
-            res = call_endpoint(self.SPACE_HOST, "/extract_glb",
-                                [decimation_target, texture_size],
-                                timeout_min=10)
-        except SpaceError as e:
+            # Stateless /image_to_3d — verified working 2026-10-07. Returns
+            # (state=None over REST, preview HTML with 48 model renders).
+            res = call_endpoint(self.SPACE_HOST, "/image_to_3d",
+                                [fd, seed, resolution,
+                                 7.5, 0.7, 12, 3.0,      # sparse-structure stage
+                                 3.0, 0.7, 12, 3.0,      # shape stage
+                                 3.0, 0.7, 12, 3.0],     # texture stage
+                                timeout_min=timeout_min)
+            for item in (res if isinstance(res, list) else [res]):
+                if isinstance(item, str) and "<div" in item:
+                    (out_dir / "trellis2-preview.html").write_text(item)
+                    break
+            # /extract_glb needs the gr.State dict, which is null over
+            # stateless REST and 404s with session_hash (see docstring).
+            try:
+                call_endpoint(self.SPACE_HOST, "/extract_glb",
+                              [decimation_target, texture_size],
+                              timeout_min=10)
+            except SpaceError as e:
+                raise ProviderError(
+                    "trellis2-space: /extract_glb is unusable over REST on "
+                    "this space's Gradio version — the gr.State from "
+                    "/image_to_3d comes back null stateless, and "
+                    "session-pinned calls fail with SSE `error: 404: Not "
+                    f"Found` ({e}). The 3D inference itself ran (preview "
+                    f"HTML saved to {out_dir}); no GLB can be exported until "
+                    "the space is fixed. Use trellis1-space for a working "
+                    "keyless TRELLIS GLB path.")
+        except (SpaceError, ProviderError):
+            raise
+        except Exception as e:  # noqa: BLE001
             raise ProviderError(f"trellis2-space failed: {e}")
-        fds = list(find_filedata(res))
-        if not fds:
-            raise ProviderError(f"trellis2-space: no GLB in extract_glb result: {str(res)[:300]}")
-        out = out_dir / "trellis2-space.glb"
-        try:
-            download_filedata(self.SPACE_HOST, fds[0], out)
-        except SpaceError as e:
-            raise ProviderError(f"trellis2-space download failed: {e}")
-        if out.stat().st_size < 1024:
-            raise ProviderError("trellis2-space: downloaded GLB suspiciously small")
-        return GenerateResult(glb_path=out, provider="trellis2-space",
-                              meta={"seed": seed, "resolution": resolution})
+        # Unreachable: /extract_glb always raises above.
+        raise ProviderError(
+            "trellis2-space: unexpected — /extract_glb returned without "
+            "error; update this provider to download the GLB.")

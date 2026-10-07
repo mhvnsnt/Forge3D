@@ -15,7 +15,8 @@ Local images are uploaded to a free file host (tmpfiles.org, verified
 -> HTTP 402 INSUFFICIENT_BALANCE: raised loudly as ProviderError, never
 masked. Quest grinding is the owner's decision — not started.
 
-Key via env var FORGE3D_POLLINATIONS_KEY only — never in the repo.
+Key via env var FORGE3D_POLLINATIONS_KEY or ~/.config/forge3d/api_keys.env
+(docs/ACCOUNTS.md) — never in the repo.
 """
 from __future__ import annotations
 
@@ -28,6 +29,7 @@ from pathlib import Path
 
 from .base import (Capability, GenerateResult, ModelProvider, ProviderError,
                    ProviderInfo)
+from .keys import get_key, key_source
 
 MODEL_PRICES = {
     "trellis-2-low": 0.24,
@@ -148,15 +150,18 @@ class Pollinations3DProvider(ModelProvider):
     API = "https://gen.pollinations.ai/3d"
 
     def _key(self) -> str:
-        key = os.environ.get("FORGE3D_POLLINATIONS_KEY", "")
+        # Env first, then ~/.config/forge3d/api_keys.env (docs/ACCOUNTS.md).
+        # Never in the repo.
+        key = get_key("FORGE3D_POLLINATIONS_KEY")
         if not key:
             raise ProviderError("set FORGE3D_POLLINATIONS_KEY (free at enter.pollinations.ai/keys)")
         return key
 
     def is_available(self) -> tuple[bool, str]:
-        if not os.environ.get("FORGE3D_POLLINATIONS_KEY"):
+        src = key_source("FORGE3D_POLLINATIONS_KEY")
+        if src == "missing":
             return False, "FORGE3D_POLLINATIONS_KEY not set"
-        return True, "key present (pollen balance checked at request time)"
+        return True, f"key present via {src} (pollen balance checked at request time)"
 
     def generate(self, *, prompt: str | None = None, image=None,
                  out_dir: Path, model: str = "trellis-2-low",

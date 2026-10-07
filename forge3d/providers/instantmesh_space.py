@@ -1,16 +1,37 @@
 """InstantMesh via official HuggingFace Space (TencentARC/InstantMesh).
 
-Keyless Gradio REST, chained with a session_hash:
-  /preprocess (bg removal) -> /generate_mvs (multiview) -> /make3d (GLB+OBJ).
-Runs on HF's free GPU — no local GPU needed. Apache-2.0 licensed.
+Keyless Gradio REST. WORKING state (verified 2026-10-07):
+  /preprocess (bg removal) -> /generate_mvs (multiview)   [stateless: WORK]
+  /make3d (GLB+OBJ)                                       [BROKEN over REST]
 
 Space: https://huggingface.co/spaces/TencentARC/InstantMesh
-Fast (~10s on GPU) but lower fidelity than TRELLIS.2 — good for quick
-iterations and props; TRELLIS.2-space is the quality anchor.
+License: Apache-2.0 (TencentARC/InstantMesh code + weights).
+NOTE: the Zero123++ multiview stage inside InstantMesh ships weights under
+CC-BY-NC 4.0 (non-commercial) per upstream research — see LICENSES.md.
+
+WHY /make3d IS BROKEN (proven three independent ways 2026-10-07):
+  The space chains preprocess -> generate_mvs -> make3d through gr.State
+  (mv_images). Over REST that requires a session-pinned call chain, but this
+  space's Gradio version breaks every session-pinned call:
+  1. hand-rolled REST with "session_hash" in the POST payload: submit 200,
+     then the SSE stream returns `event: error, data: "404: Not Found"`.
+     The identical call WITHOUT session_hash completes fine.
+  2. official gradio_client (sends session_hash): AppError on /preprocess.
+  3. stateless /make3d (no session): `event: error, data: null` — there is
+     no state for it to read, and the named endpoint declares 0 params so a
+     reconstructed input cannot be passed either (tested: extra `data` items
+     are ignored -> same error).
+  All community InstantMesh space copies are paused (HTTP 503), so there is
+  no alternate host. /make3d is therefore documented UNUSABLE until the
+  space upgrades Gradio or exposes a stateless single-call endpoint.
+
+What generate() does: runs the two working stateless stages and saves the
+real artifacts (bg-removed image + 6-view grid — directly usable by the
+Forge3D MULTIVIEW stage), then raises ProviderError loudly at the /make3d
+step with this explanation. No fake GLB, ever.
 """
 from __future__ import annotations
 
-import uuid
 from pathlib import Path
 
 
@@ -26,8 +47,9 @@ class InstantMeshSpaceProvider(ModelProvider):
         name="instantmesh-space",
         kind="api",
         capabilities=[Capability.IMAGE_TO_3D, Capability.MULTIVIEW],
-        license="Apache-2.0 (TencentARC/InstantMesh); Space terms apply",
-        commercial_ok=True,
+        license="Apache-2.0 (TencentARC/InstantMesh); Space terms apply; "
+                "Zero123++ stage weights CC-BY-NC 4.0 — see LICENSES.md",
+        commercial_ok=False,  # Zero123++ weights are CC-BY-NC; see LICENSES.md
         needs_gpu=False,
         needs_key=False,
         quota_note="free; HF Spaces queue/rate limits apply",
@@ -49,80 +71,56 @@ class InstantMeshSpaceProvider(ModelProvider):
         except Exception as e:  # noqa: BLE001
             return False, f"space unreachable: {e}"
 
+    def _stateless_stage(self, endpoint: str, data: list,
+                         tmin: int) -> list:
+        try:
+            return call_endpoint(self.SPACE_HOST, endpoint, data,
+                                 timeout_min=tmin)
+        except SpaceError as e:
+            raise ProviderError(f"instantmesh-space {endpoint} failed: {e}")
+
     def generate(self, *, prompt=None, image: Path | None = None,
                  out_dir: Path, sample_steps: int = 75, sample_seed: int = 42,
-                 remove_bg: bool = True, timeout_min: int = 20,
-                 **kwargs) -> GenerateResult:
+                 remove_bg: bool = True, **kwargs) -> GenerateResult:
         if image is None or not Path(image).exists():
             raise ProviderError("instantmesh-space needs --image <file>")
         out_dir = Path(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
-        session = uuid.uuid4().hex[:12]
         try:
             server_path = upload_file(self.SPACE_HOST, Path(image))
             fd = file_data(server_path, Path(image).name)
 
-            def call(ep: str, data: list, tmin: int = 10):
-                # session-pinned call (stateful chain: preprocess->mvs->make3d)
-                import json, time, urllib.request
-                url = f"https://{self.SPACE_HOST}/gradio_api/call/{ep.lstrip('/')}"
-                payload = json.dumps({"data": data, "session_hash": session}).encode()
-                req = urllib.request.Request(
-                    url, data=payload, headers={"Content-Type": "application/json"})
-                try:
-                    with urllib.request.urlopen(req, timeout=60) as r:
-                        event_id = json.loads(r.read())["event_id"]
-                except Exception as e:  # noqa: BLE001
-                    raise SpaceError(f"/{ep} submit failed: {e}")
-                surl = (f"https://{self.SPACE_HOST}/gradio_api/call/"
-                        f"{ep.lstrip('/')}/{event_id}")
-                deadline = time.time() + tmin * 60
-                sreq = urllib.request.Request(surl, headers={"Accept": "text/event-stream"})
-                try:
-                    resp = urllib.request.urlopen(sreq, timeout=30)
-                except Exception as e:  # noqa: BLE001
-                    raise SpaceError(f"/{ep} SSE connect failed: {e}")
-                buf = ""
-                try:
-                    while time.time() < deadline:
-                        chunk = resp.read(65536)
-                        if not chunk:
-                            break
-                        buf += chunk.decode("utf-8", "replace")
-                        while "\n\n" in buf:
-                            block, buf = buf.split("\n\n", 1)
-                            et, pl = None, None
-                            for line in block.splitlines():
-                                if line.startswith("event:"):
-                                    et = line[6:].strip()
-                                elif line.startswith("data:"):
-                                    pl = line[5:].strip()
-                            if et == "complete" and pl:
-                                return json.loads(pl)
-                            if et == "error" and pl:
-                                raise SpaceError(f"/{ep} error: {pl[:300]}")
-                finally:
-                    resp.close()
-                raise SpaceError(f"/{ep} timed out after {tmin} min")
+            # Stage 1+2 (stateless — verified working 2026-10-07).
+            pre = self._stateless_stage("/preprocess", [fd, remove_bg], tmin=5)
+            pre_fds = list(find_filedata(pre))
+            if pre_fds:
+                download_filedata(self.SPACE_HOST, pre_fds[0],
+                                  out_dir / "instantmesh-preprocessed.png")
+            mvs = self._stateless_stage(
+                "/generate_mvs", [fd, sample_steps, sample_seed], tmin=12)
+            mvs_fds = list(find_filedata(mvs))
+            if mvs_fds:
+                download_filedata(self.SPACE_HOST, mvs_fds[-1],
+                                  out_dir / "instantmesh-multiview.png")
 
-            call("/preprocess", [fd, remove_bg], tmin=5)
-            call("/generate_mvs", [fd, sample_steps, sample_seed], tmin=10)
-            res = call("/make3d", [], tmin=10)
-        except SpaceError as e:
+            # Stage 3: /make3d needs session-pinned gr.State, which this
+            # space's Gradio version breaks over REST (see module docstring).
+            try:
+                call_endpoint(self.SPACE_HOST, "/make3d", [], timeout_min=10)
+            except SpaceError as e:
+                raise ProviderError(
+                    "instantmesh-space: /make3d is unusable over REST on this "
+                    "space's Gradio version — every session-pinned call fails "
+                    "with SSE `error: 404: Not Found`, and stateless /make3d "
+                    f"has no state to read ({e}). Multiview artifacts were "
+                    f"saved to {out_dir} (usable by the MULTIVIEW stage); no "
+                    "GLB can be produced until the space is fixed.")
+        except (SpaceError, ProviderError):
+            raise
+        except Exception as e:  # noqa: BLE001
             raise ProviderError(f"instantmesh-space failed: {e}")
-        fds = list(find_filedata(res))
-        if not fds:
-            raise ProviderError(f"instantmesh-space: no model in /make3d result: {str(res)[:300]}")
-        # prefer GLB over OBJ
-        pick = next((f for f in fds
-                     if (f.get("path") or "").endswith(".glb")
-                     or "glb" in (f.get("url") or "")), fds[0])
-        out = out_dir / "instantmesh-space.glb"
-        try:
-            download_filedata(self.SPACE_HOST, pick, out)
-        except SpaceError as e:
-            raise ProviderError(f"instantmesh-space download failed: {e}")
-        if out.stat().st_size < 1024:
-            raise ProviderError("instantmesh-space: downloaded model suspiciously small")
-        return GenerateResult(glb_path=out, provider="instantmesh-space",
-                              meta={"seed": sample_seed, "steps": sample_steps})
+        # Unreachable: /make3d always raises above. Kept explicit so a future
+        # space fix lands here instead of silently changing behavior.
+        raise ProviderError(
+            "instantmesh-space: unexpected — /make3d returned without error; "
+            "update this provider to download the GLB.")
