@@ -8,3 +8,6 @@ __pycache__/
 web/data/
 
 _vendor/
+
+# quality100 wave 2: local build products (sources are vendored)
+forge3d/pipelines/_vendor/mikktspace/mikkt_driver

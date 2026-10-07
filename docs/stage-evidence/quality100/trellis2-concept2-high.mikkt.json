@@ -1,0 +1,18 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "verts": 59766,
+  "faces": 93234,
+  "naive_degenerate_tangents": 41,
+  "mikkt_degenerate_tangents": 0,
+  "mirrored_uv_vertex_fraction": 0.5943,
+  "mikkt_negative_handedness_fraction": 0.595,
+  "bake_texels_touched": 584936,
+  "bake_mean_angular_delta_deg": 2.359,
+  "bake_p99_angular_delta_deg": 18.905,
+  "bake_texels_gt5deg_fraction": 0.1468,
+  "naive_seconds": 0.7,
+  "mikkt_seconds": 1.6,
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.mikkt.glb",
+  "primitives_tangentized": 1,
+  "seconds": 130.3
+}
