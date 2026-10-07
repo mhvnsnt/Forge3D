@@ -98,3 +98,33 @@ close; Tripo way ahead; nowhere near 100%. Findings, all measured:
    trellis-2-low via API when balance allows — owner decision on quests).
 3. Keep every dimension measured — this doc is the living scoreboard. Update it
    whenever a stage lands new numbers.
+
+## Wave 1 — quality100 (2026-10-07)
+
+Standing directive: continuous pulling against the losing dimensions.
+Wave 1 pulled **114 catalog entries** (`docs/QUALITY100.md` +
+`docs/quality100.json`, all license-verified) and wired **5 new stages**,
+all proven on `trellis2-concept2-high.glb`
+(`docs/stage-evidence/quality100/`):
+
+- **SwinIR-S x4** (`forge3d/pipelines/swinir.py`): 768² → 3072² CPU texture
+  SR (Apache-2.0). Smoke-tested 128→512 correct; full-GLB run ~40 min on
+  this CPU — GPU runner recommended. Complements Real-ESRGAN (faster,
+  doubles as denoiser).
+- **xatlas re-unwrap + rebake** (`forge3d/pipelines/xatlas_uv.py`): MIT;
+  exact texture transfer via vmapping face correspondence (no Blender).
+  Seams 23,793 → 23,297 (−2%); rebake verified visually correct.
+- **Micro-detail** (`forge3d/pipelines/detail.py`): HF luminance boost
+  (4.34 → 4.89 mean abs) + Sobel detail-normal attached as normalTexture.
+- **AO bake** (`forge3d/pipelines/ao_bake.py`): Blender Cycles AO →
+  occlusionTexture (mean 167.7, std 58.3, quality-gated).
+- **Bump-to-geometry** (`forge3d/pipelines/displace.py`): HF luminance →
+  smoothed displacement along normals (mean 0.00053, max 0.00461 world
+  units — conservative).
+
+Honest: texture-res and native-detail still lose to Tripo; these stages
+narrow the gap but don't close it. Wave-2 queue (in QUALITY100.md):
+MikkTSpace, DiffBIR/OSEDiff/CCSR, CaPa, Instant Meshes, QuadriFlow,
+FlexiCubes, MatFuse/Material Anything, FlashTex, LaMa, StableNormal.
+manifold3d was evaluated and REJECTED for soup repair (current bindings
+have no MeshGL repair path; ctor returns empty on trellis output).
