@@ -32,6 +32,9 @@ against official repos (see docs/research/).
 | InstantMesh via HF Space (TencentARC/InstantMesh) | Apache-2.0; HF Spaces terms | yes | keyless Gradio REST provider `instantmesh-space`; fast iteration path |
 | Pixal3D (TencentARC, SIGGRAPH 2026) | check at pull time | TBD | pixel-aligned TRELLIS.2 successor; not yet wired — candidate for next round |
 | Blender 4.2 LTS (portable binary, `_vendor/`, gitignored) | GPL-3.0 | yes — used as a *tool*, not linked/vendored; scripts drive it headless via `--background --python` | Blender stage (`forge3d/blender/`); binary never committed |
+| Blender Quadriflow remesher (built into Blender 4.2) | GPL-3.0 (part of Blender) | yes — same tool-use as Blender itself | quad-remesh stage (`pipelines/quadremesh.py`); no new license burden |
+| Zero123++ (SUDO-AI-3D, via public HF Space) | CC-BY-NC 4.0 | NO — research-only | multi-view backend `zero123plus` (`pipelines/multiview.py`); NEVER in commercial auto path; verified 2026-10-07 against github.com/SUDO-AI-3D/zero123plus |
+| Instant Meshes (wjakob) | BSD-3-Clause (verified 2026-10-07 against LICENSE.txt) | yes | EVALUATED, NOT WIRED — interactive GUI only, no CLI/batch mode for headless pipeline; Blender Quadriflow chosen instead |
 | google/GNM head model (weights, HF `google/gnm-3`) | Apache-2.0 (repo + model) | yes | `forge3d/body/gnm_head.py`; weights cached repo-local, never committed |
 | Prisma 3D (app) | commercial, NOT open source | n/a | workflow replicated as stages (docs/PRISMA_WORKFLOW.md); no code pulled |
 | COLMAP / pycolmap | BSD-3-Clause | yes | scan path evaluated only (docs/SCAN_PATH.md); not wired |

@@ -19,6 +19,7 @@ def cmd_providers(_args) -> int:
 def cmd_generate(args) -> int:
     from forge3d.providers.registry import discover, available
     from forge3d.pipelines.pipeline import Pipeline, ProviderError
+    from forge3d.pipelines import latency
 
     providers = discover()
     if args.provider == "auto":
@@ -39,7 +40,11 @@ def cmd_generate(args) -> int:
             except ValueError:
                 q = len(QUALITY_ORDER)
             return (q,)
-        chain = [name for name, _ in sorted(pool.items(), key=rank)]
+        quality_chain = [name for name, _ in sorted(pool.items(), key=rank)]
+        # Latency learning: within equal quality tiers, try historically-fastest first.
+        # (Does not override quality order — it reorders unmeasured/unknown providers
+        # by learned speed and pushes known-flaky ones last.)
+        chain = latency.ranked(quality_chain)
     else:
         prov = providers.get(args.provider)
         name = args.provider
@@ -47,16 +52,44 @@ def cmd_generate(args) -> int:
             print(f"unknown provider {name}", file=sys.stderr)
             return 2
         chain = [name]
+
+    gen_kwargs = dict(
+        texture=None if args.texture == "none" else args.texture,
+        densify=not args.no_densify,
+        quadremesh=args.quadremesh,
+        quad_target=args.quad_target,
+        multiview=args.multiview,
+        rig=args.rig,
+    )
+    image = Path(args.image) if args.image else None
+
+    # FAN-OUT: race N providers in parallel, take the first good mesh,
+    # then run post stages once on the winner. (GAP 3 latency mitigation.)
+    if args.fanout > 1 and len(chain) > 1:
+        from forge3d.pipelines.fanout import fanout_generate
+        racers = {n: providers[n] for n in chain[:args.fanout]}
+        print(f"fan-out: racing {', '.join(racers)}", file=sys.stderr)
+        try:
+            winner, mesh_result = fanout_generate(
+                racers, prompt=args.prompt, image=image,
+                out_dir=Path(args.out), max_parallel=args.fanout)
+        except ProviderError as e:
+            print(f"fan-out FAILED: {e}", file=sys.stderr)
+            return 1
+        print(f"fan-out winner: {winner}", file=sys.stderr)
+        pipe = Pipeline(providers[winner], Path(args.out))
+        result = pipe.run_from_mesh(mesh_result, **gen_kwargs)
+        print(f"GLB: {result.glb_path}")
+        print(f"manifest: {result.run_manifest}")
+        return 0
+
     errors = []
     for name in chain:
         prov = providers[name]
         print(f"provider: {name}")
         try:
             result = Pipeline(prov, Path(args.out)).run(
-                prompt=args.prompt, image=Path(args.image) if args.image else None,
-                texture=None if args.texture == "none" else args.texture,
-                densify=not args.no_densify,
-                rig=args.rig)
+                prompt=args.prompt, image=image, **gen_kwargs)
         except ProviderError as e:
             print(f"provider {name} FAILED: {e}", file=sys.stderr)
             errors.append(f"{name}: {e}")
@@ -90,6 +123,19 @@ def main(argv=None) -> int:
                    help="texture refinement backend (none = skip)")
     g.add_argument("--no-densify", action="store_true",
                    help="skip geometry densification")
+    g.add_argument("--quadremesh", action="store_true",
+                   help="quad-remesh to animation-ready topology via Blender "
+                        "Quadriflow (runs instead of densify; game characters)")
+    g.add_argument("--quad-target", type=int, default=30000,
+                   help="target quad count for --quadremesh (default 30000)")
+    g.add_argument("--multiview", default=None,
+                   choices=["zero123plus", "provider-native"],
+                   help="multi-view synthesis before meshing (backs observed, "
+                        "not hallucinated). zero123plus is research-only "
+                        "(CC-BY-NC); provider-native is a documented no-op")
+    g.add_argument("--fanout", type=int, default=1,
+                   help="race N providers in parallel, take first good mesh "
+                        "(latency mitigation; default 1 = sequential chain)")
     g.add_argument("--rig", action="store_true",
                    help="auto-rig the output (instance-rig, CPU)")
     sub.add_parser("selftest")
