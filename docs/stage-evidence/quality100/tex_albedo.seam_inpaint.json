@@ -1,0 +1,10 @@
+{
+  "input": "docs/stage-evidence/quality100/tex_albedo.png",
+  "size": 512,
+  "n_holes": 12,
+  "hole_pixel_fraction": 0.1526,
+  "hole_psnr_before_db": 9.16,
+  "hole_psnr_after_db": 15.43,
+  "psnr_gain_db": 6.27,
+  "seconds": 77.6
+}
