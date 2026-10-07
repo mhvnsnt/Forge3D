@@ -60,6 +60,7 @@ def cmd_generate(args) -> int:
         quad_target=args.quad_target,
         multiview=args.multiview,
         rig=args.rig,
+        gates=not args.no_gates,
     )
     image = Path(args.image) if args.image else None
 
@@ -138,6 +139,9 @@ def main(argv=None) -> int:
                         "(latency mitigation; default 1 = sequential chain)")
     g.add_argument("--rig", action="store_true",
                    help="auto-rig the output (instance-rig, CPU)")
+    g.add_argument("--no-gates", action="store_true",
+                   help="skip automated quality gates (default: gates run, "
+                        "FAIL aborts loudly)")
     sub.add_parser("selftest")
     args = ap.parse_args(argv)
     # allow running from repo root without install

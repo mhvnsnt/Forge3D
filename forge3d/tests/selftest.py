@@ -232,6 +232,35 @@ def test_scan_gate_loud_without_gpu():
         raise AssertionError("scan_photos should have raised ScanError")
 
 
+def test_gates_pass_and_fail():
+    # gates: a clean watertight humanoid-ish mesh passes; a holed mesh FAILs
+    import trimesh
+    from forge3d.pipelines.gates import run_gates, PASS, FAIL
+
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        # good: watertight box scaled to humanoid proportions (1.8m tall)
+        good = trimesh.creation.box(extents=(0.5, 1.8, 0.3))
+        good_path = td / "good.glb"
+        good.export(good_path)
+        rep = run_gates(good_path)
+        assert rep.verdict in (PASS, "FLAG"), \
+            f"clean mesh should pass/flag, got {rep.verdict}: {rep.to_dict()}"
+        names = {r.name: r.verdict for r in rep.results}
+        assert names.get("watertight") == PASS, "box must be watertight"
+
+        # bad: remove some faces -> boundary edges -> watertight FAIL
+        bad = good.copy()
+        bad.update_faces(bad.faces[: len(bad.faces) // 2])
+        bad_path = td / "bad.glb"
+        bad.export(bad_path)
+        rep2 = run_gates(bad_path)
+        assert rep2.verdict == FAIL, \
+            f"holed mesh must FAIL, got {rep2.verdict}"
+        names2 = {r.name: r.verdict for r in rep2.results}
+        assert names2.get("watertight") == FAIL
+
+
 def run() -> bool:
     checks = [
         ("imports", test_imports),
@@ -245,6 +274,7 @@ def run() -> bool:
         ("multiview-unknown-loud", test_multiview_unknown_backend_loud),
         ("pipeline-run-from-mesh", test_pipeline_run_from_mesh),
         ("scan-gate-loud-without-gpu", test_scan_gate_loud_without_gpu),
+        ("gates-pass-and-fail", test_gates_pass_and_fail),
     ]
     results = [_check(n, f) for n, f in checks]
     print(f"{sum(results)}/{len(results)} selftest checks passed")

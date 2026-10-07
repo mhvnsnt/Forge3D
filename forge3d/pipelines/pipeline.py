@@ -59,7 +59,8 @@ class Pipeline:
             densify: bool = True,
             quadremesh: bool = False,
             quad_target: int = 30000,
-            rig: bool = False) -> PipelineResult:
+            rig: bool = False,
+            gates: bool = True) -> PipelineResult:
         """Full run: mesh generation + all post stages."""
         if not prompt and not image:
             raise ProviderError("need --prompt and/or --image")
@@ -87,14 +88,15 @@ class Pipeline:
         self._record("mesh", str(result.glb_path))
         return self.run_from_mesh(result, texture=texture, densify=densify,
                                   quadremesh=quadremesh, quad_target=quad_target,
-                                  rig=rig)
+                                  rig=rig, gates=gates)
 
     def run_from_mesh(self, result: GenerateResult, *,
                       texture: str | None = "lanczos",
                       densify: bool = True,
                       quadremesh: bool = False,
                       quad_target: int = 30000,
-                      rig: bool = False) -> PipelineResult:
+                      rig: bool = False,
+                      gates: bool = True) -> PipelineResult:
         """Post stages on an already-generated mesh (fan-out winner path)."""
         self._record("mesh", str(result.glb_path))
 
@@ -136,6 +138,17 @@ class Pipeline:
             self._record("rig", str(current))
 
         self._record("export", str(current))
+        # quality gates: PASS ships, FLAG ships with warnings recorded,
+        # FAIL raises loudly (fan-out retries next provider, or aborts)
+        if gates:
+            from .gates import run_gates, FAIL
+            report = run_gates(current)
+            self._record("gates", report.to_dict())
+            if report.verdict == FAIL:
+                raise ProviderError(
+                    f"quality gates FAILED on {current}: " +
+                    "; ".join(f"{r.name}: {r.detail}" for r in report.results
+                              if r.verdict == FAIL))
         self._record("handoff",
                      "ready for retarget/rig tooling (Bannon/AshLanev2 generative)")
         return PipelineResult(glb_path=current,
