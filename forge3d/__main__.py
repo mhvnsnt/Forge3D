@@ -26,31 +26,48 @@ def cmd_generate(args) -> int:
         if not pool:
             print("no provider available; run `providers` for reasons", file=sys.stderr)
             return 2
-        # prefer: free API with quota > local GPU > CPU fallback
-        def rank(p):
-            api = 0 if p.info.kind == "api" else 1
-            gpu = 0 if not p.info.needs_gpu else 1
-            return (api, gpu)
-        name, prov = sorted(pool.items(), key=lambda kv: rank(kv[1]))[0]
+        # Fallback chain for image-to-3d: best quality first, local CPU last.
+        # A provider that raises ProviderError is skipped; the next is tried.
+        # (Owner law: failures are loud, never masked into fake output.)
+        QUALITY_ORDER = ["trellis2-space", "instantmesh-space",
+                         "pollinations-3d", "tripo-api",
+                         "triposg", "trellis2", "hi3dgen", "sf3d", "triposr"]
+        def rank(item):
+            name, p = item
+            try:
+                q = QUALITY_ORDER.index(name)
+            except ValueError:
+                q = len(QUALITY_ORDER)
+            return (q,)
+        chain = [name for name, _ in sorted(pool.items(), key=rank)]
     else:
         prov = providers.get(args.provider)
         name = args.provider
         if prov is None:
             print(f"unknown provider {name}", file=sys.stderr)
             return 2
-    print(f"provider: {name}")
-    try:
-        result = Pipeline(prov, Path(args.out)).run(
-            prompt=args.prompt, image=Path(args.image) if args.image else None,
-            texture=None if args.texture == "none" else args.texture,
-            densify=not args.no_densify,
-            rig=args.rig)
-    except ProviderError as e:
-        print(f"FAILED (no fake output produced): {e}", file=sys.stderr)
-        return 1
-    print(f"GLB: {result.glb_path}")
-    print(f"manifest: {result.run_manifest}")
-    return 0
+        chain = [name]
+    errors = []
+    for name in chain:
+        prov = providers[name]
+        print(f"provider: {name}")
+        try:
+            result = Pipeline(prov, Path(args.out)).run(
+                prompt=args.prompt, image=Path(args.image) if args.image else None,
+                texture=None if args.texture == "none" else args.texture,
+                densify=not args.no_densify,
+                rig=args.rig)
+        except ProviderError as e:
+            print(f"provider {name} FAILED: {e}", file=sys.stderr)
+            errors.append(f"{name}: {e}")
+            continue
+        print(f"GLB: {result.glb_path}")
+        print(f"manifest: {result.run_manifest}")
+        return 0
+    print(f"ALL PROVIDERS FAILED (no fake output produced):", file=sys.stderr)
+    for e in errors:
+        print(f"  - {e}", file=sys.stderr)
+    return 1
 
 
 def cmd_selftest(_args) -> int:

@@ -27,3 +27,17 @@ Not beating it on raw cloud speed — beating it on **owner-judged character
 quality at $0**, with full pipeline ownership (no per-model fees, no vendor
 lock-in). The eyes-on loop ("that sucked" / "that was good") is the training
 signal no API gives us.
+
+## Reinforcement round 1 (2026-10-06) — what changed
+- **Speed/quality access:** keyless HF Spaces providers (`trellis2-space`,
+  `instantmesh-space`) give this GPU-less box SOTA image-to-3D. TRELLIS.2 is
+  now the quality anchor; InstantMesh the fast-iteration path. `auto` runs a
+  loud fallback chain instead of failing on one provider.
+- **Topology:** cleanup stage now fills pinholes (`trimesh.repair.fill_holes`)
+  and reports hole counts per run. Quad remesh still open.
+- **Texture/anatomy:** unchanged this round — TRELLIS.2's baked textures are
+  the best free option today; multi-view input (front+back images) is the
+  next lever, then a Paint-equivalent texture stage via space.
+- **Remaining honest gaps:** Space queue latency (2–15 min vs Tripo seconds);
+  hallucinated backs from single view; triangle-soup topology; Pixal3D not
+  yet wired.

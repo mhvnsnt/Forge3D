@@ -13,7 +13,9 @@ against official repos (see docs/research/).
 | numpy | BSD-3-Clause | yes | base requirement |
 | requests (API providers) | Apache-2.0 | yes | base requirement |
 | instance-rig (auto-rig backend, external venv) | MIT | yes | not vendored; subprocess via `pipelines/rig.py` |
-| TripoSR (Stability AI × Tripo) | MIT (code + weights) | yes | CPU-capable fallback provider |
+| TripoSR (Stability AI × Tripo) | MIT (code + weights) | yes | CPU-capable fallback provider; vendored tree patched 2026-10-06 for lazy rembg (see row below) |
+| rembg (TripoSR optional bg-removal dep) | MIT | yes | optional; needed only when remove_bg=True; fails loudly if called without it |
+| omegaconf / einops (TripoSR vendored-dep requirements) | BSD-3-Clause / MIT | yes | in requirements-local.txt |
 | Stable Fast 3D | Stability AI Community License | yes, <$1M annual revenue | default GPU provider; gated HF checkpoint |
 | TripoSG (VAST AI) | MIT | yes | shape fallback; geometry-only |
 | Unique3D | MIT | yes | hero-asset provider (16 GB) |
@@ -26,6 +28,22 @@ against official repos (see docs/research/).
 | Pollinations.ai (image + 3D API) | service terms | check terms before shipping | free key; 3D costs Pollen |
 | Tripo3D API Platform | service terms, free tier CC BY 4.0 non-commercial | NO on free tier | prototyping/reference only |
 | Meshy AI | service terms, free tier CC BY 4.0 | yes with attribution | web UI only (no free API) |
+| TRELLIS.2 via HF Space (microsoft/TRELLIS.2) | MIT (code + weights); HF Spaces terms | yes | keyless Gradio REST provider `trellis2-space`; GPU on HF side; quality anchor |
+| InstantMesh via HF Space (TencentARC/InstantMesh) | Apache-2.0; HF Spaces terms | yes | keyless Gradio REST provider `instantmesh-space`; fast iteration path |
+| Pixal3D (TencentARC, SIGGRAPH 2026) | check at pull time | TBD | pixel-aligned TRELLIS.2 successor; not yet wired — candidate for next round |
+| Blender 4.2 LTS (portable binary, `_vendor/`, gitignored) | GPL-3.0 | yes — used as a *tool*, not linked/vendored; scripts drive it headless via `--background --python` | Blender stage (`forge3d/blender/`); binary never committed |
+| google/GNM head model (weights, HF `google/gnm-3`) | Apache-2.0 (repo + model) | yes | `forge3d/body/gnm_head.py`; weights cached repo-local, never committed |
+| Prisma 3D (app) | commercial, NOT open source | n/a | workflow replicated as stages (docs/PRISMA_WORKFLOW.md); no code pulled |
+| COLMAP / pycolmap | BSD-3-Clause | yes | scan path evaluated only (docs/SCAN_PATH.md); not wired |
+
+## Parametric body models — license verdicts (2026-10-06)
+
+| Model | License | Commercial-safe? | Forge3D decision |
+|---|---|---|---|
+| google/GNM head | Apache-2.0 | **yes** | WIRED — identity/expression parametric head |
+| SMPL / SMPL-X / FLAME / STAR (MPI) | Max Planck non-commercial research only | **NO** | research reference only; weights never downloaded, outputs never derived |
+| GHUM / GHUML (Google) | request-form gated | **NO (gated)** | reference only |
+| Body morphs (`forge3d/body/morphs.py`) | Forge3D-original | yes | authored deformation fields, no statistical model, no tainted data |
 
 ## Hard no-gos (never wired as providers)
 - Zero123++ weights — CC-BY-NC 4.0 (non-commercial). Code is Apache-2.0; weights are the blocker. Research/R&D only, quarantined from shipped builds.

@@ -90,3 +90,51 @@ Topology (triangle soup vs clean mesh) → closed by cleanup + retarget tooling.
 Textures (blurry backs) → Hunyuan3D-Paint stage / better provider.
 Anatomy (hallucinated occlusions) → multi-view stage; owner's eyes-on loop is
 the real training signal.
+
+## REINFORCEMENT ROUND 1 (2026-10-06) — keyless HF Spaces GPU path
+
+Owner directive: wire open-source across every stage until output matches/beats
+Tripo3D. This box has NO GPU (nvidia-smi absent, torch CUDA false, 7GB RAM), so
+the reinforcement leans on **keyless HuggingFace Spaces** (free GPU, Gradio
+REST — proven pattern from AshLanev2 auto-character.py) plus the local CPU
+fallback.
+
+New providers wired (all keyless, verified reachable 2026-10-06):
+| Provider | Backend | License | What it does |
+|---|---|---|---|
+| `trellis2-space` | microsoft/TRELLIS.2 Space | MIT (code+weights) | image→3D SOTA mesh + PBR texture → GLB. QUALITY ANCHOR. |
+| `instantmesh-space` | TencentARC/InstantMesh Space | Apache-2.0 | fast image→3D (~10s GPU) via preprocess→multiview→make3d chain. Iteration speed. |
+
+Shared client: `forge3d/providers/_vendor/hf_space.py` (urllib-based Gradio
+REST: upload → call → SSE poll → download; avoids the httpx/no_proxy IPv6 bug).
+
+`generate --provider auto` now runs a **fallback chain** (best quality first,
+local CPU last): trellis2-space → instantmesh-space → pollinations-3d →
+tripo-api → GPU-local providers → triposr. Any provider raising ProviderError
+is skipped loudly; all-fail still produces NO fake output.
+
+Cleanup stage reinforced: `pipelines/postprocess.py` now counts boundary loops
+(holes) before/after and runs `trimesh.repair.fill_holes()` — stats written to
+`<name>.cleanup.json` for the run manifest.
+
+### Exact command for the owner's first job (image-to-3D)
+```bash
+cd ~/workspace/forge3d
+python3 -m forge3d generate --image /path/to/echo.png --provider auto --out runs/echo1
+# --provider trellis2-space   # force the quality anchor
+# --provider instantmesh-space # force the fast path
+# --provider triposr           # force local CPU fallback
+```
+Output: `runs/echo1/*.clean.glb` (postprocessed) + run manifest with stage
+recordings + cleanup stats. `--rig` adds the CPU auto-rig stage.
+
+### Remaining gaps vs Tripo3D (honest, after round 1)
+1. Space queue latency: HF Spaces are free-tier shared — generations take
+   2–15 min wall-clock vs Tripo's seconds. Mitigated by the fallback chain.
+2. Texture backs: TRELLIS.2 bakes good textures but backs are still hallucinated
+   from one view. Next: Hunyuan3D-Paint-equivalent via space, or multi-view
+   input (owner can supply front+back images — pipeline accepts one today).
+3. Topology: triangle soup persists; hole-fill + weld help, true quad remesh
+   still open (research: Open3D/MeshLab-based remesh on CPU).
+4. Pixal3D (TencentARC, SIGGRAPH 2026) — pixel-aligned TRELLIS.2 successor —
+   not yet wired; top candidate for round 2.

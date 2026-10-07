@@ -6,3 +6,5 @@ out/
 __pycache__/
 *.pyc
 web/data/
+
+_vendor/

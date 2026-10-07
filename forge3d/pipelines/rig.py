@@ -30,6 +30,11 @@ HOME = Path.home()
 # instance-rig venv (built by the animation harvest; MIT-licensed tool)
 VENV_PY = HOME / "workspace/anim-harvest/.venv-ir/bin/python"
 
+# canonical 58-bone Mixamo-style skeleton (extracted from CIPHER_repaired.glb,
+# provenance: docs/PROVENANCE.md) + BVH->mixamorig name map (from Bannon)
+SKELETON_58 = Path(__file__).resolve().parent / "skeleton_58.json"
+MIXAMO_MAP = Path(__file__).resolve().parent / "mixamo_map.json"
+
 
 def bone_count(path: Path) -> int:
     """Count skin joints in a GLB. -1 if not a GLB at all."""
@@ -72,4 +77,30 @@ def rig_glb(glb: Path, out_dir: Path, timeout: int = 600) -> Path:
         raise ProviderError(
             f"rig stage produced unrigged output ({out.name}); refusing to ship it")
     print(f"rig: {glb.name} -> {out.name} ({n} bones)", file=sys.stderr)
+    return out
+
+
+def retarget_to_58(glb: Path, out_dir: Path, timeout: int = 1200) -> Path:
+    """Re-skin a rigged GLB onto the canonical 58-bone Mixamo skeleton.
+
+    Extends (does not fork) the rig stage: delegates to the Blender stage's
+    retarget_58, then validates the output really has 58 joints. Raises
+    ProviderError on any failure — never a fake rig.
+    """
+    from ..blender.stage import retarget_58 as _blender_retarget_58
+    glb = Path(glb)
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    if not SKELETON_58.exists():
+        raise ProviderError(f"retarget stage: {SKELETON_58.name} missing")
+    out = out_dir / f"{glb.stem}.58bone.glb"
+    _blender_retarget_58(glb, out, SKELETON_58,
+                         MIXAMO_MAP if MIXAMO_MAP.exists() else None,
+                         timeout=timeout)
+    n = bone_count(out)
+    if n != 58:
+        raise ProviderError(
+            f"retarget stage: expected 58 bones, got {n} in {out.name}")
+    print(f"rig: {glb.name} -> {out.name} (58 bones verified)",
+          file=sys.stderr)
     return out

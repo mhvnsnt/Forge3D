@@ -14,3 +14,8 @@ Owner rule: reuse, don't duplicate. Provenance of everything ported in:
 | `forge3d/pipelines/measure.py` | new (Forge3D-original) | honest GLB metrics vs Tripo bar (faces/verts/texture-res/watertight/bones); feeds docs/TRIPO_BASELINE.md |
 | `forge3d/pipelines/multiview.py` | new (Forge3D-original) | stage interface; backends fail loudly until wired (zero123plus = CC-BY-NC research-only; mv-adapter license unverified) |
 | _(handoff only)_ | Bannon `tools/generative/retarget/*`, `motion/*` | stays in Bannon; Forge3D emits handoff-ready GLB |
+| `forge3d/pipelines/skeleton_58.json` | Bannon `out/CIPHER_repaired.glb` (extracted joint names + rest pose) | canonical 58-bone Mixamo skeleton, grounded 2026-10-06 — the retarget target |
+| `forge3d/pipelines/mixamo_map.json` | Bannon `tools/generative/retarget/mixamo_map.json` | BVH/instance-rig joint name -> `mixamorig:` bone map used by retarget_58 |
+| `forge3d/blender/stage.py` | Bannon `bannon_blender_rig.py` (op sequence: headless import -> join -> merge doubles -> normals -> decimate -> auto-weight -> export) | generalized as pipeline stages (cleanup/remesh/weights/58-retarget); bmesh used for mesh surgery (merge_by_distance op is unstable headless) |
+| `forge3d/body/gnm_head.py` | google/GNM (Apache-2.0, cloned to `_vendor/gnm`, gitignored) | wrapped NumPy-side; model weights from public HF, cached repo-local, never committed |
+| `forge3d/body/morphs.py` | new (Forge3D-original) | authored region-mask deformation fields; no MPI data anywhere in the chain |
