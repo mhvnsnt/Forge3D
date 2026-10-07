@@ -1,0 +1,113 @@
+{
+  "stages": [
+    {
+      "stage": "concept",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy.concept.jpg",
+      "ts": 1791351299.8287966
+    },
+    {
+      "stage": "concept",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy.concept.jpg",
+      "ts": 1791354361.7053046
+    },
+    {
+      "stage": "mesh",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy/triposr-grunt_kennedy.concept.glb",
+      "ts": 1791354534.3759341
+    },
+    {
+      "stage": "mesh",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy/triposr-grunt_kennedy.concept.glb",
+      "ts": 1791354534.3772764
+    },
+    {
+      "stage": "cleanup",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy/triposr-grunt_kennedy.concept.clean.glb",
+      "ts": 1791354534.9154658
+    },
+    {
+      "stage": "densify",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy/triposr-grunt_kennedy.concept.clean.dense.glb",
+      "ts": 1791354537.8842068
+    },
+    {
+      "stage": "export",
+      "detail": "/home/hatch/workspace/forge3d/docs/stage-evidence/grunt-batch/grunt_kennedy/triposr-grunt_kennedy.concept.clean.dense.glb",
+      "ts": 1791354537.885111
+    },
+    {
+      "stage": "gates",
+      "detail": {
+        "verdict": "FLAG",
+        "gates": [
+          {
+            "name": "watertight",
+            "verdict": "PASS",
+            "detail": "0 boundary edges",
+            "measured": {
+              "boundary_edges": 0
+            }
+          },
+          {
+            "name": "manifold",
+            "verdict": "PASS",
+            "detail": "watertight + winding consistent",
+            "measured": {
+              "watertight": true,
+              "winding_consistent": true
+            }
+          },
+          {
+            "name": "components",
+            "verdict": "PASS",
+            "detail": "single connected mesh",
+            "measured": {
+              "components": 1
+            }
+          },
+          {
+            "name": "degenerate",
+            "verdict": "PASS",
+            "detail": "0 degenerate faces (0.0000)",
+            "measured": {
+              "ratio": 0.0,
+              "count": 0
+            }
+          },
+          {
+            "name": "poly_count",
+            "verdict": "FLAG",
+            "detail": "1642016 tris above 120000 \u2014 heavy for game, consider decimate/quadremesh",
+            "measured": {
+              "tris": 1642016
+            }
+          },
+          {
+            "name": "texture_res",
+            "verdict": "FLAG",
+            "detail": "no embedded textures found \u2014 untextured mesh?",
+            "measured": {
+              "textures": 0
+            }
+          },
+          {
+            "name": "proportions",
+            "verdict": "FLAG",
+            "detail": "height 0.96m outside 1.2-2.4m \u2014 normalize scale",
+            "measured": {
+              "height": 0.961,
+              "width": 0.965
+            }
+          }
+        ]
+      },
+      "ts": 1791354549.893592
+    },
+    {
+      "stage": "handoff",
+      "detail": "ready for retarget/rig tooling (Bannon/AshLanev2 generative)",
+      "ts": 1791354549.8959365
+    }
+  ],
+  "provider": "triposr"
+}
