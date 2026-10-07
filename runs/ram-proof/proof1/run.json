@@ -1,0 +1,35 @@
+{
+  "stages": [
+    {
+      "stage": "concept",
+      "detail": "runs/gen1/concept1.jpg",
+      "ts": 1791345072.9239442
+    },
+    {
+      "stage": "mesh",
+      "detail": "runs/ram-proof/proof1/triposr-concept1.glb",
+      "ts": 1791345440.7685304
+    },
+    {
+      "stage": "mesh",
+      "detail": "runs/ram-proof/proof1/triposr-concept1.glb",
+      "ts": 1791345440.8025196
+    },
+    {
+      "stage": "cleanup",
+      "detail": "runs/ram-proof/proof1/triposr-concept1.clean.glb",
+      "ts": 1791345443.1315036
+    },
+    {
+      "stage": "export",
+      "detail": "runs/ram-proof/proof1/triposr-concept1.clean.glb",
+      "ts": 1791345443.1378443
+    },
+    {
+      "stage": "handoff",
+      "detail": "ready for retarget/rig tooling (Bannon/AshLanev2 generative)",
+      "ts": 1791345443.138215
+    }
+  ],
+  "provider": "triposr"
+}
