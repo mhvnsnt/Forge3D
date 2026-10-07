@@ -35,6 +35,11 @@ VW = float(argv[5]); VH = float(argv[6]); SAMP = int(argv[7])
 MARG = float(argv[8]); VDIR = _j.loads(argv[9])
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
+# factory "empty" is not guaranteed empty in every build (seen: a default
+# Icosphere survives) — purge every object before import so stray factory
+# geometry can never render alongside the proof mesh.
+for _o in list(bpy.data.objects):
+    bpy.data.objects.remove(_o, do_unlink=True)
 bpy.ops.import_scene.gltf(filepath=INP)
 meshes = [o for o in bpy.data.objects if o.type == 'MESH']
 arms = [o for o in bpy.data.objects if o.type == 'ARMATURE']
@@ -115,6 +120,7 @@ bpy.context.scene.world = world
 sc = bpy.context.scene
 sc.render.engine = 'CYCLES'
 sc.cycles.device = 'CPU'
+sc.cycles.use_denoising = False  # some builds ship without OpenImageDenoiser
 sc.cycles.samples = SAMP
 sc.render.resolution_x = int(VW); sc.render.resolution_y = int(VH)
 sc.render.film_transparent = False

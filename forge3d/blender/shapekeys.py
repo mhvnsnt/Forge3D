@@ -44,6 +44,11 @@ if bad:
     print("[shapekeys] FATAL: unknown morphs", bad); sys.exit(1)
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
+# factory "empty" is not guaranteed empty in every build (seen: a default
+# Icosphere survives) — purge every object before import so stray factory
+# geometry can never join the bake or leak into the export.
+for _o in list(bpy.data.objects):
+    bpy.data.objects.remove(_o, do_unlink=True)
 bpy.ops.import_scene.gltf(filepath=INP)
 meshes = [o for o in bpy.data.objects if o.type == 'MESH']
 if not meshes:
