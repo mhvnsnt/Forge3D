@@ -16,7 +16,8 @@ _RENDER_SCRIPT = r"""
 import bpy, math, sys, os
 from mathutils import Vector
 
-glb_path, png_path, size = sys.argv[-4], sys.argv[-3], int(sys.argv[-2])
+glb_path, png_path, size = sys.argv[-5], sys.argv[-4], int(sys.argv[-3])
+engine = sys.argv[-2]
 hdri_path = sys.argv[-1]
 if hdri_path == "NONE":
     hdri_path = None
@@ -86,7 +87,12 @@ else:
     bg.inputs[1].default_value = 1.0
 
 scene = bpy.context.scene
-scene.render.engine = 'BLENDER_EEVEE_NEXT'  # Blender 4.2+ name
+if engine == "cycles":
+    scene.render.engine = 'CYCLES'
+    scene.cycles.samples = 32
+    scene.cycles.device = 'CPU'
+else:
+    scene.render.engine = 'BLENDER_EEVEE_NEXT'  # Blender 4.2+ name
 scene.render.resolution_x = size
 scene.render.resolution_y = size
 scene.render.resolution_percentage = 100
@@ -100,11 +106,13 @@ print("rendered", png_path, flush=True)
 
 def render_glb(glb_path: Path, png_path: Path, size: int = 1024,
                hdri: Path | None = None,
+               engine: str = "eevee",
                timeout: int = 600) -> Path:
     """Render a GLB to PNG with the vendored headless Blender.
 
     hdri: optional CC0 .hdr environment for world lighting
     (see forge3d/assets/cc0/hdris/).
+    engine: "eevee" (needs system EGL) or "cycles" (pure CPU, no EGL).
     """
     if not VENDOR_BLENDER.exists():
         raise RuntimeError(f"vendored blender missing: {VENDOR_BLENDER}")
@@ -113,7 +121,7 @@ def render_glb(glb_path: Path, png_path: Path, size: int = 1024,
     png_path = Path(png_path)
     png_path.parent.mkdir(parents=True, exist_ok=True)
     cmd = [str(VENDOR_BLENDER), "-b", "--python", str(script), "--",
-           str(glb_path), str(png_path), str(size),
+           str(glb_path), str(png_path), str(size), engine,
            str(hdri) if hdri else "NONE"]
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     if proc.returncode != 0 or not png_path.exists():
@@ -130,9 +138,11 @@ def main():
     ap.add_argument("--size", type=int, default=1024)
     ap.add_argument("--hdri", default=None,
                     help="CC0 .hdr for environment lighting")
+    ap.add_argument("--engine", default="eevee", choices=["eevee", "cycles"],
+                    help="eevee needs system EGL; cycles is pure CPU")
     a = ap.parse_args()
     p = render_glb(Path(a.input), Path(a.output), a.size,
-                   Path(a.hdri) if a.hdri else None)
+                   Path(a.hdri) if a.hdri else None, a.engine)
     print(p)
 
 

@@ -1,0 +1,16 @@
+{
+  "mode": "cleanup",
+  "seconds": 12.1,
+  "before": {
+    "vertices": 57865,
+    "faces": 96825,
+    "watertight": false,
+    "bytes": 4149572
+  },
+  "after": {
+    "vertices": 57958,
+    "faces": 96794,
+    "watertight": false,
+    "bytes": 3571240
+  }
+}

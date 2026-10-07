@@ -1,0 +1,16 @@
+{
+  "mode": "voxel",
+  "seconds": 5.5,
+  "before": {
+    "vertices": 57865,
+    "faces": 96825,
+    "watertight": false,
+    "bytes": 4149572
+  },
+  "after": {
+    "vertices": 8976,
+    "faces": 4488,
+    "watertight": false,
+    "bytes": 1378016
+  }
+}
