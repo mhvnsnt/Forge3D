@@ -24,7 +24,7 @@ against official repos (see docs/research/).
 | MV-Adapter (ICCV 2025) | Apache-2.0 (adapter); SDXL base = Open RAIL++-M | yes (propagate RAIL Attachment-A) | commercial-safe multi-view (replaces Zero123++); ~14GB VRAM |
 | TRELLIS.2 (Microsoft) | MIT (code + weights) | yes | SOTA quality anchor; 24GB VRAM (FP8 variant lower); DINOv3 dep is HF-gated |
 | TripoSG (VAST AI) | MIT (code + weights) | yes | watertight geometry workhorse, 8-12GB VRAM; geometry-only — pair with Paint |
-| Hi3DGen (Stable-X) | MIT per upstream README — VERIFY LICENSE at pull time | yes (pending check) | best-detail geometry option; 16-19GB VRAM; geometry-only |
+| Hi3DGen (Stable-X) | MIT — confirmed via Stable-X/Hi3DGen README "License" section 2026-10-06 | yes | best-detail geometry option; 16-19GB VRAM; geometry-only |
 | Pollinations.ai (image + 3D API) | service terms | check terms before shipping | free key; 3D costs Pollen |
 | Tripo3D API Platform | service terms, free tier CC BY 4.0 non-commercial | NO on free tier | prototyping/reference only |
 | Meshy AI | service terms, free tier CC BY 4.0 | yes with attribution | web UI only (no free API) |

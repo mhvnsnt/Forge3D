@@ -55,7 +55,7 @@ Other observed properties:
    (lanczos2x now; Real-ESRGAN / Hunyuan3D-Paint when pulled). Attacks the
    blurry-back weakness.
 3. **Occluded anatomy** — multi-view stage (`pipelines/multiview.py`;
-   Zero123++ is CC-BY-NC research-only, MV-Adapter pending license check)
+   Zero123++ is CC-BY-NC research-only, MV-Adapter Apache-2.0 verified 2026-10-06)
    so backs/sides are observed, not hallucinated.
 4. **Rig-readiness (the beyond-Tripo edge)** — `pipelines/rig.py` auto-rig
    stage (instance-rig, CPU). Tripo's free output ships unrigged; a Forge3D
