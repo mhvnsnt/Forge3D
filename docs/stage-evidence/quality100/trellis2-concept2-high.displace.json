@@ -1,0 +1,11 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "stage": "displace",
+  "amplitude_frac": 0.004,
+  "amplitude_world": 0.00461,
+  "smooth_iters": 3,
+  "mean_abs_disp": 0.00053,
+  "max_abs_disp": 0.00461,
+  "total_seconds": 1.7,
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.displace.glb"
+}

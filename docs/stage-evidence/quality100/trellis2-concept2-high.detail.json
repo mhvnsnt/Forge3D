@@ -1,0 +1,26 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "stage": "detail",
+  "micro_contrast": 0.55,
+  "textures": [
+    {
+      "image_index": 0,
+      "in": [
+        768,
+        768
+      ],
+      "seconds": 2.4
+    },
+    {
+      "image_index": 1,
+      "in": [
+        768,
+        768
+      ],
+      "seconds": 1.2
+    }
+  ],
+  "detail_normal_attached_to": 1,
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.detail.glb",
+  "total_seconds": 4.3
+}

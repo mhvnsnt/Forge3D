@@ -83,3 +83,7 @@ sha256 provenance manifests: `forge3d/assets/fetch.py`.
 ## Quarantine policy
 - `quarantine/` holds any GPL/AGPL-licensed code. NOTHING in `forge3d/` may import from it.
 - Non-commercial-licensed models are research-only providers, clearly marked, never in the default `auto` path for money work.
+| SwinIR (JingyunLiang/SwinIR — network vendored in gitignored `forge3d/pipelines/_vendor/`, weights host-local `~/.forge3d/weights/swinir/`) | Apache-2.0 (verified 2026-10-07 via GitHub API) | yes | `forge3d/pipelines/swinir.py` — SwinIR-S x4 CPU texture SR; timm shim avoids torchvision chain |
+| xatlas (jpcy/xatlas — pip wheel) | MIT (verified 2026-10-07) | yes | `forge3d/pipelines/xatlas_uv.py` — auto-UV rewrite |
+| manifold3d (elalish/manifold — pip) | Apache-2.0 (verified 2026-10-07) | yes | EVALUATED, not wired: `Manifold(Mesh)` ctor returns NotManifold/empty on trellis triangle soup in current bindings (no MeshGL soup-repair path) — trimesh weld remains the repair route |
+| QUALITY100 wave-1 catalog (114 entries: 57 queued permissive, 22 GPL quarantine, 13 paid note-only, 12 research-only, 8 unverified-blocked, 2 wired) | mixed — see `docs/QUALITY100.md` per-entry | per entry | full license manifest in docs/QUALITY100.md "License red-flag summary"; wave-2 queue prioritized by impact |

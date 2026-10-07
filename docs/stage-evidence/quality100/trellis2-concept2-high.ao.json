@@ -1,0 +1,12 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "stage": "ao-bake",
+  "size": 1024,
+  "samples": 24,
+  "ao_mean": 167.7,
+  "ao_std": 58.3,
+  "occlusion_attached_to": 1,
+  "ao_png": "docs/stage-evidence/quality100/trellis2-concept2-high.ao.png",
+  "output": "docs/stage-evidence/quality100/trellis2-concept2-high.ao.glb",
+  "total_seconds": 121.4
+}
