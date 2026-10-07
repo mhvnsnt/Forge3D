@@ -70,7 +70,14 @@ class Pipeline:
         if not ok:
             raise ProviderError(f"provider unavailable: {reason}")
 
-        self._record("concept", prompt or str(image))
+        # concept-image stage: text prompt -> reference image (owner tweak point).
+        # If the owner supplied --image, that IS the concept — skip generation.
+        if prompt and not image:
+            from .concept import concept_image
+            image = concept_image(prompt, self.out_dir)
+            self._record("concept", f"generated: {image}")
+        else:
+            self._record("concept", prompt or str(image))
 
         # multi-view synthesis BEFORE meshing (backs are observed, not hallucinated)
         views: list[Path] = []
@@ -148,6 +155,19 @@ class Pipeline:
                 raise ProviderError(
                     f"quality gates FAILED on {current}: " +
                     "; ".join(f"{r.name}: {r.detail}" for r in report.results
+                              if r.verdict == FAIL))
+            # anatomical defect gates: a horse-legged (or otherwise deformed)
+            # model must NEVER reach presentation. FAIL quarantines the GLB
+            # and raises loudly — same fan-out/abort contract as above.
+            from .anatomy_gates import run_anatomy_gates, quarantine_failed
+            arep = run_anatomy_gates(current)
+            self._record("anatomy_gates", arep.to_dict())
+            if arep.verdict == FAIL:
+                q = quarantine_failed(current, self.out_dir, arep)
+                raise ProviderError(
+                    f"anatomy gates FAILED on {current} "
+                    f"(quarantined: {q}): " +
+                    "; ".join(f"{r.name}: {r.detail}" for r in arep.results
                               if r.verdict == FAIL))
         self._record("handoff",
                      "ready for retarget/rig tooling (Bannon/AshLanev2 generative)")
