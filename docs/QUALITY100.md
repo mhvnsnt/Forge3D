@@ -34,6 +34,7 @@ Real-ESRGAN upscale, LOD chain, CC0 materials.
 | LaMa texture completion | `forge3d/pipelines/seam_inpaint.py` (+ `_vendor/lama/`, Apache-2.0; weights `~/.forge3d/weights/lama/`) | texture-res | `tex_albedo.{holes,inpainted}.png` + `.seam_inpaint.json`: synthetic-hole benchmark on real trellis albedo, hole-PSNR **9.16 → 15.43 dB (+6.27 dB)**. Distinct from speckle dilation (generative fill vs smear). |
 | PyMeshLab mesh quality (quarantined) | `forge3d/pipelines/mesh_quality.py` (MIT shim) + `quarantine/pymeshlab_worker.py` (GPL-3.0, subprocess-only) | native-detail/topology | `.mq.{glb,json}`: faces 93,234→88,052; tri aspect p99 3.44→**2.85**; aspect mean 18753→**1.37** (slivers gone); non-6 poles 45,369→**16,535** (−64%). Adaptive targetlen (first run over-decimated — documented). |
 | Detail bake-pass checklist | `forge3d/pipelines/bake_passes.py` (vanilla bpy) | native-detail | curvature/cavity/thickness/ID passes — Blender run pending. |
+| Instant Meshes quad remesh | `forge3d/pipelines/instantmeshes.py` (BSD-3, built from source) | topology | `.im.{obj,glb,json}`: 93,234 tris → **73,162 faces, 100% quads** (deterministic). New backend for the sibling remesh shootout; no UVs survive (xatlas re-unwraps downstream). |
 
 GPU-lane items stay queued (no CUDA on this box): DiffBIR/OSEDiff/CCSR,
 CaPa, MatFuse/Material Anything, FlashTex, StableNormal.

@@ -82,6 +82,19 @@
       "license": "vanilla Blender 4.2 bpy (GPL software, scripting use safe)",
       "proof": "pending Blender run",
       "metrics": {}
+    },
+    {
+      "wave": 2,
+      "stage": "instant-meshes-quad",
+      "file": "forge3d/pipelines/instantmeshes.py",
+      "license": "BSD-3-Clause (verified from source LICENSE.txt)",
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.im.obj",
+      "metrics": {
+        "in_faces": 93234,
+        "out_faces": 73162,
+        "quad_fraction": 1.0,
+        "note": "pure-quad; no UVs survive (xatlas re-unwraps downstream)"
+      }
     }
   ],
   "entries": [
