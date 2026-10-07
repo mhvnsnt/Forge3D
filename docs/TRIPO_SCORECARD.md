@@ -19,7 +19,7 @@ vertices, T-pose/A-pose, full PBR textures, unrigged, cloud, credit-metered.
 | 4 | Rigged out of the box | 0 bones (unrigged; ~26-joint auto-rig add-on) | **58 joints verified in file** (`bannon_15bone.58bone.glb`) | **WIN — 2.2× the joints** |
 | 5 | Parametric head + expressions | none | **GNM: 253 identity + 383 expression blendshapes** (Apache-2.0) | **WIN — Tripo has no equivalent** |
 | 6 | Body morphs | none | **bulk/height/shoulders/belly/limbs**, topology unchanged | **WIN — Tripo has no equivalent** |
-| 7 | Texture resolution | 2K base / 4K–8K PBR (base+metal+rough+normal) | **2×768² albedo + 1024² normal map** (trellis-2-high; ESRGAN 1536² run in progress) | **LOSS — gap is real but narrowing** |
+| 7 | Texture resolution | 2K base / 4K–8K PBR (base+metal+rough+normal) | **2×1536² albedo (Real-ESRGAN 2x) + 1024² normal map** (trellis-2-high) | **LOSS — gap is real but narrowing** |
 | 8 | Texture delight (de-baked lighting) | "delight" step strips baked light | Hunyuan3D-Paint wired as delight-equivalent | **IN PROGRESS** |
 | 9 | Generation cost | credits per model | **$0** (local CPU + free tiers) | **WIN** |
 | 10 | Pipeline ownership | cloud black box | **full stack in-repo** (providers → mesh → rig → web) | **WIN** |
@@ -82,7 +82,10 @@ close; Tripo way ahead; nowhere near 100%. Findings, all measured:
   Proof: `docs/stage-evidence/normalmap/`. Honest: the map is mostly flat —
   the smooth generated mesh has little high-frequency geometry to capture.
 - **Real-ESRGAN 2x** (`forge3d/pipelines/upscale.py`): 768² → 1536² on
-  trellis-2-high textures — run in progress, evidence pending.
+  trellis-2-high textures — DONE (325s albedo + 727s metallicRoughness, CPU
+  tiled). Before/after texture crops show visibly sharper edges and cleaner
+  detail. Proof: `docs/stage-evidence/upscale2/` (GLB + report + renders).
+  Scorecard dim 7 updated: 2×1536² albedo.
 - **Retexture (re-unwrap + rebake)** (`forge3d/pipelines/retexture.py`):
   ATTEMPTED — Cycles selected-to-active bake is unreliable on this input
   (mostly-black bakes). A quality gate now fails loudly instead of shipping
