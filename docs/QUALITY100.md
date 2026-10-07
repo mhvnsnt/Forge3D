@@ -988,6 +988,66 @@ CaPa, MatFuse/Material Anything, FlashTex, StableNormal.
 
 ---
 
+## Wave-2 research additions (70 new entries, 2026-10-07)
+
+Three research legs (texture-side, geometry-side, free-APIs/assets/add-ons),
+all licenses verified from source, all cross-checked absent from the wave-1
+114. Status mix: **43 queued** (permissive, wireable) · 12 GPL quarantine ·
+5 unverified-blocked · 5 note-only (proprietary free tiers) · 4 queued-gpu ·
+1 research-only. Full per-entry data (what/license/impact/difficulty) in
+`docs/quality100.json` (`"wave": 2`).
+
+**Texture SR (9):** HAT, DAT, RGT, DRCT (MIT), ATD-SR (Apache-2.0) — transformer
+SR family beyond SwinIR; PASD (diffusion real-ISR, GPU); MambaIR (state-space,
+linear complexity); BSRGAN (blind-degradation GAN); Real-CUGAN ncnn
+(weights UNVERIFIED — blocked).
+
+**PBR synthesis (4):** DreamMat (MIT, text-to-PBR, GPU); Ouroboros (MIT,
+single-step rgb↔PBR, GPU); StableMaterials (OpenRAIL commercial-OK,
+diffusers-native, GPU); MaterialMVP (UNVERIFIED — no LICENSE, blocked).
+
+**Tileable diffusion (3):** Content-Aware Tiles (UNVERIFIED, blocked);
+Ultimate SD Upscale (GPL quarantine); Mixture of Diffusers (MIT).
+
+**Free APIs / UIs (11):** TEXTtoPBR (MIT, Pollinations-backed);
+InvokeAI (Apache-2.0, REST API); chaiNNer (GPL quarantine);
+**Poly Haven API** (CC0, keyless, 8K); **ambientCG API v2** (CC0, keyless);
+Sketchfab Data API (CC0 filter); Pollinations.ai image API (keyless);
+Google AI Studio Nano Banana (~500 req/day free); HF Inference Providers
+(~$0.10/mo); Clipdrop (20/24h free); BigJPG (20/mo free).
+
+**Mesh denoise/smooth (5):** trimesh.smoothing (MIT, Taubin w/o PyMeshLab);
+tatsy/L0Denoising (MIT, verify code); bldeng/guideddenoising (LGPL,
+external-binary); pmp-library (MIT, meshfilter CLI + pypmp);
+fastcore-rs (GPL quarantine).
+
+**Remesh/retopo (8):** **Geogram** (BSD-3, CVT/anisotropic remesh) +
+**pygeogram** (BSD-3 bindings, difficulty 1); codemechanic/autoremesher
+(MIT headless quad CLI); Tri2Quad (BSD-3 declared, verify text);
+MeshAnythingV2 (S-Lab research); requad/PaMO/quadforge (GPL/AGPL quarantine).
+
+**UV (6):** mouette (MIT, LSCM/BFF pure-Python); confmap (MIT);
+boundary-first-flattening (MIT); ARAP-Pelt-UV-Unwrap (MIT);
+gltf-asset-auditor (Apache-2.0, texel-density QA gate);
+bff-rust-reference (MIT).
+
+**Baking (5):** **texutil** (MIT, curvature/AO/thickness/materialids CLI —
+strongest bake find); aobaker (public domain); xNormal (freeware note-only);
+jBake Tools (GPL quarantine); mbaker (UNVERIFIED, blocked).
+
+**CC0/PD assets (10):** cgbookcase (566 sets, 8K); TextureCan (+SBSAR);
+Texture Ninja (5000+); 3dtextures.me; Smithsonian Open Access 3D (API);
+Redwood 3DScan (10,933 RGB-D, public domain); Objaverse-XL (filter CC0);
+Google Scanned Objects (CC-BY); OpenSurfaces/MINC; NeRF Synthetic.
+
+**Permissive Blender add-ons (4):** glTF-Blender-IO (Apache-2.0);
+AI-Render (MIT); Malt (MIT); BlenderNeRF (MIT). Quarantine 5: Dream
+Textures, BlenderProc, Sverchok, MB-Lab, D-NOISE (all GPL/AGPL).
+
+**Wave-3 wire-up shortlist** (impact/effort, CPU-feasible): texutil (5/2),
+Geogram/pygeogram (5/3, 4/1), autoremesher (4/2), mouette (4/1),
+gltf-asset-auditor (3/1), Poly Haven/ambientCG ingest (5/1).
+
 ## Wave-2 queue (priority backlog for the next wave)
 
 1. **MikkTSpace** — drop-in tangent basis for correct normal maps (impact 5, difficulty 1).
@@ -1014,9 +1074,22 @@ CaPa, MatFuse/Material Anything, FlashTex, StableNormal.
 - **Paid (note only):** Exoside QuadRemesher, ZRemesher, Zen UV, Headus UVLayout, Knald, Marmoset Toolbag, Substance 3D Painter, MESHmachine, Bake Wrangler, SpeedRetopo, SimplyBake, RizomUV.
 - **License corrections this wave:** OpenVDB = Apache-2.0 (not MPL); Materialize = GPL-3.0 (open source, not freeware); Blender 4.2 has NO Quadriflow modifier; Kaolin's FlexiCubes copy is NC (use standalone repo); CaPa README footer "© NCSOFT" loses to its BSD-3 LICENSE file.
 
+## License red-flag summary (wave 2)
+
+- **GPL/AGPL quarantine (new):** Ultimate SD Upscale, chaiNNer, fastcore-rs, requad, PaMO (AGPL), quadforge, jBake Tools, Dream Textures, BlenderProc, Sverchok, MB-Lab (AGPL/GPL), D-NOISE.
+- **LGPL (external-binary-only):** bldeng/guideddenoising.
+- **NC / research-only (new):** MeshAnythingV2 (S-Lab 1.0), SwinFIR (CC BY-NC-SA), Tiled Diffusion & VAE (CC BY-NC-SA), RGB↔X (noncommercial), IntrinsicAnything (registration license).
+- **Unverified (do not wire):** MaterialMVP, Content-Aware Tiles, Tri2Quad (BSD-3 declared, verify text), mbaker, Real-CUGAN weights, SRFormer, Omni-SR.
+- **Paid/proprietary free-tier (note only):** xNormal (freeware), Clipdrop, BigJPG, Google AI Studio, HF Inference Providers.
+- **License corrections this wave:** chaiNNer and ComfyUI are GPL-3.0 (not MIT); ShareTextures "Custom CC0" bans redistribution (excluded); MikkTSpace = zlib-style permissive; Instant Meshes = BSD-3-Clause.
+
 ## Entry count
 
 - Categories 1–3 (texture SR / synthesis / detail): 37 entries
 - Categories 4–7 (mesh / topology / UV / baking): 40 entries
 - Categories 8–10 (multiview / scan / Blender): 36 entries
 - **Wave-1 total: 113 new entries**, all license-verified from source.
+- **Wave-2 total: 70 new entries** (3 research legs, all license-verified
+  from source 2026-10-07) + **6 wired stages** (MikkTSpace, LaMa,
+  PyMeshLab-mesh_quality, InstantMeshes, bake_passes, + xatlas index bugfix).
+- **Catalog total: 184 entries** (114 wave-1 + 70 wave-2).
