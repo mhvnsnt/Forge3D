@@ -28,16 +28,32 @@ quality at $0**, with full pipeline ownership (no per-model fees, no vendor
 lock-in). The eyes-on loop ("that sucked" / "that was good") is the training
 signal no API gives us.
 
-## Reinforcement round 1 (2026-10-06) — what changed
-- **Speed/quality access:** keyless HF Spaces providers (`trellis2-space`,
-  `instantmesh-space`) give this GPU-less box SOTA image-to-3D. TRELLIS.2 is
-  now the quality anchor; InstantMesh the fast-iteration path. `auto` runs a
-  loud fallback chain instead of failing on one provider.
-- **Topology:** cleanup stage now fills pinholes (`trimesh.repair.fill_holes`)
-  and reports hole counts per run. Quad remesh still open.
-- **Texture/anatomy:** unchanged this round — TRELLIS.2's baked textures are
-  the best free option today; multi-view input (front+back images) is the
-  next lever, then a Paint-equivalent texture stage via space.
-- **Remaining honest gaps:** Space queue latency (2–15 min vs Tripo seconds);
-  hallucinated backs from single view; triangle-soup topology; Pixal3D not
-  yet wired.
+## Gap-closing round (2026-10-07) — owner: "solve the blocks before I send the image"
+- **Backs (GAP 1):** multi-view synthesis stage wired (`pipelines/multiview.py`,
+  `--multiview` flag). Zero123++ via public HF Space, single image → 6-view
+  grid → split views, fed to mesh providers that accept them. License reality:
+  Zero123++ is CC-BY-NC 4.0 — research-only, NEVER in the commercial auto path.
+  All public Zero123++ Spaces were paused as of 2026-10-07; the backend retries
+  with backoff then fails loudly. Commercial-safe explicit multi-view synthesis
+  does not exist in open-source (every generative NVS model is research-licensed);
+  the money path stays provider-native internal multiview (TRELLIS.2/InstantMesh,
+  MIT/Apache) + fan-out multi-seed + owner eyes-on.
+- **Topology (GAP 2):** quad-remesh stage wired (`pipelines/quadremesh.py`,
+  `--quadremesh` flag, default target 30k quads). Headless Blender 4.2
+  Quadriflow: triangle soup → animation-ready quad-dominant mesh, UVs
+  smart-projected, original texture baked best-effort (loud on skip). Runs
+  INSTEAD of densify (upsampling clean quads back to soup would undo it).
+  No new license burden (Blender tool-use, already a dependency). Instant
+  Meshes evaluated and rejected: BSD-3-Clause but interactive-GUI-only, no
+  CLI for headless pipelines.
+- **Latency (GAP 3):** two mitigations, both wired. (1) Parallel fan-out
+  (`--fanout N`): race N providers simultaneously on the mesh stage, first
+  good mesh wins, losers cancelled — worst case drops from sum-of-queues to
+  max-of-queues. (2) Latency learning (`pipelines/latency.py`): every attempt
+  recorded to `~/.forge3d/latency.json`, auto order tries historically-fastest
+  first. Honest floor: without paid compute, latency = fastest free queue
+  available (observed 2–15 min on HF Spaces). This finds that floor; it
+  doesn't lower it.
+- **Remaining honest gaps:** Pixal3D not yet wired; texture backs still the
+  weakest link on local runs; quad-remesh texture bake is best-effort
+  (8-sample CPU Cycles — good enough for game characters, not hero assets).
