@@ -7,7 +7,7 @@ Owner rule: reuse, don't duplicate. Provenance of everything ported in:
 | `forge3d/pipelines/postprocess.py` | AshLanev2 `tools/generative/3d/postprocess.py` | adapted to provider interface; trimesh-based; raises ProviderError on corrupt input (no fake pass-through) |
 | `forge3d/providers/triposr.py` | AshLanev2 `tools/generative/3d/triposr_generate.py` | real inference path ported (mc_resolution, bg-removal, chunk_size 8192); honest DOWN until torch+vendor present |
 | _(port candidates)_ | Bannon `tools/generative/mesh/mesh_doctor.py` | hole-fill + weld; next port for cleanup stage upgrade |
-| _(port candidates)_ | Bannon `tools/generative/mesh/lod_chain.py` | LOD0/1/2 for game-ready exports |
+| _(ported 2026-10-07)_ | Bannon `tools/generative/mesh/lod_chain.py` | LOD0/1/2 for game-ready exports → now `forge3d/pipelines/lod.py` (see Vertical depth expansion) |
 | `forge3d/pipelines/rig.py` | AshLanev2 `tools/auto-rig/auto_rig.py` | capsule/instance-rig skinning ported as library stage; external MIT venv via subprocess; validates bone count, raises ProviderError on failure |
 | `forge3d/pipelines/texture.py` | new (Forge3D-original) | embedded-texture 2x refinement; backends: lanczos (CPU, honest resample), realesrgan (BSD, when installed), hunyuan-paint (Tencent license, gated — not wired) |
 | `forge3d/pipelines/densify.py` | new (Forge3D-original) | midpoint subdivision toward ~1.9M-face Tripo bar; same surface, UV-safe; tessellation only, not detail |
@@ -24,3 +24,27 @@ Owner rule: reuse, don't duplicate. Provenance of everything ported in:
 | `forge3d/pipelines/transfer_weights.cjs` | Bannon `tools/model_diag/transfer_weights.cjs` @ 95300506b4b2a8be7ee7af54d2e93a2016dd9c4a | K=6 inverse-distance KNN donor→target skin-weight copy (verbatim skeleton + IBMs, target geometry/texture); proof run 2026-10-06: donor `docs/stage-evidence/bannon_15bone.glb` → 4mm-perturbed noskin target, 14789 verts, 15 joints, weight-sums exactly 1.0, top-joint agreement 100%, mean |W−W_donor| 0.01276; render + GLB under `docs/stage-evidence/donor-transfer/` |
 | `forge3d/pipelines/normalize_to_donor.cjs` | Bannon `out/tools/normalize_to_donor.cjs` (build-output dir, untracked) @ 95f68f4bd2af8241e9d63fc2e1c6979db99279f3 | companion: bakes target mesh into donor bind space (uniform height scale + centre translate) before transfer |
 | Bannon LICENSE for both ports | Copyright (c) 2026 mhvnsnt, All Rights Reserved | ported intra-owner (same copyright holder) at owner direction; no third-party code involved |
+
+## Vertical depth expansion (2026-10-07)
+
+| Forge3D file | Source | Notes |
+|---|---|---|
+| `forge3d/pipelines/lod.py` | Bannon `tools/generative/mesh/lod_chain.py` (mhvnsnt/Bannon, proprietary — same owner, ported at owner direction 2026-10-07) | structural port; Forge3D extension: vendored headless-Blender COLLAPSE-decimate backend (open3d/fast-simplification not installed on free runner); LOD0/1/2 GLBs + face-count table; proof `docs/stage-evidence/lod/` |
+| `forge3d/pipelines/upscale.py` | new (Forge3D-original) | Real-ESRGAN 2x texture upscale: vendored BasicSR RRDBNet arch (Apache-2.0) + official RealESRGAN_x2 weights (BSD-2-Clause), tiled torch-CPU inference; the ncnn-vulkan binary was evaluated and rejected on this box (needs Vulkan GPU — proven `vkCreateInstance failed -9`; api-wiring's own install notes agree); proof `docs/stage-evidence/upscale/` |
+| `forge3d/pipelines/normalmap.py` | new (Forge3D-original) | tangent-space normal map baked from mesh geometry (trimesh+numpy UV rasterization), attached as material normalTexture; proof `docs/stage-evidence/normalmap/` |
+| `forge3d/pipelines/remesh.py` | new (Forge3D-original) | voxel remesh vs bmesh-cleanup shootout harness (vendored headless Blender); verdict in `docs/REMESH_SHOOTOUT.md`; proof `docs/stage-evidence/remesh/` |
+| `forge3d/pipelines/glbutil.py` | new (Forge3D-original) | shared GLB parse/append/write helpers — texture.py refactored onto it so upscale/normalmap extend rather than duplicate |
+| `forge3d/pipelines/render.py` | new (Forge3D-original) | deterministic headless-Blender EEVEE 3/4-view render for stage evidence before/after pairs |
+| `forge3d/pipelines/texture.py` (edit) | existing | `_realesrgan2x` backend now actually wired via `upscale.esrgan2x` (was a loud-failure stub for the uninstalled `realesrgan` package); GLB rebuild refactored onto `glbutil` — behavior unchanged (verified: lanczos 768→1536 re-run byte-identical path) |
+| `_vendor/realesrgan/` (rrdbnet_arch.py, LICENSE.txt, models/RealESRGAN_x2.pth) | xinntao/BasicSR (arch, Apache-2.0) + xinntao/Real-ESRGAN official v0.2.1 release (weights, BSD-2-Clause) | weights (67MB) downloaded 2026-10-07 via HuggingFace mirror (github.com blocked by egress proxy); gitignored, never committed |
+
+## Keyless HF Space providers (2026-10-07 expansion)
+
+| Forge3D file | Source | Notes |
+|---|---|---|
+| `forge3d/providers/keys.py` | new (Forge3D-original) | `FORGE3D_<PROVIDER>_KEY` resolution: env first, then `~/.config/forge3d/api_keys.env` (600, `export KEY=...`); never prints/logs/commits values |
+| `forge3d/providers/trellis1_space.py` | new (Forge3D-original, pattern from `hf_space.py`/`trellis2_space.py`) | trellis-community/TRELLIS space, single stateless `/generate_and_extract_glb` -> GLB; MIT weights; nvdiffrast-NC server-side caveat in LICENSES.md |
+| `forge3d/providers/flux_space.py` | new (Forge3D-original, pattern from `pollinations_image.py`) | black-forest-labs/FLUX.1-schnell space, stateless `/infer` text-to-image concept stage (`fetch_image()`); Apache-2.0 |
+| `forge3d/providers/instantmesh_space.py` (rewrite) | new (Forge3D-original) | stateless `/preprocess` + `/generate_mvs` (real artifacts saved); `/make3d` proven unusable over REST 3 ways (session_hash -> SSE `error: 404: Not Found`; official gradio_client -> AppError; stateless -> `error: null`) — raises ProviderError loudly with the forensics |
+| `forge3d/providers/trellis2_space.py` (rewrite) | new (Forge3D-original) | stateless `/image_to_3d` (preview HTML saved); `/extract_glb` needs gr.State (null stateless, 404 session-pinned) — raises loudly; points at trellis1-space |
+| REST forensics method | `https://huggingface.co/spaces/TencentARC/InstantMesh/raw/main/app.py`, `.../microsoft/TRELLIS.2/raw/main/app.py`, `.../trellis-community/TRELLIS/raw/main/app.py` | read upstream app.py to confirm gr.State chaining is the blocker; all community InstantMesh copies paused (HTTP 503); stabilityai/stable-fast-3d space 404 (down) |
