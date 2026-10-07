@@ -1,0 +1,35 @@
+{
+  "input": "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.glb",
+  "size": 1024,
+  "samples": 8,
+  "thickness_cap_world": 0.2769,
+  "thickness_hit_rate": 0.9717,
+  "curvature": {
+    "mean": 0.0023,
+    "std": 0.0138,
+    "min": 0.0,
+    "max": 1.0,
+    "coverage": 1.0
+  },
+  "cavity": {
+    "mean": 0.0011,
+    "std": 0.0097,
+    "min": 0.0,
+    "max": 1.0,
+    "coverage": 1.0
+  },
+  "thickness": {
+    "mean": 0.3628,
+    "std": 0.1979,
+    "min": 0.008,
+    "max": 1.0,
+    "coverage": 0.5938
+  },
+  "outputs": [
+    "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.curvature.png",
+    "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.cavity.png",
+    "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.thickness.png",
+    "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.id.png"
+  ],
+  "seconds": 14.5
+}

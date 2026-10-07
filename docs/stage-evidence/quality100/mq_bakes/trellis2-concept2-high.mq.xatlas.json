@@ -1,0 +1,17 @@
+{
+  "input": "docs/stage-evidence/quality100/trellis2-concept2-high.mq.glb",
+  "stage": "xatlas-uv",
+  "verts_in": 44635,
+  "verts_out": 53158,
+  "faces": 88052,
+  "seam_edges_before": 1717,
+  "seam_edges_after": 16741,
+  "texture_rebaked": [
+    1024,
+    1024
+  ],
+  "xatlas_seconds": 17.2,
+  "rebake_seconds": 13.4,
+  "total_seconds": 37.1,
+  "output": "docs/stage-evidence/quality100/mq_bakes/trellis2-concept2-high.mq.xatlas.glb"
+}

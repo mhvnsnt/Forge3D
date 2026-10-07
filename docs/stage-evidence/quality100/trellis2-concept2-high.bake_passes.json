@@ -1,0 +1,35 @@
+{
+  "input": "docs/stage-evidence/trellis2-full/trellis2-concept2-high.glb",
+  "size": 1024,
+  "samples": 8,
+  "thickness_cap_world": 0.2941,
+  "thickness_hit_rate": 0.9663,
+  "curvature": {
+    "mean": 0.0025,
+    "std": 0.0098,
+    "min": 0.0,
+    "max": 1.0,
+    "coverage": 1.0
+  },
+  "cavity": {
+    "mean": 0.0015,
+    "std": 0.0091,
+    "min": 0.0,
+    "max": 1.0,
+    "coverage": 1.0
+  },
+  "thickness": {
+    "mean": 0.3423,
+    "std": 0.192,
+    "min": 0.0072,
+    "max": 1.0,
+    "coverage": 0.5747
+  },
+  "outputs": [
+    "docs/stage-evidence/quality100/trellis2-concept2-high.curvature.png",
+    "docs/stage-evidence/quality100/trellis2-concept2-high.cavity.png",
+    "docs/stage-evidence/quality100/trellis2-concept2-high.thickness.png",
+    "docs/stage-evidence/quality100/trellis2-concept2-high.id.png"
+  ],
+  "seconds": 13.2
+}

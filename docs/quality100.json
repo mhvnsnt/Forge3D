@@ -80,8 +80,19 @@
       "stage": "bake-passes",
       "file": "forge3d/pipelines/bake_passes.py",
       "license": "vanilla Blender 4.2 bpy (GPL software, scripting use safe)",
-      "proof": "pending Blender run",
-      "metrics": {}
+      "proof": "docs/stage-evidence/quality100/trellis2-concept2-high.bake_passes.json",
+      "metrics": {
+        "thickness_hit_rate": 0.9663,
+        "thickness_coverage": 0.5747,
+        "curvature_std_raw": 0.0098,
+        "passes": [
+          "curvature",
+          "cavity",
+          "thickness",
+          "id"
+        ],
+        "pipeline_order": "mesh_quality -> xatlas_uv -> bake_passes proven in mq_bakes/"
+      }
     },
     {
       "wave": 2,
