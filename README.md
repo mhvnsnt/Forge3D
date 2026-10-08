@@ -2,7 +2,7 @@
 
 Free, open-source 3D character model generation — Tripo3D-quality output at zero cost.
 
-**Status: PHASE 1 — pipeline built, no models generated yet.** The pipeline is wired and self-tested; the first generation run happens only after owner review of the architecture.
+**Status: PIPELINE OPERATIONAL — generations running.** The pipeline is wired, self-tested (14/14), and has produced models (`runs/gen1/`, `runs/closeout/`, `runs/quality/`). Anatomical defect gates (horse-leg detectors) are wired into the pipeline and verified against a proof corpus (`docs/ANATOMY_GATES.md`). Generation quality work continues toward the 400% bar.
 
 ## What it is
 
