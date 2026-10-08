@@ -68,7 +68,10 @@ def test_pipeline_records_stages():
             return GenerateResult(glb_path=glb, provider="dummy-pipe")
 
     with tempfile.TemporaryDirectory() as td:
-        res = Pipeline(Dummy(), Path(td)).run(prompt="test orc")
+        # cube dummy is not humanoid: anatomy gates correctly reject it, so
+        # run with gates=False to test stage recording (gate wiring is
+        # covered by test_anatomy_gates_reject_cube below)
+        res = Pipeline(Dummy(), Path(td)).run(prompt="test orc", gates=False)
         assert res.glb_path.exists()
         manifest = json.loads(res.run_manifest.read_text())
         stages = [s["stage"] for s in manifest["stages"]]
@@ -206,9 +209,10 @@ def test_pipeline_run_from_mesh():
     with tempfile.TemporaryDirectory() as td:
         d = Dummy()
         mesh_res = d.generate(prompt="x", out_dir=Path(td))
-        # run_from_mesh: post stages on existing mesh (fan-out winner path)
+        # run_from_mesh: post stages on existing mesh (fan-out winner path).
+        # Cube dummy is not humanoid -> gates=False (see test_anatomy_gates_reject_cube)
         res = Pipeline(d, Path(td) / "post").run_from_mesh(
-            mesh_res, texture="none", densify=False)
+            mesh_res, texture="none", densify=False, gates=False)
         assert res.glb_path.exists()
         stages = [s["stage"] for s in
                   json.loads(res.run_manifest.read_text())["stages"]]
@@ -281,6 +285,41 @@ def test_gates_pass_and_fail():
         assert names2.get("watertight") == FAIL
 
 
+def test_anatomy_gates_reject_cube():
+    # anatomy gates are WIRED INTO the pipeline: a non-humanoid mesh (cube)
+    # must be rejected loudly when gates=True (the default). This is the
+    # proof that the horse-leg gates actually gate the pipeline, not just
+    # exist as a module.
+    import trimesh
+    from forge3d.providers.base import (Capability, GenerateResult,
+                                        ModelProvider, ProviderError,
+                                        ProviderInfo)
+    from forge3d.pipelines.pipeline import Pipeline
+
+    class Dummy(ModelProvider):
+        info = ProviderInfo(name="dummy-cube-reject", kind="local",
+                            capabilities=[Capability.IMAGE_TO_3D])
+
+        def is_available(self):
+            return True, "test double"
+
+        def generate(self, *, prompt=None, image=None, out_dir, **kw):
+            glb = Path(out_dir) / "cube.glb"
+            trimesh.creation.box(extents=(1, 1, 1)).export(glb)
+            return GenerateResult(glb_path=glb, provider="dummy-cube-reject")
+
+    with tempfile.TemporaryDirectory() as td:
+        try:
+            Pipeline(Dummy(), Path(td)).run(prompt="test cube", gates=True)
+        except ProviderError as e:
+            assert "anatomy gates FAILED" in str(e), \
+                f"expected anatomy gate rejection, got: {e}"
+            assert "quarantined" in str(e), "rejected mesh must be quarantined"
+            return
+        raise AssertionError(
+            "pipeline with gates=True must REJECT a non-humanoid cube")
+
+
 def run() -> bool:
     checks = [
         ("imports", test_imports),
@@ -295,6 +334,7 @@ def run() -> bool:
         ("pipeline-run-from-mesh", test_pipeline_run_from_mesh),
         ("scan-gate-loud-without-gpu", test_scan_gate_loud_without_gpu),
         ("gates-pass-and-fail", test_gates_pass_and_fail),
+        ("anatomy-gates-reject-cube", test_anatomy_gates_reject_cube),
         ("concept-stage-contract", test_concept_stage_contract),
     ]
     results = [_check(n, f) for n, f in checks]
