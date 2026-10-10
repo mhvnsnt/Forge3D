@@ -50,8 +50,14 @@ def run_bpy(script: str, *args: str, timeout: int = 900) -> str:
         f.write(script)
         script_path = f.name
     try:
+        # xvfb-run provides the GLX context Blender needs (EGL breaks on restarts)
+        import shutil
+        xvfb = shutil.which("xvfb-run")
+        cmd = [str(bbin), "--background", "--python", script_path, "--", *args]
+        if xvfb:
+            cmd = [xvfb, "-a"] + cmd
         r = subprocess.run(
-            [str(bbin), "--background", "--python", script_path, "--", *args],
+            cmd,
             capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired as e:
         raise ProviderError(f"blender stage timed out after {timeout}s: {e}")
