@@ -22,3 +22,6 @@ Standing rules for every agent working in this repo. These come from the owner (
 
 ## Verification
 - A worker's "verified" is a CLAIM. Deliverable reports must include proof: which files exist, which tests ran and passed, sample outputs. No proof = not done.
+
+## Muse training pack
+Muse/Ashes and every agent: read the [Muse training pack](https://github.com/mhvnsnt/money-machine-hq/tree/main/docs/muse-training-pack) (instructions, pre-flight checklist, real before/after examples, right-way videos) before every job.
