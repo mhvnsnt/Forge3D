@@ -1,0 +1,211 @@
+<div id="partposer" style="box-sizing:border-box;max-width:100%;font-family:system-ui,sans-serif">
+<style>
+#partposer *{box-sizing:border-box}
+#partposer .viewer{width:100%;height:460px;background:var(--hatch-widget-surface-muted);border:1px solid var(--hatch-widget-border);border-radius:8px;overflow:hidden;position:sticky;top:0;z-index:10}
+#partposer canvas{display:block;width:100%;height:100%}
+#partposer .controls{padding:12px 4px;max-height:460px;overflow-y:auto}
+#partposer .row{display:flex;align-items:center;gap:8px;margin:6px 0}
+#partposer .row label{width:130px;flex-shrink:0;color:var(--hatch-widget-text);font-size:12px}
+#partposer .row input[type=range]{flex:1;accent-color:var(--hatch-widget-accent)}
+#partposer .row .val{width:60px;text-align:right;color:var(--hatch-widget-muted);font-size:11px;font-variant-numeric:tabular-nums}
+#partposer .section{color:var(--hatch-widget-text);font-size:13px;font-weight:600;margin:14px 0 6px}
+#partposer .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+#partposer .btnrow button{padding:7px 12px;border:1px solid var(--hatch-widget-border);border-radius:6px;background:var(--hatch-widget-surface);color:var(--hatch-widget-text);font-size:12px;cursor:pointer}
+#partposer .btnrow button.active{background:var(--hatch-widget-accent);color:var(--hatch-widget-on-accent);border-color:var(--hatch-widget-accent)}
+#partposer .btnrow button.danger{border-color:#c44;color:#c44}
+#partposer .note{color:var(--hatch-widget-muted);font-size:11px;margin-top:8px;line-height:1.4}
+#partposer .copybtn{margin-top:10px;padding:9px 14px;border:1px solid var(--hatch-widget-accent);border-radius:6px;background:transparent;color:var(--hatch-widget-accent);font-size:13px;cursor:pointer;width:100%}
+#partposer .savepreset{display:flex;gap:8px;margin:8px 0}
+#partposer .savepreset input{flex:1;padding:7px 10px;border:1px solid var(--hatch-widget-border);border-radius:6px;background:var(--hatch-widget-surface);color:var(--hatch-widget-text);font-size:12px}
+#partposer .savepreset button{padding:7px 14px;border:1px solid var(--hatch-widget-accent);border-radius:6px;background:var(--hatch-widget-accent);color:var(--hatch-widget-on-accent);font-size:12px;cursor:pointer}
+#partposer .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--hatch-widget-muted);font-size:14px}
+#partposer .modified{color:var(--hatch-widget-accent);font-size:11px;margin-left:6px}
+</style>
+<div class="viewer"><div class="loading" id="loadmsg">Loading PartPoser...</div><canvas id="pp3d"></canvas></div>
+<div class="controls">
+<div class="section">Gizmo (grab parts directly)</div>
+<div class="btnrow" id="gizmobtns">
+<button data-g="translate" class="active">Move</button>
+<button data-g="rotate">Rotate</button>
+<button data-g="off">Gizmo Off</button>
+</div>
+<div class="section">Presets <span class="modified" id="modflag" style="display:none">modified</span></div>
+<div class="btnrow" id="presets"></div>
+<div class="savepreset">
+<input type="text" id="newpresetname" placeholder="Name this pose..." maxlength="24">
+<button id="savepresetbtn">Save preset</button>
+</div>
+<div class="btnrow">
+<button id="resetbtn" class="danger">Reset to default</button>
+</div>
+<div class="note">Your tweaks auto-save per preset. Switch presets and come back, your values are still there. Reset wipes the current preset back to factory.</div>
+<div class="section">Move mode</div>
+<div class="btnrow" id="modetoggle">
+<button data-m="wing" class="active">Wing (mirrored)</button>
+<button data-m="together">Together</button>
+</div>
+<div class="section">Position (both arms)</div>
+<div class="row"><label>1. Spread (left/right)</label><input type="range" id="s_spread" min="-0.4" max="0.5" step="0.005" value="0"><span class="val" id="v_spread">0.000</span></div>
+<div class="row"><label>2. Shift left/right</label><input type="range" id="s_shiftlr" min="-0.4" max="0.4" step="0.005" value="0"><span class="val" id="v_shiftlr">0.000</span></div>
+<div class="row"><label>3. Up / down</label><input type="range" id="s_updown" min="-0.4" max="0.5" step="0.005" value="0"><span class="val" id="v_updown">0.000</span></div>
+<div class="row"><label>4. Forward / back</label><input type="range" id="s_fwdbak" min="-0.4" max="0.4" step="0.005" value="0"><span class="val" id="v_fwdbak">0.000</span></div>
+<div class="section">Rotation (both arms)</div>
+<div class="row"><label>5. Wing flap (up/down)</label><input type="range" id="s_pitch" min="-90" max="90" step="1" value="0"><span class="val" id="v_pitch">0&deg;</span></div>
+<div class="row"><label>6. Wing flap (fwd/back)</label><input type="range" id="s_yaw" min="-90" max="90" step="1" value="0"><span class="val" id="v_yaw">0&deg;</span></div>
+<div class="row"><label>7. Roll (twist)</label><input type="range" id="s_roll" min="-90" max="90" step="1" value="0"><span class="val" id="v_roll">0&deg;</span></div>
+<div class="section">Fine-tune (individual)</div>
+<div class="row"><label>8. Left arm nudge L/R</label><input type="range" id="s_lnudge" min="-0.2" max="0.2" step="0.005" value="0"><span class="val" id="v_lnudge">0.000</span></div>
+<div class="row"><label>9. Right arm nudge L/R</label><input type="range" id="s_rnudge" min="-0.2" max="0.2" step="0.005" value="0"><span class="val" id="v_rnudge">0.000</span></div>
+<div class="row"><label>10. Arm scale</label><input type="range" id="s_scale" min="0.5" max="1.5" step="0.01" value="1"><span class="val" id="v_scale">1.00</span></div>
+<button class="copybtn" id="copyvals">Copy current values</button>
+<div class="note" id="copied" style="display:none">Copied.</div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+<script>
+(function(){
+var DEFAULTS={
+  gyro:{spread:0,shiftlr:0,updown:0,fwdbak:0,pitch:0,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1},
+  docock:{spread:0.07,shiftlr:0,updown:0.145,fwdbak:-0.03,pitch:70,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1},
+  floating:{spread:-0.075,shiftlr:0,updown:0.155,fwdbak:-0.10,pitch:-26,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1}
+};
+var BUILTIN_LABELS={gyro:'Gyro (attached)',docock:'Doc Ock',floating:'Floating'};
+var S=window.hatchWidget.getState({preset:'gyro',mode:'wing',saved:{},customOrder:[]});
+function allPresetNames(){ return ['gyro','docock','floating'].concat(S.customOrder||[]); }
+function getVals(name){
+  if(S.saved&&S.saved[name]) return Object.assign({},S.saved[name]);
+  if(DEFAULTS[name]) return Object.assign({},DEFAULTS[name]);
+  return Object.assign({},DEFAULTS.gyro);
+}
+function isModified(name){
+  return !!(S.saved&&S.saved[name]);
+}
+var canvas=document.getElementById('pp3d');
+var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+var scene=new THREE.Scene(); scene.background=new THREE.Color(0xf0f0f0);
+var camera=new THREE.PerspectiveCamera(45,2,0.01,100);
+var orbit=new THREE.OrbitControls(camera,canvas); orbit.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x888888,1.1));
+var dl=new THREE.DirectionalLight(0xffffff,0.7); dl.position.set(2,3,4); scene.add(dl);
+var tc=new THREE.TransformControls(camera,canvas); scene.add(tc);
+tc.addEventListener('dragging-changed',function(e){ orbit.enabled=!e.value; });
+tc.setMode('translate');
+var tcMode='translate';
+var armL=null,armR=null,selected=null;
+var ray=new THREE.Raycaster(), mouse=new THREE.Vector2();
+canvas.addEventListener('pointerdown',function(e){
+  if(tc.dragging) return;
+  var r=canvas.getBoundingClientRect();
+  mouse.x=((e.clientX-r.left)/r.width)*2-1; mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(mouse,camera);
+  var hits=ray.intersectObjects([armL,armR].filter(Boolean),false);
+  if(hits.length){ selected=hits[0].object; tc.attach(selected); }
+  else { tc.detach(); selected=null; }
+});
+new THREE.GLTFLoader().load('https://raw.githubusercontent.com/mhvnsnt/western-heart/main/tools/dxmmii-poser/dxmmii_widget2.glb',function(gltf){
+  document.getElementById('loadmsg').style.display='none';
+  scene.add(gltf.scene);
+  var meshes=[];
+  gltf.scene.traverse(function(o){ if(o.isMesh) meshes.push(o); });
+  meshes.sort(function(a,b){
+    var sa=new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).length();
+    var sb=new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).length();
+    return sa-sb;
+  });
+  if(meshes.length>=3){
+    var c0=new THREE.Box3().setFromObject(meshes[0]).getCenter(new THREE.Vector3());
+    var c1=new THREE.Box3().setFromObject(meshes[1]).getCenter(new THREE.Vector3());
+    if(c0.x>c1.x){ armL=meshes[0]; armR=meshes[1]; } else { armL=meshes[1]; armR=meshes[0]; }
+  }
+  applyState();
+  var box=new THREE.Box3().setFromObject(gltf.scene);
+  var c=box.getCenter(new THREE.Vector3());
+  orbit.target.copy(c);
+  camera.position.set(c.x+1.8,c.y-1.4,c.z+0.6);
+},undefined,function(){ document.getElementById('loadmsg').textContent='Failed to load model.'; });
+function cur(){ return getVals(S.preset); }
+function applyState(){
+  var V=cur();
+  var map=[['s_spread','v_spread','spread',3],['s_shiftlr','v_shiftlr','shiftlr',3],['s_updown','v_updown','updown',3],['s_fwdbak','v_fwdbak','fwdbak',3],['s_pitch','v_pitch','pitch',0],['s_yaw','v_yaw','yaw',0],['s_roll','v_roll','roll',0],['s_lnudge','v_lnudge','lnudge',3],['s_rnudge','v_rnudge','rnudge',3],['s_scale','v_scale','scale',2]];
+  map.forEach(function(m){
+    document.getElementById(m[0]).value=V[m[2]];
+    document.getElementById(m[1]).textContent=m[3]===0?V[m[2]]+'°':Number(V[m[2]]).toFixed(m[3]);
+  });
+  if(armL&&armR){
+    // Axis map (user-verified): pos.x=screen fwd/back, pos.y=screen up/down, pos.z=screen left/right.
+    // Spread = mirrored left/right = position.z.
+    var lS,rS;
+    if(S.mode==='wing'){ lS=V.spread+V.shiftlr+V.lnudge; rS=-V.spread+V.shiftlr+V.rnudge; }
+    else { lS=V.spread+V.shiftlr+V.lnudge; rS=V.spread+V.shiftlr+V.rnudge; }
+    var pr=V.pitch*Math.PI/180, yw=V.yaw*Math.PI/180, rl=V.roll*Math.PI/180;
+    armL.position.set(V.fwdbak, V.updown, lS);
+    armR.position.set(V.fwdbak, V.updown, rS);
+    armL.rotation.set(pr, yw, rl);
+    armR.rotation.set(-pr, -yw, -rl);
+    armL.scale.setScalar(V.scale); armR.scale.setScalar(V.scale);
+  }
+  renderPresetButtons();
+  document.getElementById('modflag').style.display=isModified(S.preset)?'inline':'none';
+  document.querySelectorAll('#modetoggle button').forEach(function(b){ b.classList.toggle('active',b.dataset.m===S.mode); });
+  document.querySelectorAll('#gizmobtns button').forEach(function(b){ b.classList.toggle('active',b.dataset.g===tcMode); });
+}
+function renderPresetButtons(){
+  var box=document.getElementById('presets'); box.innerHTML='';
+  allPresetNames().forEach(function(n){
+    var b=document.createElement('button');
+    b.dataset.p=n; b.textContent=(BUILTIN_LABELS[n]||n)+(isModified(n)?' *':'');
+    if(n===S.preset) b.classList.add('active');
+    b.addEventListener('click',function(){ setState({preset:n}); });
+    box.appendChild(b);
+  });
+}
+function setState(p){ S=Object.assign({},S,p); window.hatchWidget.setState(S); applyState(); }
+function saveSlider(key,val){
+  var V=cur(); V[key]=val;
+  var saved=Object.assign({},S.saved||{}); saved[S.preset]=V;
+  setState({saved:saved});
+}
+[['s_spread','spread'],['s_shiftlr','shiftlr'],['s_updown','updown'],['s_fwdbak','fwdbak'],['s_pitch','pitch'],['s_yaw','yaw'],['s_roll','roll'],['s_lnudge','lnudge'],['s_rnudge','rnudge'],['s_scale','scale']].forEach(function(pr){
+  document.getElementById(pr[0]).addEventListener('input',function(e){ saveSlider(pr[1],parseFloat(e.target.value)); });
+});
+document.querySelectorAll('#modetoggle button').forEach(function(b){
+  b.addEventListener('click',function(){ setState({mode:b.dataset.m}); });
+});
+document.querySelectorAll('#gizmobtns button').forEach(function(b){
+  b.addEventListener('click',function(){
+    tcMode=b.dataset.g;
+    if(tcMode==='off'){ tc.detach(); selected=null; } else { tc.setMode(tcMode); if(selected) tc.attach(selected); }
+    applyState();
+  });
+});
+document.getElementById('resetbtn').addEventListener('click',function(){
+  var saved=Object.assign({},S.saved||{}); delete saved[S.preset];
+  setState({saved:saved});
+});
+document.getElementById('savepresetbtn').addEventListener('click',function(){
+  var name=document.getElementById('newpresetname').value.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  if(!name) return;
+  if(DEFAULTS[name]||(S.customOrder||[]).indexOf(name)>=0){ document.getElementById('newpresetname').value=''; return; }
+  var V=cur();
+  var saved=Object.assign({},S.saved||{}); saved[name]=Object.assign({},V);
+  var order=(S.customOrder||[]).concat([name]);
+  document.getElementById('newpresetname').value='';
+  setState({saved:saved,customOrder:order,preset:name});
+});
+document.getElementById('copyvals').addEventListener('click',function(){
+  var V=cur();
+  var t='PartPoser ['+S.preset+']: spread='+V.spread.toFixed(3)+' shiftlr='+V.shiftlr.toFixed(3)+' updown='+V.updown.toFixed(3)+' fwdbak='+V.fwdbak.toFixed(3)+' pitch='+V.pitch+' yaw='+V.yaw+' roll='+V.roll+' lnudge='+V.lnudge.toFixed(3)+' rnudge='+V.rnudge.toFixed(3)+' scale='+V.scale.toFixed(2)+' mode='+S.mode;
+  if(navigator.clipboard) navigator.clipboard.writeText(t);
+  document.getElementById('copied').style.display='block';
+  setTimeout(function(){document.getElementById('copied').style.display='none';},2500);
+});
+function resize(){ var w=canvas.parentElement.clientWidth,h=460; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+window.addEventListener('resize',resize); resize();
+(function anim(){ requestAnimationFrame(anim); orbit.update(); renderer.render(scene,camera); })();
+document.addEventListener('hatch-widget-state',function(e){ S=e.detail.state; applyState(); });
+applyState();
+})();
+</script>
