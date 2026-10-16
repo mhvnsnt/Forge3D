@@ -15,22 +15,44 @@ Input: `fixtures/fixture_tpose.obj` — synthetic T-pose test figure
 | auto_skin → 58-bone WH skeleton | fixture.quad.glb → fixture.rigged.glb | **58 joints verified** (`mixamorig:Hips` … `mixamorig:LeftToeBase`), `JOINTS_0` + `WEIGHTS_0` skinning attributes present |
 | export | rigged.glb → .fbx + .obj | FBX 150,428 bytes, OBJ 11,523 bytes |
 
+**Quadriflow limitation (2026-10-16):** `bpy.ops.object.quadriflow_remesh`
+silently no-ops (returns FINISHED, 0 quads) on TripoSR-generated meshes
+(tested 29,690-tri flamingo, with/without preserve flags) — works fine on
+the synthetic fixture. The stage fails loudly via its 0%-quad gate rather
+than passing through bad topology. Root cause unidentified; quadremesh of
+AI-generated meshes needs GPU-side investigation.
+
 Driver: `~/workspace/forge3d-scratch/stage_proof.py`
 (note: Blender 4.x renamed OBJ I/O to `wm.obj_import`/`wm.obj_export` —
 `bpy.ops.import_scene.obj` no longer exists).
 
-## TripoSR generation proof (CPU)
+## TripoSR generation proof (CPU) — 2026-10-16
 
-- Provider: `forge3d/providers/triposr.py` (battle-hardened 2026-10-07:
-  bf16 fast path, transformers 4.x pin, torchmcubes CPU shim, component
-  filtering, proxy sanitization, `--wait-for-ram` gate).
-- Prior measurement on this VM class (2026-10-07, documented in
-  docs/FREE_RUNNER_GUIDE.md): deterministic 6,634 verts at 128³,
-  ~2–10 min/image on CPU.
-- 2026-10-16 rebuild: venv + weights re-download in progress
-  (network-throttled); fresh generation proof runs when they land.
-  The Colab notebook (`notebooks/Forge3D_Free_Pipeline.ipynb`) is the
-  primary generation path (free T4, seconds per model).
+- Weights: `~/.forge3d/weights/triposr/model.ckpt` (1,677,246,742 bytes,
+  zip-valid 553 entries) + `config.yaml`, downloaded via resilient
+  `wget -c` loop (egress proxy kills connections ~hourly; loop relaunches).
+- Provider: `forge3d/providers/triposr.py` — bf16 fast path, transformers
+  4.40.0, torchmcubes CPU shim (skimage-backed, recreated 2026-10-16 with
+  bf16→fp32 cast fix), component filtering.
+- **Pipeline wiring: PROVEN end-to-end.** Three generations ran without
+  errors:
+  - `tripo-studio-redhooded-tpose.png` (phone screenshot) → 14,842 verts /
+    29,690 faces, 594,736-byte GLB, vertex colors present
+  - `flamingo.png` (official TripoSR test image) → 12,650 verts /
+    25,300 faces, 506,984-byte GLB (bf16 and fp32 both)
+  - Rig: 58-bone auto_skin verified (`JOINTS_0`+`WEIGHTS_0`), exports:
+    GLB 4,999,964 B / FBX 2,065,548 B / OBJ 4,620,968 B
+- **Quality limitation (honest):** CPU generations are flattened
+  ("pancake") — e.g. flamingo extents 0.967×0.959×0.183 instead of a
+  proper 3D bird. Debugging 2026-10-16: DINO encoder healthy
+  (input-dependent features), 549/549 checkpoint keys match, shim
+  verified correct via sphere test, preprocessing matches upstream,
+  fp32=bf16, transformers 4.40=4.57. Root cause unidentified; needs GPU
+  validation (CUDA torchmcubes + GPU inference may resolve).
+- Artifacts: `~/workspace/forge3d-scratch/proof/gen2/`,
+  `gen3/`, `gen4/`, `gen5/` (comparison renders included).
+- The Colab notebook (`notebooks/Forge3D_Free_Pipeline.ipynb`) remains
+  the primary quality generation path (free T4, seconds per model).
 
 ## TRELLIS.2 provider
 
