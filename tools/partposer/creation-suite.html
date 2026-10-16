@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Western Heart Creation Suite — PartPoser</title>
+<style>
+:root{
+  --bg:#1a1a1e; --surface:#242428; --surface2:#2e2e34; --text:#e8e8ea; --muted:#9a9aa2;
+  --border:#3a3a42; --accent:#c8a84b; --accent2:#e8c86a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column}
+/* Fixed viewer */
+#viewer-wrap{flex:0 0 auto;height:42vh;min-height:280px;position:relative;background:#111;border-bottom:2px solid var(--border)}
+#viewer-wrap canvas{width:100%;height:100%;display:block}
+#viewer-title{position:absolute;top:10px;left:14px;color:var(--accent);font-size:15px;font-weight:700;letter-spacing:1px;pointer-events:none;text-shadow:0 1px 4px #000}
+#viewer-sub{position:absolute;top:32px;left:14px;color:var(--muted);font-size:11px;pointer-events:none}
+#loadmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+/* Scrollable controls */
+#controls{flex:1 1 auto;overflow-y:auto;padding:14px 16px 40px;-webkit-overflow-scrolling:touch}
+.section{font-size:13px;font-weight:700;color:var(--accent);margin:18px 0 8px;letter-spacing:.5px;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{width:150px;flex-shrink:0;font-size:13px}
+.row input[type=range]{flex:1;accent-color:var(--accent);height:28px}
+.row .val{width:64px;text-align:right;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.btnrow button{padding:9px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;min-height:40px}
+.btnrow button.active{background:var(--accent);color:#1a1a1e;border-color:var(--accent);font-weight:600}
+.btnrow button.danger{border-color:#a44;color:#e88}
+.note{color:var(--muted);font-size:12px;margin:8px 0;line-height:1.5}
+.copybtn{margin-top:12px;padding:12px;border:1px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);font-size:14px;cursor:pointer;width:100%;min-height:48px;font-weight:600}
+.savepreset{display:flex;gap:8px;margin:8px 0}
+.savepreset input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px;min-height:44px}
+.savepreset button{padding:10px 18px;border:none;border-radius:8px;background:var(--accent);color:#1a1a1e;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}
+.modified{color:var(--accent);font-size:11px;margin-left:8px}
+#copied{color:var(--accent);font-size:13px;margin-top:8px;display:none;text-align:center}
+</style>
+</head>
+<body>
+<div id="viewer-wrap">
+  <div id="viewer-title">WESTERN HEART CREATION SUITE</div>
+  <div id="viewer-sub">PartPoser v1.0</div>
+  <div id="loadmsg">Loading model...</div>
+  <canvas id="pp3d"></canvas>
+</div>
+<div id="controls">
+  <div class="section">Gizmo</div>
+  <div class="btnrow" id="gizmobtns">
+    <button data-g="translate" class="active">Move</button>
+    <button data-g="rotate">Rotate</button>
+    <button data-g="off">Gizmo Off</button>
+  </div>
+  <div class="note">Tap an arm to select it, drag the arrows/rings. Gizmo off to orbit.</div>
+
+  <div class="section">Presets <span class="modified" id="modflag" style="display:none">● modified</span></div>
+  <div class="btnrow" id="presets"></div>
+  <div class="savepreset">
+    <input type="text" id="newpresetname" placeholder="Name this pose..." maxlength="24">
+    <button id="savepresetbtn">Save</button>
+  </div>
+  <div class="btnrow"><button id="resetbtn" class="danger">Reset to default</button></div>
+
+  <div class="section">Move mode</div>
+  <div class="btnrow" id="modetoggle">
+    <button data-m="wing" class="active">Wing (mirrored)</button>
+    <button data-m="together">Together</button>
+  </div>
+
+  <div class="section">Position</div>
+  <div class="row"><label>1. Spread (L/R)</label><input type="range" id="s_spread" min="-0.4" max="0.5" step="0.005" value="0"><span class="val" id="v_spread">0.000</span></div>
+  <div class="row"><label>2. Shift L/R</label><input type="range" id="s_shiftlr" min="-0.4" max="0.4" step="0.005" value="0"><span class="val" id="v_shiftlr">0.000</span></div>
+  <div class="row"><label>3. Up / Down</label><input type="range" id="s_updown" min="-0.4" max="0.5" step="0.005" value="0"><span class="val" id="v_updown">0.000</span></div>
+  <div class="row"><label>4. Forward / Back</label><input type="range" id="s_fwdbak" min="-0.4" max="0.4" step="0.005" value="0"><span class="val" id="v_fwdbak">0.000</span></div>
+
+  <div class="section">Rotation</div>
+  <div class="row"><label>5. Wing flap U/D</label><input type="range" id="s_pitch" min="-90" max="90" step="1" value="0"><span class="val" id="v_pitch">0°</span></div>
+  <div class="row"><label>6. Wing flap F/B</label><input type="range" id="s_yaw" min="-90" max="90" step="1" value="0"><span class="val" id="v_yaw">0°</span></div>
+  <div class="row"><label>7. Roll (twist)</label><input type="range" id="s_roll" min="-90" max="90" step="1" value="0"><span class="val" id="v_roll">0°</span></div>
+
+  <div class="section">Fine-tune</div>
+  <div class="row"><label>8. Left nudge</label><input type="range" id="s_lnudge" min="-0.2" max="0.2" step="0.005" value="0"><span class="val" id="v_lnudge">0.000</span></div>
+  <div class="row"><label>9. Right nudge</label><input type="range" id="s_rnudge" min="-0.2" max="0.2" step="0.005" value="0"><span class="val" id="v_rnudge">0.000</span></div>
+  <div class="row"><label>10. Scale</label><input type="range" id="s_scale" min="0.5" max="1.5" step="0.01" value="1"><span class="val" id="v_scale">1.00</span></div>
+
+  <button class="copybtn" id="copyvals">Copy current values</button>
+  <div id="copied">Copied!</div>
+  <div class="note" style="margin-top:20px;text-align:center">Western Heart Creation Suite — PartPoser<br>Built on Three.js (open source)</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+<script>
+(function(){
+// Use localStorage for standalone app (no widget bridge)
+var store={load:function(){try{return JSON.parse(localStorage.getItem('partposer')||'{}')}catch(e){return{}}},save:function(s){try{localStorage.setItem('partposer',JSON.stringify(s))}catch(e){}}};
+var DEFAULTS={
+  gyro:{spread:0,shiftlr:0,updown:0,fwdbak:0,pitch:0,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1},
+  docock:{spread:0.07,shiftlr:0,updown:0.145,fwdbak:-0.03,pitch:70,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1},
+  floating:{spread:-0.075,shiftlr:0,updown:0.155,fwdbak:-0.10,pitch:-26,yaw:0,roll:0,lnudge:0,rnudge:0,scale:1}
+};
+var LABELS={gyro:'Gyro',docock:'Doc Ock',floating:'Floating'};
+var S=Object.assign({preset:'gyro',mode:'wing',saved:{},customOrder:[]},store.load());
+function persist(){ store.save({preset:S.preset,mode:S.mode,saved:S.saved,customOrder:S.customOrder}); }
+function names(){ return ['gyro','docock','floating'].concat(S.customOrder||[]); }
+function vals(n){ if(S.saved&&S.saved[n]) return Object.assign({},S.saved[n]); if(DEFAULTS[n]) return Object.assign({},DEFAULTS[n]); return Object.assign({},DEFAULTS.gyro); }
+function modified(n){ return !!(S.saved&&S.saved[n]); }
+var canvas=document.getElementById('pp3d'),wrap=document.getElementById('viewer-wrap');
+var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+var scene=new THREE.Scene(); scene.background=new THREE.Color(0x111114);
+var camera=new THREE.PerspectiveCamera(45,2,0.01,100);
+var orbit=new THREE.OrbitControls(camera,canvas); orbit.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x666688,1.2));
+var dl=new THREE.DirectionalLight(0xfff2dd,0.9); dl.position.set(2,3,4); scene.add(dl);
+var dl2=new THREE.DirectionalLight(0x8899ff,0.3); dl2.position.set(-3,-2,-2); scene.add(dl2);
+var tc=new THREE.TransformControls(camera,canvas); scene.add(tc);
+tc.addEventListener('dragging-changed',function(e){ orbit.enabled=!e.value; });
+var tcMode='translate'; tc.setMode('translate');
+var armL=null,armR=null,selected=null;
+var ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+canvas.addEventListener('pointerdown',function(e){
+  if(tc.dragging) return;
+  var r=canvas.getBoundingClientRect();
+  mouse.x=((e.clientX-r.left)/r.width)*2-1; mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(mouse,camera);
+  var hits=ray.intersectObjects([armL,armR].filter(Boolean),false);
+  if(hits.length){ selected=hits[0].object; tc.attach(selected); }
+  else { tc.detach(); selected=null; }
+});
+// Model URL: override with ?model= for other repos
+var params=new URLSearchParams(location.search);
+var modelUrl=params.get('model')||'https://raw.githubusercontent.com/mhvnsnt/western-heart/main/tools/dxmmii-poser/dxmmii_widget2.glb';
+new THREE.GLTFLoader().load(modelUrl,function(gltf){
+  document.getElementById('loadmsg').style.display='none';
+  scene.add(gltf.scene);
+  var meshes=[];
+  gltf.scene.traverse(function(o){ if(o.isMesh) meshes.push(o); });
+  meshes.sort(function(a,b){
+    var sa=new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).length();
+    var sb=new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).length();
+    return sa-sb;
+  });
+  if(meshes.length>=3){
+    var c0=new THREE.Box3().setFromObject(meshes[0]).getCenter(new THREE.Vector3());
+    var c1=new THREE.Box3().setFromObject(meshes[1]).getCenter(new THREE.Vector3());
+    if(c0.x>c1.x){ armL=meshes[0]; armR=meshes[1]; } else { armL=meshes[1]; armR=meshes[0]; }
+  } else if(meshes.length===2){ armL=meshes[0]; armR=meshes[1]; }
+  apply();
+  var box=new THREE.Box3().setFromObject(gltf.scene);
+  var c=box.getCenter(new THREE.Vector3());
+  orbit.target.copy(c);
+  camera.position.set(c.x+1.8,c.y-1.4,c.z+0.6);
+},undefined,function(){ document.getElementById('loadmsg').textContent='Failed to load model.'; });
+function cur(){ return vals(S.preset); }
+function apply(){
+  var V=cur();
+  [['s_spread','v_spread','spread',3],['s_shiftlr','v_shiftlr','shiftlr',3],['s_updown','v_updown','updown',3],['s_fwdbak','v_fwdbak','fwdbak',3],['s_pitch','v_pitch','pitch',0],['s_yaw','v_yaw','yaw',0],['s_roll','v_roll','roll',0],['s_lnudge','v_lnudge','lnudge',3],['s_rnudge','v_rnudge','rnudge',3],['s_scale','v_scale','scale',2]].forEach(function(m){
+    document.getElementById(m[0]).value=V[m[2]];
+    document.getElementById(m[1]).textContent=m[3]===0?V[m[2]]+'°':Number(V[m[2]]).toFixed(m[3]);
+  });
+  if(armL&&armR){
+    var lS,rS;
+    if(S.mode==='wing'){ lS=V.spread+V.shiftlr+V.lnudge; rS=-V.spread+V.shiftlr+V.rnudge; }
+    else { lS=V.spread+V.shiftlr+V.lnudge; rS=V.spread+V.shiftlr+V.rnudge; }
+    var pr=V.pitch*Math.PI/180,yw=V.yaw*Math.PI/180,rl=V.roll*Math.PI/180;
+    armL.position.set(V.fwdbak,V.updown,lS);
+    armR.position.set(V.fwdbak,V.updown,rS);
+    armL.rotation.set(pr,yw,rl); armR.rotation.set(-pr,-yw,-rl);
+    armL.scale.setScalar(V.scale); armR.scale.setScalar(V.scale);
+  }
+  var pb=document.getElementById('presets'); pb.innerHTML='';
+  names().forEach(function(n){
+    var b=document.createElement('button');
+    b.textContent=(LABELS[n]||n)+(modified(n)?' *':'');
+    if(n===S.preset) b.classList.add('active');
+    b.onclick=function(){ S.preset=n; persist(); apply(); };
+    pb.appendChild(b);
+  });
+  document.getElementById('modflag').style.display=modified(S.preset)?'inline':'none';
+  document.querySelectorAll('#modetoggle button').forEach(function(b){ b.classList.toggle('active',b.dataset.m===S.mode); });
+  document.querySelectorAll('#gizmobtns button').forEach(function(b){ b.classList.toggle('active',b.dataset.g===tcMode); });
+}
+function saveSlider(k,v){ var V=cur(); V[k]=v; S.saved=S.saved||{}; S.saved[S.preset]=V; persist(); apply(); }
+[['s_spread','spread'],['s_shiftlr','shiftlr'],['s_updown','updown'],['s_fwdbak','fwdbak'],['s_pitch','pitch'],['s_yaw','yaw'],['s_roll','roll'],['s_lnudge','lnudge'],['s_rnudge','rnudge'],['s_scale','scale']].forEach(function(p){
+  document.getElementById(p[0]).addEventListener('input',function(e){ saveSlider(p[1],parseFloat(e.target.value)); });
+});
+document.querySelectorAll('#modetoggle button').forEach(function(b){ b.onclick=function(){ S.mode=b.dataset.m; persist(); apply(); }; });
+document.querySelectorAll('#gizmobtns button').forEach(function(b){ b.onclick=function(){ tcMode=b.dataset.g; if(tcMode==='off'){tc.detach();selected=null;}else{tc.setMode(tcMode);if(selected)tc.attach(selected);} apply(); }; });
+document.getElementById('resetbtn').onclick=function(){ if(S.saved) delete S.saved[S.preset]; persist(); apply(); };
+document.getElementById('savepresetbtn').onclick=function(){
+  var n=document.getElementById('newpresetname').value.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  if(!n||DEFAULTS[n]||(S.customOrder||[]).indexOf(n)>=0) return;
+  S.saved=S.saved||{}; S.saved[n]=cur(); S.customOrder=(S.customOrder||[]).concat([n]); S.preset=n;
+  document.getElementById('newpresetname').value=''; persist(); apply();
+};
+document.getElementById('copyvals').onclick=function(){
+  var V=cur();
+  var t='PartPoser ['+S.preset+']: '+Object.keys(V).map(function(k){ return k+'='+(typeof V[k]==='number'?V[k].toFixed(3):V[k]); }).join(' ');
+  if(navigator.clipboard) navigator.clipboard.writeText(t);
+  var c=document.getElementById('copied'); c.style.display='block'; setTimeout(function(){c.style.display='none'},2000);
+};
+function resize(){ var w=wrap.clientWidth,h=wrap.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+window.addEventListener('resize',resize);
+new ResizeObserver(resize).observe(wrap); resize();
+(function anim(){ requestAnimationFrame(anim); orbit.update(); renderer.render(scene,camera); })();
+apply();
+})();
+</script>
+</body>
+</html>
