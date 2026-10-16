@@ -10,10 +10,12 @@ owner's 58-bone Mixamo-style game skeleton is the job of the Bannon/AshLanev2
 retargeters (handoff stage) — this stage's contract is "rigged, validated",
 not "58 bones exactly". The measured bone count is recorded in run.json.
 
-Environment note (2026-10-06): on the CPU-only agent VM the instance-rig
+Environment note (2026-10-16): on the CPU-only agent VM the instance-rig
 venv is DOWN — its open3d dependency needs system libEGL.so.1, which is not
-installed and apt is unavailable. The stage fails loudly with that reason
-(no fake rig). It runs on hosts with system GL libs (Kaggle/Colab/GPU box).
+installed and apt is unavailable. When the venv is missing, the stage falls
+back to the Blender auto_skin path (headless, Bannon lineage), which rigs
+straight onto the canonical 58-bone Western Heart skeleton. Either path
+validates bone count > 0 and raises loudly on failure — never a fake rig.
 """
 from __future__ import annotations
 
@@ -60,11 +62,26 @@ def rig_glb(glb: Path, out_dir: Path, timeout: int = 600) -> Path:
     if bone_count(glb) > 0:
         return glb  # already rigged — honest pass-through
 
-    if not VENV_PY.exists():
-        raise ProviderError(
-            f"rig stage unavailable: instance-rig venv not found at {VENV_PY}")
-
     out = out_dir / f"{glb.stem}.rigged.glb"
+
+    # Fallback chain (2026-10-16): the instance-rig venv needs system GL libs
+    # and is DOWN on minimal CPU hosts. The Blender auto_skin path (proven
+    # Bannon lineage, headless) rigs straight onto the canonical 58-bone
+    # Western Heart skeleton and runs anywhere Blender runs.
+    if not VENV_PY.exists():
+        from ..blender.stage import auto_skin
+        print(f"rig: instance-rig venv missing — Blender auto_skin fallback "
+              f"onto {SKELETON_58.name}", file=sys.stderr)
+        auto_skin(glb, out, SKELETON_58, timeout=timeout)
+        n = bone_count(out)
+        if n <= 0:
+            raise ProviderError(
+                f"rig stage (blender fallback) produced unrigged output "
+                f"({out.name}); refusing to ship it")
+        print(f"rig: {glb.name} -> {out.name} ({n} bones, blender fallback)",
+              file=sys.stderr)
+        return out
+
     cmd = [str(VENV_PY), "-m", "instancerig", str(glb), "-o", str(out)]
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
