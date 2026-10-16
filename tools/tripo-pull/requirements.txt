@@ -1,0 +1,5 @@
+# tripo-pull is stdlib-only — nothing to install.
+# Optional (only for --to format conversion):
+#   Blender 4.2+ (external binary, not a pip package)
+# Optional (only for richer GLB inspection in manifests):
+# pygltflib
